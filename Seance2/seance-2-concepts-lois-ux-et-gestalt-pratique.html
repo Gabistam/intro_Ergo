@@ -336,6 +336,18 @@ input[type=range]{width:100%;accent-color:var(--primary)}
 select.f-input{width:auto;min-width:240px}
 #poLaw .row{grid-template-columns:150px 1fr}
 @media(max-width:600px){#poLaw .row{grid-template-columns:1fr}}
+
+/* Cas 1 — traits d'association */
+.match-grid{position:relative;column-gap:72px}
+.c1-wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
+.c1-wires path{fill:none;stroke-width:2.5;stroke-linecap:round}
+.c1-wires path.pending,.c1-wires path.bad{stroke-dasharray:6 5}
+.c1-wires circle{stroke:#fff;stroke-width:1.5}
+.m-term.paired .pair-badge,.m-def.paired .pair-badge{background:var(--pc,var(--primary));color:#fff}
+.m-term.paired:not(.good):not(.bad):not(.active){border-color:var(--pc,var(--dark))}
+.m-def.paired:not(.good):not(.bad){border-color:var(--pc,#93c5fd)}
+.c1-hint{display:none;position:sticky;bottom:12px;z-index:30;margin-top:10px;background:var(--dark);color:#fff;padding:10px 14px;border-radius:10px;font-size:.85rem;box-shadow:0 6px 20px rgba(15,23,42,.25);border-left:4px solid #fbbf24}
+.c1-hint.show{display:block}
 </style>
 </head>
 <body>
@@ -357,7 +369,7 @@ select.f-input{width:auto;min-width:240px}
 <section class="panel active" data-panel="0">
 <div class="card"><div class="section-title"><span class="icon-bg green">🎯</span>Mettre en pratique la séance 2</div><p class="lead">Ce support vous fait manipuler les concepts, les lois de l’UX et les principes de la Gestalt, puis vous demande d’en expliquer une à toute la classe sous la forme d’un poster.</p><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Définir avec précision les concepts, lois UX et principes de la Gestalt de la séance ;</li><li>Reconnaître une loi ou un principe dans une situation concrète et le distinguer d’une notion voisine ;</li><li>Reformuler une loi UX avec ses propres mots, l’illustrer par un exemple réel et un contre-exemple ;</li><li>Énoncer les limites d’une loi au lieu de la présenter comme une vérité absolue ;</li><li>Appliquer hiérarchie visuelle, proximité et contraste à sa propre production.</li></ul></div><div class="grid grid-2"><div class="mini-card"><h4>🧩 Cas 1 — Correspondance</h4><p class="muted">Associez 30 termes à leur définition, en 3 rounds de 10 tirés au hasard.</p></div><div class="mini-card"><h4>🔍 Cas 2 — Situations</h4><p class="muted">6 groupes de 4 situations : identifiez la loi ou le principe commun et repérez l’intruse.</p></div><div class="mini-card"><h4>🎨 Cas 3 — Poster d’une loi UX</h4><p class="muted">Une loi tirée au sort, reformulée, illustrée et nuancée, puis exposée en galerie.</p></div><div class="mini-card"><h4>📖 Glossaire</h4><p class="muted">Débloqué uniquement lorsque les 3 cas sont terminés.</p></div></div><h3>Les familles de notions</h3><div class="chips"><span class="famille-tag f1">Concepts &amp; critères · 5</span><span class="famille-tag f2">Mémoire &amp; attention · 5</span><span class="famille-tag f3">Décision &amp; action · 6</span><span class="famille-tag f4">Comportement &amp; attentes · 6</span><span class="famille-tag f5">Gestalt &amp; mise en page · 8</span></div><div class="instruction-box"><strong class="title">Mode d’emploi</strong>Faites les cas dans l’ordre. Chaque activité validée fait avancer la barre de progression ; les termes et les situations sont mélangés à chaque nouvel essai. Pour le poster, préparez un compte Canva ou Figma (gratuit) et de quoi faire des captures d’écran.</div><div class="link-card"><span><strong>📚 Support théorique associé</strong><br><span class="muted">Relisez un chapitre en cas de doute.</span></span><a class="btn btn-ghost" href="seance-2-concepts-lois-ux-et-gestalt-theorie.html">◂ Ouvrir le support théorique</a></div><div class="nav-bottom"><span></span><button class="btn btn-primary" data-goto="c1">Commencer : Cas 1 ▸</button></div></div></section>
 <section class="panel" data-panel="c1">
-<div class="card"><div class="section-title"><span class="icon-bg">🧩</span>Cas 1 — Correspondance termes / définitions</div><div class="objectif-box"><strong class="title">Objectif</strong>Maîtriser le vocabulaire de la séance : chaque concept, loi ou principe doit pouvoir être défini avec précision.</div><div class="instruction-box"><strong class="title">Consigne</strong>Cliquez sur un terme (colonne de gauche), puis sur la définition qui lui correspond. Le numéro du terme s’affiche sur la définition choisie. Cliquez sur une définition associée pour annuler. Quand les 10 associations sont faites, vérifiez, puis passez au round suivant (3 rounds).</div><div class="round-pills" id="c1Rounds"></div><div class="match-grid"><div class="match-col" id="c1Terms"></div><div class="match-col" id="c1Defs"></div></div><div class="progress-wrap"><div class="progress-label"><span>Associations du round</span><span id="c1Txt">0 / 10</span></div><div class="progress-track"><div class="progress-fill" id="c1Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c1Check">✔ Vérifier le round</button><button class="btn btn-success" id="c1Next" style="display:none">Round suivant ▸</button><button class="btn btn-warning btn-reveal" id="c1Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c1Reset">↺ Recommencer</button></div><div class="result-panel" id="c1Result"></div><div class="nav-bottom" style="margin-top:20px"><span></span><button class="btn btn-primary" data-goto="c2">Suite : Cas 2 ▸</button></div></div>
+<div class="card"><div class="section-title"><span class="icon-bg">🧩</span>Cas 1 — Correspondance termes / définitions</div><div class="objectif-box"><strong class="title">Objectif</strong>Maîtriser le vocabulaire de la séance : chaque concept, loi ou principe doit pouvoir être défini avec précision.</div><div class="instruction-box"><strong class="title">Consigne</strong>Cliquez sur un terme (colonne de gauche), puis sur la définition qui lui correspond. Un trait de couleur relie le terme à la définition choisie ; sur mobile, ils partagent le même numéro et la même couleur. Cliquez sur une définition associée pour annuler. Quand les 10 associations sont faites, vérifiez, puis passez au round suivant (3 rounds).</div><div class="round-pills" id="c1Rounds"></div><div class="match-grid"><div class="match-col" id="c1Terms"></div><div class="match-col" id="c1Defs"></div></div><div class="c1-hint" id="c1Hint" role="status" aria-live="polite"></div><div class="progress-wrap"><div class="progress-label"><span>Associations du round</span><span id="c1Txt">0 / 10</span></div><div class="progress-track"><div class="progress-fill" id="c1Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c1Check">✔ Vérifier le round</button><button class="btn btn-success" id="c1Next" style="display:none">Round suivant ▸</button><button class="btn btn-warning btn-reveal" id="c1Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c1Reset">↺ Recommencer</button></div><div class="result-panel" id="c1Result"></div><div class="nav-bottom" style="margin-top:20px"><span></span><button class="btn btn-primary" data-goto="c2">Suite : Cas 2 ▸</button></div></div>
 </section>
 <section class="panel" data-panel="c2">
 <div class="card"><div class="section-title"><span class="icon-bg amber">🔍</span>Cas 2 — Identification de situations</div><div class="objectif-box"><strong class="title">Objectif</strong>Reconnaître une loi ou un principe dans des situations concrètes, et le distinguer d’une notion voisine.</div><div class="instruction-box"><strong class="title">Consigne</strong>Chaque groupe contient 4 situations. Trois illustrent la même notion (bien appliquée ou négligée), <strong>une est une intruse</strong>. Pour chaque groupe : (1) choisissez la notion commune, (2) cliquez sur la situation intruse. Vérifiez, puis lisez les explications.</div><div id="c2Box"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="c2Txt">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="c2Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c2Check">✔ Vérifier</button><button class="btn btn-warning btn-reveal" id="c2Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c2Reset">↺ Recommencer</button></div><div class="result-panel" id="c2Result"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c1">◂ Cas 1</button><button class="btn btn-primary" data-goto="c3">Suite : Cas 3 ▸</button></div></div>
@@ -497,6 +509,7 @@ function paintPairs(){
   $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); b.classList.toggle('paired',owner!==undefined); $('.pair-badge',b).textContent= owner!==undefined ? (+owner+1) : '·'; });
   const n=Object.keys(c1.pairs).length, tot=c1.rounds[c1.r].length;
   setProgress('c1Fill','c1Txt',n,tot,' associations');
+  drawLinks();
 }
 function checkRound(silent){
   const R=c1.rounds[c1.r];
@@ -504,7 +517,7 @@ function checkRound(silent){
   let ok=0;
   $$('#c1Terms .m-term').forEach(b=>{ const i=+b.dataset.i; const g=c1.pairs[i]===i; if(g) ok++; b.classList.remove('active'); b.classList.add(g?'good':'bad'); });
   $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); const g= owner!==undefined && +owner===di; b.classList.add(g?'good':'bad'); if(!g){ $('.pair-badge',b).textContent='→'+(di+1); } });
-  c1.checked=true; c1.scores[c1.r]=ok; $('#c1Check').disabled=true;
+  c1.checked=true; drawLinks(); c1.scores[c1.r]=ok; $('#c1Check').disabled=true;
   const last = c1.r===c1.rounds.length-1;
   const tot=c1.scores.reduce((a,b)=>a+b,0), max=c1.rounds.slice(0,c1.r+1).reduce((a,r)=>a+r.length,0);
   $('#c1Result').innerHTML='<div class="score">'+ok+' / '+R.length+'</div><div class="msg">Round '+(c1.r+1)+' sur '+c1.rounds.length+'. Les définitions en rouge indiquent le numéro du bon terme. '+(last?'<br><strong style="color:#34d399">Score total : '+tot+' / '+max+'</strong> — '+scoreMsg(Math.round(tot/max*100)):'Score cumulé : '+tot+' / '+max+'.')+'</div>';
@@ -517,6 +530,58 @@ $('#c1Next').addEventListener('click',()=>{ c1.r++; $('#c1Result').classList.rem
 $('#c1Reveal').addEventListener('click',()=>{ if(c1.checked) return; c1.rounds[c1.r].forEach((_,i)=>c1.pairs[i]=i); paintPairs(); checkRound(true); });
 $('#c1Reset').addEventListener('click',initCas1);
 initCas1();
+
+/* Cas 1 — traits reliant les associations (écran large) ; couleurs + bandeau en colonnes empilées */
+const C1_COLORS=['#2563eb','#db2777','#059669','#d97706','#7c3aed','#0891b2','#dc2626','#65a30d','#c026d3','#0d9488'];
+const c1Grid=$('#c1Terms').parentNode;
+let c1Pointer=null, c1Raf=0;
+const c1Svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+c1Svg.setAttribute('class','c1-wires'); c1Svg.setAttribute('aria-hidden','true'); c1Grid.appendChild(c1Svg);
+function c1Wire(x1,y1,x2,y2,color,cls){
+  const dx=Math.max(20,Math.abs(x2-x1)/2);
+  return '<path class="'+cls+'" stroke="'+color+'" d="M'+x1+','+y1+' C'+(x1+dx)+','+y1+' '+(x2-dx)+','+y2+' '+x2+','+y2+'"/>'+
+    '<circle cx="'+x1+'" cy="'+y1+'" r="4" fill="'+color+'"/><circle cx="'+x2+'" cy="'+y2+'" r="4" fill="'+color+'"/>';
+}
+function drawLinks(){
+  if(!c1 || !c1Ready) return;
+  const terms=$$('#c1Terms .m-term'), defs=$$('#c1Defs .m-def');
+  const ownerOf=di=>Object.keys(c1.pairs).find(k=>c1.pairs[k]===di);
+  terms.forEach(b=>{ const i=+b.dataset.i; if(c1.pairs[i]!==undefined) b.style.setProperty('--pc',C1_COLORS[i%10]); else b.style.removeProperty('--pc'); });
+  defs.forEach(b=>{ const o=ownerOf(+b.dataset.d); if(o!==undefined) b.style.setProperty('--pc',C1_COLORS[+o%10]); else b.style.removeProperty('--pc'); });
+  const g=c1Grid.getBoundingClientRect(), tc=$('#c1Terms').getBoundingClientRect(), dc=$('#c1Defs').getBoundingClientRect();
+  const side=g.width>0 && dc.left>=tc.right;
+  let html='';
+  if(side){
+    const pt=(el,right)=>{ const r=el.getBoundingClientRect(); return [(right?r.right:r.left)-g.left, r.top+r.height/2-g.top]; };
+    Object.keys(c1.pairs).forEach(k=>{
+      const t=terms.find(b=>+b.dataset.i===+k), d=defs.find(b=>+b.dataset.d===c1.pairs[k]); if(!t||!d) return;
+      const a=pt(t,true), b=pt(d,false); let color=C1_COLORS[+k%10], cls='';
+      if(c1.checked){ const ok=c1.pairs[k]===+k; color=ok?'#10b981':'#ef4444'; cls=ok?'':'bad'; }
+      html+=c1Wire(a[0],a[1],b[0],b[1],color,cls);
+    });
+    if(c1.active!==null && !c1.checked && c1Pointer){
+      const t=terms.find(b=>+b.dataset.i===c1.active);
+      if(t){ const a=pt(t,true); html+=c1Wire(a[0],a[1],c1Pointer[0],c1Pointer[1],'#f59e0b','pending'); }
+    }
+  }
+  c1Svg.innerHTML=html;
+  const hint=$('#c1Hint'), show=!side && c1.active!==null && !c1.checked;
+  hint.classList.toggle('show',show);
+  hint.textContent=show?'« '+c1.rounds[c1.r][c1.active].t+' » sélectionné : touchez sa définition ci-dessous.':'';
+}
+c1Grid.addEventListener('pointermove',e=>{
+  if(e.pointerType!=='mouse' || !c1 || c1.active===null || c1.checked) return;
+  const g=c1Grid.getBoundingClientRect(), d=e.target.closest('.m-def');
+  if(d){ const r=d.getBoundingClientRect(); c1Pointer=[r.left-g.left, r.top+r.height/2-g.top]; }
+  else c1Pointer=[e.clientX-g.left, e.clientY-g.top];
+  cancelAnimationFrame(c1Raf); c1Raf=requestAnimationFrame(drawLinks);
+});
+c1Grid.addEventListener('pointerleave',()=>{ c1Pointer=null; drawLinks(); });
+if(window.ResizeObserver) new ResizeObserver(()=>drawLinks()).observe(c1Grid);
+window.addEventListener('resize',drawLinks);
+var c1Ready=true;
+drawLinks();
+
 
 /* ================= CAS 2 — IDENTIFICATION + INTRUSE ================= */
 let c2=[];
