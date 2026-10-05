@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Séance 1 — Comprendre l’ergonomie et évaluer une interface · Pratique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --secondary:#059669;--secondary-light:#d1fae5;
+  --accent:#d97706;--accent-light:#fef3c7;
+  --danger:#dc2626;--danger-light:#fee2e2;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --dark:#0f172a;--dark2:#1e293b;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f1f5f9;--card:#ffffff;--radius:14px;
+  --sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+code,.mono{font-family:var(--mono)}
+code{background:#f1f5f9;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.84em}
+pre code,.key-box code,.nest.n4 code{background:transparent;border:none;padding:0;color:inherit}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+
+header{background:linear-gradient(135deg,#0f172a 0%,#4c1d95 60%,#6d28d9 100%);color:#fff;padding:42px 24px 34px;position:relative;overflow:hidden}
+header.practice{background:linear-gradient(135deg,#0f172a 0%,#6d28d9 60%,#7c3aed 100%)}
+header::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.25),transparent 70%)}
+.header-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+header h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:10px}
+header .subtitle{color:#cbd5e1;max-width:720px;font-size:1rem}
+.meta-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.meta-pill{background:rgba(15,23,42,.45);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:999px;font-size:.8rem;display:inline-flex;align-items:center;gap:6px}
+.global-progress{margin-top:24px;max-width:520px}
+.global-progress .label{display:flex;justify-content:space-between;font-size:.8rem;color:#cbd5e1;margin-bottom:6px}
+.global-progress .track{height:8px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.global-progress .fill{height:100%;width:0;background:linear-gradient(90deg,#10b981,#34d399);border-radius:999px;transition:width .5s ease}
+.mode-flag{display:none;margin-top:14px;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;width:max-content}
+body.formateur .mode-flag{display:block}
+
+.tabs-wrap{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.tabs{max-width:1100px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 16px;scrollbar-width:thin}
+.tab{border:none;background:none;padding:15px 14px;font-size:.85rem;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--primary)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab .done-mark{display:none;color:var(--secondary)}
+.tab.done .done-mark{display:inline}
+.tab .lock-mark{font-size:.8rem}
+
+main{max-width:1100px;margin:0 auto;padding:28px 16px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel.active{animation:none}.global-progress .fill,.progress-fill{transition:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+@media(max-width:600px){.card{padding:20px 16px}}
+.section-title{display:flex;align-items:center;gap:14px;font-size:1.3rem;font-weight:700;margin-bottom:18px;color:var(--dark)}
+.icon-bg{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;background:var(--primary-light)}
+.icon-bg.green{background:var(--secondary-light)}.icon-bg.amber{background:var(--accent-light)}.icon-bg.purple{background:var(--purple-light)}.icon-bg.red{background:var(--danger-light)}
+h3{font-size:1.05rem;font-weight:700;margin:22px 0 10px;color:var(--dark)}
+p{margin-bottom:10px}
+.lead{font-size:1.05rem;color:var(--dark2)}
+.muted{color:var(--muted);font-size:.88rem}
+ul.clean{list-style:none}
+ul.clean li{padding:6px 0 6px 26px;position:relative}
+ul.clean li::before{content:"▸";position:absolute;left:6px;color:var(--primary);font-weight:700}
+ol{padding-left:22px}ol li{padding:3px 0}
+
+.objectif-box{background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid var(--primary);border-radius:10px;padding:18px 20px;margin:16px 0}
+.objectif-box strong.title{display:block;color:var(--primary-dark);margin-bottom:8px}
+.instruction-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid var(--accent);border-radius:10px;padding:18px 20px;margin:16px 0}
+.instruction-box strong.title{display:block;color:#92400e;margin-bottom:8px}
+.key-box{background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin:18px 0;border-left:5px solid #10b981}
+.key-box .big{font-size:1.15rem;font-weight:700;color:#fff}
+.warn-box{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid var(--danger);border-radius:10px;padding:16px 20px;margin:16px 0}
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.mini-card{border:1px solid var(--border);border-radius:12px;padding:18px;background:#fff}
+.mini-card h4{font-size:1rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mini-card.bad{border-color:#fecaca;background:#fef2f2}
+.mini-card.good{border-color:#a7f3d0;background:#f0fdf4}
+.mini-card pre.prompt{margin-top:8px}
+
+.famille-tag{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.2px}
+.f1{background:var(--primary-light);color:#1e40af}
+.f2{background:var(--secondary-light);color:#065f46}
+.f3{background:var(--accent-light);color:#92400e}
+.f4{background:var(--purple-light);color:#5b21b6}
+.f5{background:var(--danger-light);color:#991b1b}
+
+.term-item{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.85rem;padding:10px 14px;border-radius:8px;display:inline-block}
+.chain .term-item,.objectif-box .term-item{padding:6px 12px}
+pre.prompt{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:18px 20px;border-radius:10px;white-space:pre-wrap;word-break:break-word;line-height:1.65;overflow-x:auto;position:relative;margin:12px 0}
+pre.prompt .hl{color:#34d399}
+pre.prompt .hl2{color:#fbbf24}
+pre.prompt .hl3{color:#93c5fd}
+
+.btn{border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:8px;transition:transform .1s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--secondary);color:#fff}.btn-success:hover{background:#047857}
+.btn-ghost{background:#fff;color:var(--dark2);border:1px solid var(--border)}.btn-ghost:hover{background:#f8fafc}
+.btn-warning{background:var(--accent);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.btn-reveal{display:none}
+body.formateur .btn-reveal{display:inline-flex}
+.reveal-content{display:none}
+.reveal-content.shown{display:block}
+
+.progress-wrap{margin:14px 0 4px}
+.progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+.progress-track{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#059669,#10b981);border-radius:999px;transition:width .4s ease}
+
+.result-panel{display:none;background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin-top:20px}
+.result-panel.show{display:block}
+.result-panel .score{font-family:var(--mono);font-size:2rem;font-weight:700;color:#34d399}
+.result-panel .msg{margin-top:6px;color:#cbd5e1}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0}
+.chain-node{border:2px solid var(--border);background:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--dark2)}
+.chain-node:hover{border-color:var(--primary)}
+.chain-node.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chain-node.seen:not(.active){border-color:#93c5fd}
+.chain-arrow{color:var(--muted);font-weight:700}
+.concept-detail{border:1px solid var(--border);border-radius:12px;padding:22px;background:#f8fafc;min-height:180px}
+.concept-detail .row{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.concept-detail .row:last-child{border-bottom:none}
+.concept-detail .k{font-weight:700;font-size:.82rem;color:var(--muted)}
+@media(max-width:600px){.concept-detail .row{grid-template-columns:1fr;gap:2px}}
+
+/* QCM */
+.qcm-q{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.qcm-q .qt{font-weight:600;margin-bottom:10px}
+.qcm-opts{display:grid;gap:8px}
+.qcm-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;font-size:.9rem;background:#fff;text-align:left;width:100%;color:var(--text)}
+.qcm-opt:hover{background:#f8fafc;border-color:#93c5fd}
+.qcm-opt .l{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:18px}
+.qcm-opt.sel{border-color:var(--primary);background:#eff6ff}
+.qcm-q.checked .qcm-opt{cursor:default}
+.qcm-opt.good{border-color:#6ee7b7;background:#ecfdf5}
+.qcm-opt.bad{border-color:#fca5a5;background:#fef2f2}
+.qcm-q.correct{border-color:#6ee7b7}
+.qcm-q.wrong{border-color:#fca5a5}
+.qcm-q .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:8px;border-top:1px dashed var(--border)}
+.qcm-q.checked .expl{display:block}
+.q-num{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-right:6px}
+
+/* V/F */
+.vf-row{padding:16px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#fff}
+.vf-row .vf-q{font-weight:500;margin-bottom:10px}
+.vf-btns{display:flex;gap:8px}
+.vf-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 18px;font-weight:600;font-size:.85rem;color:var(--text)}
+.vf-btn.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.vf-row.correct{border-color:#6ee7b7;background:#ecfdf5}
+.vf-row.wrong{border-color:#fca5a5;background:#fef2f2}
+.vf-row .expl{display:none;margin-top:10px;font-size:.85rem}
+.vf-row.checked .expl{display:block}
+
+/* Cas 1 matching */
+.match-grid{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:16px;margin-top:10px}
+@media(max-width:760px){.match-grid{grid-template-columns:1fr}}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-col h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.m-term{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:10px 12px;border-radius:8px;border:2px solid var(--dark);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.m-term:hover{border-color:#60a5fa}
+.m-term.active{border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.35)}
+.m-def{background:#fff;border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.86rem;text-align:left;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.m-def:hover{border-color:#93c5fd}
+.pair-badge{font-family:var(--mono);font-size:.72rem;font-weight:700;min-width:24px;height:24px;border-radius:6px;display:inline-grid;place-items:center;background:#e2e8f0;color:var(--muted);flex-shrink:0}
+.paired .pair-badge{background:var(--primary);color:#fff}
+.m-def.paired{border-color:#93c5fd;background:#eff6ff}
+.m-term.good,.m-def.good{border-color:#10b981}
+.m-def.good{background:#ecfdf5}
+.m-term.bad,.m-def.bad{border-color:#ef4444}
+.m-def.bad{background:#fef2f2}
+.round-pills{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.round-pill{font-family:var(--mono);font-size:.75rem;padding:4px 10px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border);color:var(--muted)}
+.round-pill.cur{background:var(--primary);color:#fff;border-color:var(--primary)}
+.round-pill.ok{background:var(--secondary-light);color:#065f46;border-color:#6ee7b7}
+
+/* Cas 2 */
+.group{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff}
+.group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.group-head strong{font-size:1rem}
+.g-label{font-size:.8rem;font-weight:700;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.choice-row{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:600;color:var(--dark2)}
+.choice.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.choice.good{background:#10b981;color:#fff;border-color:#10b981}
+.choice.bad{background:#ef4444;color:#fff;border-color:#ef4444}
+.sit{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--border);border-radius:9px;padding:10px 12px;background:#f8fafc;font-size:.88rem;margin-bottom:8px;color:var(--text)}
+.sit:hover{border-color:#fbbf24}
+.sit .tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:#e2e8f0;color:var(--muted);white-space:nowrap}
+.sit.sel{border-color:var(--accent);background:#fffbeb}
+.sit.sel .tag{background:var(--accent);color:#fff}
+.sit.good{border-color:#10b981;background:#ecfdf5}
+.sit.good .tag{background:#10b981;color:#fff}
+.sit.bad{border-color:#ef4444;background:#fef2f2}
+.sit.bad .tag{background:#ef4444;color:#fff}
+.group .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:10px;border-top:1px dashed var(--border)}
+.group.checked .expl{display:block}
+.group.correct{border-color:#6ee7b7}
+.group.wrong{border-color:#fca5a5}
+.group.half{border-color:#fcd34d}
+
+/* forms */
+label.f-label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:var(--dark2)}
+input.f-input,textarea.f-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;font-family:var(--sans);font-size:.9rem;background:#fff;color:var(--text)}
+textarea.f-input{min-height:78px;resize:vertical}
+
+.steps{margin:14px 0}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step input[type=checkbox]{width:20px;height:20px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+.step .s-num{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:24px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:8px;cursor:pointer}
+.checklist label:hover{background:#f8fafc}
+.checklist input{width:18px;height:18px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}
+th{background:var(--dark);color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+th:first-child{border-top-left-radius:10px}th:last-child{border-top-right-radius:10px}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;background:#fff}
+tr:nth-child(even) td{background:#f8fafc}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.75rem;background:#f1f5f9;border:1px solid var(--border);padding:3px 10px;border-radius:999px;color:var(--dark2)}
+
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:14px 0}
+.route-step{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.route-step .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.route-step .t{font-weight:700;font-size:.9rem;color:var(--dark)}
+.route-step .c{font-size:.75rem;color:var(--muted)}
+.route-step.past{background:#ecfdf5;border-color:#a7f3d0}
+.route-step.here{background:var(--primary);border-color:var(--primary)}
+.route-step.here .t,.route-step.here .n,.route-step.here .c{color:#fff}
+
+.levels{display:grid;gap:8px;margin:14px 0}
+.level{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#fff}
+.level .lv{font-family:var(--mono);font-weight:700;font-size:1.1rem;color:var(--primary)}
+.level .risk{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px}
+@media(max-width:600px){.level{grid-template-columns:40px 1fr}.level .risk{grid-column:2;justify-self:start}}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.pillar{border-radius:12px;padding:16px;background:#fff;border:1px solid var(--border);border-top:4px solid var(--primary)}
+.pillar:nth-child(5n+2){border-top-color:var(--purple)}
+.pillar:nth-child(5n+3){border-top-color:var(--secondary)}
+.pillar:nth-child(5n+4){border-top-color:var(--accent)}
+.pillar:nth-child(5n+5){border-top-color:var(--danger)}
+.pillar .n{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.pillar h4{font-size:1rem;margin:4px 0 6px}
+.pillar p{font-size:.84rem;color:var(--dark2);margin:0}
+.pillar .q{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px}
+
+details.acc{border:1px solid var(--border);border-radius:10px;margin:10px 0;background:#fff}
+details.acc summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-family:var(--mono);color:var(--primary);font-weight:700}
+details.acc[open] summary::after{content:"−"}
+details.acc[open] summary{border-bottom:1px dashed var(--border)}
+details.acc > div{padding:12px 16px;font-size:.9rem}
+
+.gloss{display:grid;gap:10px;margin-top:10px}
+.gloss-item{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.gloss-item .gt{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+@media(max-width:620px){.gloss-item{grid-template-columns:1fr}}
+.lock-wrap{text-align:center;padding:30px 10px}
+.lock-wrap .big-lock{font-size:3rem}
+.lock-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.lock-pill{font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border)}
+.lock-pill.ok{background:var(--secondary-light);border-color:#6ee7b7;color:#065f46}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.filter-row button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600;color:var(--dark2)}
+.filter-row button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+.score-table td:last-child{font-family:var(--mono);font-weight:700}
+.link-card{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f8fafc;border:1px dashed #93c5fd;border-radius:12px;padding:16px 18px;margin-top:16px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.nav-bottom{display:flex;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:30px 16px 50px}
+@media print{.tabs-wrap,.actions-row,.nav-bottom{display:none}.panel{display:block!important}}
+
+
+/* ---- ajouts Ergonomie web ---- */
+.f-only{display:none}
+body.formateur .f-only{display:block}
+.mock{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;max-width:540px;margin:14px auto;font-size:.88rem;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.mock-bar{background:#e2e8f0;color:#475569;font-family:var(--mono);font-size:.72rem;padding:6px 12px}
+.mock-body{padding:18px 20px}
+.mock-body h4{margin:0 0 12px;font-size:1.05rem}
+.mock-field{margin-bottom:12px}
+.mock-field .ml{display:block;font-size:.78rem;color:#475569;margin-bottom:3px}
+.mock-input{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;color:#94a3b8;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:8px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-actions{display:flex;gap:10px;align-items:center}
+.mock-ok{background:#16a34a;color:#fff;padding:8px 24px;font-weight:700;display:inline-block}
+.mock-note{font-size:.74rem;color:#64748b;padding:8px 20px 14px;border-top:1px dashed var(--border)}
+.mk-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.mk-demo{display:flex;align-items:center;justify-content:center;min-height:84px;border-radius:10px;background:#f8fafc;border:1px dashed var(--border);margin-bottom:8px;padding:10px}
+.mk-link{color:#2563eb;text-decoration:underline}
+.mk-btn{background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;box-shadow:0 2px 0 #1d4ed8;display:inline-block}
+.chunk{font-family:var(--mono);font-size:1.25rem;letter-spacing:.08em;text-align:center;padding:14px 8px;background:#f8fafc;border-radius:10px;border:1px solid var(--border);word-break:break-all}
+.vr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:10px 0}
+.vr-grid span{background:#e2e8f0;color:#475569;border-radius:8px;padding:10px 6px;text-align:center;font-size:.78rem;font-weight:600}
+.vr-grid span.vr{background:#f59e0b;color:#fff}
+.fitts-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.fitts-zone{position:relative;height:190px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;overflow:hidden;touch-action:manipulation}
+.fitts-target{position:absolute;border-radius:50%;background:#dc2626;border:none;padding:0;box-shadow:0 0 0 3px rgba(220,38,38,.2)}
+.hick-bar{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:6px}
+.hick-bar>div{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);width:0;transition:width .25s}
+input[type=range]{width:100%;accent-color:var(--primary)}
+.g-stage{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;margin-top:10px}
+.g-stage svg{max-width:100%;height:auto}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.pair{grid-template-columns:1fr}}
+.legend-line{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){.hick-bar>div{transition:none}}
+
+.group .mock{margin:10px auto 6px}
+#auBox textarea.f-input{min-height:60px}
+</style>
+</head>
+<body>
+<header class="practice">
+  <div class="header-inner">
+    <span class="badge">🧭 Ergonomie web — Séance 1 · Support pratique</span>
+    <h1>Comprendre l’ergonomie et évaluer une interface</h1>
+    <p class="subtitle">Manipuler le vocabulaire de l’ergonomie, reconnaître les critères et les heuristiques en situation, puis auditer six écrans comme un ergonome.</p>
+    <div class="meta-pills"><span class="meta-pill">🧭 Séance 1 sur 4</span><span class="meta-pill">🛠️ Support pratique</span><span class="meta-pill">🧩 30 termes</span><span class="meta-pill">🔀 Aléatoire</span><span class="meta-pill">🧪 Audit flash</span><span class="meta-pill">🔒 Glossaire verrouillé</span></div>
+    <div class="global-progress">
+      <div class="label"><span>Progression des activités</span><span id="globalPct">0 / 3</span></div>
+      <div class="track"><div class="fill" id="globalFill"></div></div>
+    </div>
+    <div class="mode-flag">Mode formateur actif — boutons « Révéler » visibles</div>
+  </div>
+</header>
+<div class="tabs-wrap"><nav class="tabs" role="tablist" aria-label="Activités pratiques"><button class="tab active" data-tab="0" role="tab">🚀 Démarrage</button><button class="tab" data-tab="c1" data-act="cas1" role="tab">🧩 Cas 1 — Correspondance <span class="done-mark">✅</span></button><button class="tab" data-tab="c2" data-act="cas2" role="tab">🔍 Cas 2 — Situations <span class="done-mark">✅</span></button><button class="tab" data-tab="c3" data-act="cas3" role="tab">🧪 Cas 3 — Audit flash <span class="done-mark">✅</span></button><button class="tab" data-tab="gl" role="tab">📖 Glossaire <span class="lock-mark">🔒</span></button></nav></div>
+<main>
+<section class="panel active" data-panel="0">
+<div class="card"><div class="section-title"><span class="icon-bg green">🎯</span>Mettre en pratique la séance 1</div><p class="lead">Ce support vous fait manipuler le vocabulaire et les grilles du support théorique, puis les appliquer à des écrans réels : c’est l’entraînement direct pour l’audit de groupe de la séance 4.</p><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Définir précisément le vocabulaire de l’ergonomie et de l’utilisabilité ;</li><li>Distinguer efficacité, efficience et satisfaction dans des situations de test ;</li><li>Reconnaître une heuristique ou un critère dans une situation concrète ;</li><li>Qualifier un problème d’interface : critère de Bastien et Scapin, heuristique de Nielsen, gravité de 0 à 4 ;</li><li>Rédiger une fiche d’audit avec constats factuels et recommandations.</li></ul></div><div class="grid grid-2"><div class="mini-card"><h4>🧩 Cas 1 — Correspondance</h4><p class="muted">Associez 30 termes à leur définition, en 3 rounds de 10 tirés au hasard.</p></div><div class="mini-card"><h4>🔍 Cas 2 — Situations</h4><p class="muted">6 groupes de 4 situations : identifiez la notion commune et repérez l’intruse.</p></div><div class="mini-card"><h4>🧪 Cas 3 — Audit flash</h4><p class="muted">6 écrans à auditer : critère, heuristique, gravité, constat et recommandation, puis fiche d’audit à télécharger.</p></div><div class="mini-card"><h4>📖 Glossaire</h4><p class="muted">Débloqué uniquement lorsque les 3 cas sont terminés.</p></div></div><h3>Les familles de notions</h3><div class="chips"><span class="famille-tag f1">Définitions &amp; utilisabilité · 8</span><span class="famille-tag f2">Enjeux · 4</span><span class="famille-tag f3">Bastien &amp; Scapin · 8</span><span class="famille-tag f4">Nielsen · 6</span><span class="famille-tag f5">Audit · 4</span></div><div class="instruction-box"><strong class="title">Mode d’emploi</strong>Faites les cas dans l’ordre. Chaque activité validée fait avancer la barre de progression ; les termes, les situations et les options sont mélangés à chaque nouvel essai. Pour l’audit flash, gardez ouverte la grille de Bastien et Scapin et la liste des heuristiques du support théorique.</div><div class="link-card"><span><strong>📚 Support théorique associé</strong><br><span class="muted">Relisez un chapitre en cas de doute.</span></span><a class="btn btn-ghost" href="seance-1-comprendre-et-evaluer-une-interface-theorie.html">◂ Ouvrir le support théorique</a></div><div class="nav-bottom"><span></span><button class="btn btn-primary" data-goto="c1">Commencer : Cas 1 ▸</button></div></div></section>
+<section class="panel" data-panel="c1">
+<div class="card"><div class="section-title"><span class="icon-bg">🧩</span>Cas 1 — Correspondance termes / définitions</div><div class="objectif-box"><strong class="title">Objectif</strong>Maîtriser le vocabulaire de la séance : chaque terme doit pouvoir être défini avec précision.</div><div class="instruction-box"><strong class="title">Consigne</strong>Cliquez sur un terme (colonne de gauche), puis sur la définition qui lui correspond. Le numéro du terme s’affiche sur la définition choisie. Cliquez sur une définition associée pour annuler. Quand les 10 associations sont faites, vérifiez, puis passez au round suivant (3 rounds).</div><div class="round-pills" id="c1Rounds"></div><div class="match-grid"><div class="match-col" id="c1Terms"></div><div class="match-col" id="c1Defs"></div></div><div class="progress-wrap"><div class="progress-label"><span>Associations du round</span><span id="c1Txt">0 / 10</span></div><div class="progress-track"><div class="progress-fill" id="c1Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c1Check">✔ Vérifier le round</button><button class="btn btn-success" id="c1Next" style="display:none">Round suivant ▸</button><button class="btn btn-warning btn-reveal" id="c1Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c1Reset">↺ Recommencer</button></div><div class="result-panel" id="c1Result"></div><div class="nav-bottom" style="margin-top:20px"><span></span><button class="btn btn-primary" data-goto="c2">Suite : Cas 2 ▸</button></div></div>
+</section>
+<section class="panel" data-panel="c2">
+<div class="card"><div class="section-title"><span class="icon-bg amber">🔍</span>Cas 2 — Identification de situations</div><div class="objectif-box"><strong class="title">Objectif</strong>Reconnaître une notion dans des situations concrètes de test ou de conception, et la distinguer d’une notion voisine.</div><div class="instruction-box"><strong class="title">Consigne</strong>Chaque groupe contient 4 situations. Trois illustrent la même notion (qu’elle soit respectée ou enfreinte), <strong>une est une intruse</strong>. Pour chaque groupe : (1) choisissez la notion commune, (2) cliquez sur la situation intruse. Vérifiez, puis lisez les explications.</div><div id="c2Box"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="c2Txt">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="c2Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c2Check">✔ Vérifier</button><button class="btn btn-warning btn-reveal" id="c2Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c2Reset">↺ Recommencer</button></div><div class="result-panel" id="c2Result"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c1">◂ Cas 1</button><button class="btn btn-primary" data-goto="c3">Suite : Cas 3 ▸</button></div></div>
+</section>
+<section class="panel" data-panel="c3">
+<div class="card"><div class="section-title"><span class="icon-bg red">🧪</span>Cas 3 — Audit flash</div><div class="objectif-box"><strong class="title">Objectif</strong>S’entraîner à la démarche d’audit de la séance 4 : repérer le défaut principal d’un écran, le rattacher à un critère et à une heuristique, estimer sa gravité, puis rédiger un constat et une recommandation.</div><div class="instruction-box"><strong class="title">Consigne</strong>Pour chacun des 6 écrans : (1) choisissez le critère de Bastien et Scapin enfreint, (2) l’heuristique de Nielsen enfreinte, (3) la gravité de 0 à 4, puis (4) rédigez votre constat factuel et (5) votre recommandation. Vérifiez : le critère, l’heuristique et la gravité sont notés (1 point chacun, la gravité est acceptée dans une fourchette) ; constat et recommandation ne sont pas notés automatiquement, comparez-les à la correction. Enfin, générez votre fiche d’audit.</div><details class="acc"><summary><span>🌡️ Rappel : l’échelle de gravité (fréquence × impact × persistance)</span></summary><div><div class="levels"><div class="level"><span class="lv">0</span><span>Pas un problème d’utilisabilité.</span><span class="risk" style="background:#e2e8f0;color:#475569">Aucun</span></div><div class="level"><span class="lv">1</span><span>Problème <strong>cosmétique</strong> : à corriger si le temps le permet.</span><span class="risk" style="background:#d1fae5;color:#065f46">Faible</span></div><div class="level"><span class="lv">2</span><span>Problème <strong>mineur</strong> : correction à faible priorité.</span><span class="risk" style="background:#fef3c7;color:#92400e">Modéré</span></div><div class="level"><span class="lv">3</span><span>Problème <strong>majeur</strong> : important à corriger, priorité haute.</span><span class="risk" style="background:#fed7aa;color:#9a3412">Élevé</span></div><div class="level"><span class="lv">4</span><span><strong>Catastrophe</strong> : à corriger avant la mise en ligne.</span><span class="risk" style="background:#fee2e2;color:#991b1b">Critique</span></div></div></div></details><div id="auBox"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="auTxt">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="auFill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="auCheck">✔ Vérifier</button><button class="btn btn-warning btn-reveal" id="auReveal">👁 Révéler</button><button class="btn btn-ghost" id="auReset">↺ Recommencer</button></div><div class="result-panel" id="auResult"></div></div><div class="card"><div class="section-title"><span class="icon-bg purple">📄</span>Générateur — <code>fiche-audit-flash.md</code></div><label class="f-label" for="auName">Nom(s) et prénom(s)</label><input class="f-input" id="auName" placeholder="Ex. Inès Martin, Hugo Leroy"><div class="actions-row"><button class="btn btn-success" id="auGen">⚙️ Générer la fiche d’audit</button></div><div id="auWrap" style="display:none"><h3>Fichier généré (Markdown)</h3><pre class="prompt" id="auOut"></pre><div class="actions-row"><button class="btn btn-primary" id="auCopy">📋 Copier</button><button class="btn btn-ghost" id="auDl">⬇️ Télécharger fiche-audit-flash.md</button></div><p class="muted" style="margin-top:10px">Ce tableau reprend le modèle de fiche d’audit du support théorique : vous utiliserez le même format pour l’audit de groupe de la séance 4.</p></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c2">◂ Cas 2</button><button class="btn btn-primary" data-goto="gl">Glossaire ▸</button></div></div></section>
+<section class="panel" data-panel="gl">
+<div class="card"><div class="section-title"><span class="icon-bg">📖</span>Glossaire de la séance</div><div id="glossLocked" class="lock-wrap"><div class="big-lock">🔒</div><h3>Glossaire verrouillé</h3><p class="muted">Terminez les trois cas pratiques pour débloquer les 30 définitions.</p><div class="lock-pills"><span class="lock-pill" data-lock="cas1">⏳ Cas 1</span><span class="lock-pill" data-lock="cas2">⏳ Cas 2</span><span class="lock-pill" data-lock="cas3">⏳ Cas 3</span></div><div class="actions-row" style="justify-content:center"><button class="btn btn-warning btn-reveal" id="glossForce">🔓 Déverrouiller (formateur)</button></div></div><div id="glossOpen" style="display:none"><div class="filter-row" id="glossFilters"><button class="on" data-f="all">Tous</button><button data-f="f1">Définitions &amp; utilisabilité</button><button data-f="f2">Enjeux</button><button data-f="f3">Bastien &amp; Scapin</button><button data-f="f4">Nielsen</button><button data-f="f5">Audit</button></div><div class="gloss" id="gloss"></div><div class="key-box"><div class="big">Un constat d’audit = un lieu, un fait, un critère, une gravité, une recommandation.</div><p style="margin:8px 0 0">Sans l’un de ces cinq éléments, ce n’est qu’une opinion.</p></div><div class="objectif-box"><strong class="title">Prochaine séance — Je sais justifier un choix de conception</strong>Vous découvrirez les concepts (affordance, charge cognitive), les critères d’Amélie Boucher, les lois de l’UX (Fitts, Hick, Jakob…) et les principes de la Gestalt. Gardez votre fiche d’audit : vous pourrez y ajouter les lois qui expliquent chaque défaut.</div></div></div>
+</section>
+</main>
+<footer>Ergonomie web — Séance 1 — Comprendre l’ergonomie et évaluer une interface — Pratique<br>Mode formateur : ajoutez <code>?formateur</code> à l'adresse de la page.</footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+"use strict";
+const FAMILIES={"f1": "Définitions & utilisabilité", "f2": "Enjeux", "f3": "Bastien & Scapin", "f4": "Nielsen", "f5": "Audit"};
+const EXPLORERS={};
+const TERMS=[{"t": "Ergonomie", "f": "f1", "d": "Discipline qui adapte un produit ou un environnement aux capacités et aux besoins de ses utilisateurs, pour un usage efficace, confortable et sûr."}, {"t": "UX", "f": "f1", "d": "Perceptions et réactions d’une personne avant, pendant et après l’utilisation d’un produit ou d’un service, émotions comprises."}, {"t": "Utilité", "f": "f1", "d": "Capacité d’un produit à répondre à un besoin réel de ses utilisateurs."}, {"t": "Utilisabilité", "f": "f1", "d": "Degré auquel des utilisateurs identifiés atteignent des buts définis avec efficacité, efficience et satisfaction, dans un contexte donné."}, {"t": "Efficacité", "f": "f1", "d": "Exactitude et complétude avec lesquelles l’utilisateur atteint son but : a-t-il réussi ?"}, {"t": "Efficience", "f": "f1", "d": "Ressources dépensées (temps, actions, effort) pour atteindre le but : a-t-il réussi sans effort inutile ?"}, {"t": "Satisfaction", "f": "f1", "d": "Confort et acceptabilité de l’utilisation, tels que l’utilisateur les ressent."}, {"t": "Accessibilité", "f": "f1", "d": "Possibilité pour toutes les personnes, y compris en situation de handicap, d’accéder à un service et de l’utiliser."}, {"t": "Taux de conversion", "f": "f2", "d": "Part des visiteurs qui accomplissent l’action visée par le site : achat, inscription, demande de devis."}, {"t": "Taux de rebond", "f": "f2", "d": "Part des visites qui s’arrêtent après une seule page, sans interaction significative."}, {"t": "Taux d’abandon", "f": "f2", "d": "Part des utilisateurs qui quittent un processus commencé (panier, formulaire) avant de l’avoir terminé."}, {"t": "Coût de support", "f": "f2", "d": "Temps et argent consacrés à répondre aux questions et aux problèmes des utilisateurs : appels, e-mails, tickets."}, {"t": "Guidage", "f": "f3", "d": "Critère regroupant les moyens de conseiller, orienter, informer et conduire l’utilisateur : incitation, groupement, feedback immédiat, lisibilité."}, {"t": "Charge de travail", "f": "f3", "d": "Critère visant à réduire l’effort de perception et de mémorisation : saisies brèves, actions minimales, densité d’information maîtrisée."}, {"t": "Contrôle explicite", "f": "f3", "d": "Critère selon lequel le système n’exécute que les actions demandées par l’utilisateur, qui garde la main sur leur déroulement."}, {"t": "Adaptabilité", "f": "f3", "d": "Critère décrivant la capacité du système à réagir selon le contexte, l’expérience et les préférences de l’utilisateur."}, {"t": "Gestion des erreurs", "f": "f3", "d": "Critère regroupant la protection contre les erreurs, la qualité des messages d’erreur et la possibilité de corriger."}, {"t": "Homogénéité / cohérence", "f": "f3", "d": "Critère selon lequel codes, dénominations, formats et procédures restent identiques dans des contextes identiques."}, {"t": "Signifiance des codes et dénominations", "f": "f3", "d": "Critère portant sur l’adéquation entre un libellé, une icône ou une abréviation et ce qu’il désigne réellement."}, {"t": "Compatibilité", "f": "f3", "d": "Critère portant sur l’accord entre les caractéristiques des utilisateurs et de leurs tâches, et l’organisation de l’interface."}, {"t": "Visibilité de l’état du système", "f": "f4", "d": "Heuristique : le système informe en permanence l’utilisateur de ce qui se passe, par un retour approprié et rapide."}, {"t": "Contrôle et liberté de l’utilisateur", "f": "f4", "d": "Heuristique : offrir une « sortie de secours » claire pour annuler, rétablir ou revenir en arrière."}, {"t": "Prévention des erreurs", "f": "f4", "d": "Heuristique : concevoir l’interface pour que l’erreur ne puisse pas se produire, par des contraintes, des valeurs par défaut ou des confirmations."}, {"t": "Reconnaissance plutôt que rappel", "f": "f4", "d": "Heuristique : laisser visibles les options et informations utiles pour que l’utilisateur reconnaisse au lieu de se souvenir."}, {"t": "Design esthétique et minimaliste", "f": "f4", "d": "Heuristique : n’afficher que l’information utile au bon moment, car chaque élément superflu concurrence l’essentiel."}, {"t": "Aide et documentation", "f": "f4", "d": "Heuristique : lorsqu’elle est nécessaire, fournir une aide courte, facile à chercher et centrée sur la tâche."}, {"t": "Heuristique", "f": "f5", "d": "Règle empirique de bon sens qui aide à repérer un problème, sans avoir le statut de loi scientifique."}, {"t": "Évaluation heuristique", "f": "f5", "d": "Méthode où des évaluateurs examinent une interface à l’aide d’une grille, sans mobiliser d’utilisateurs."}, {"t": "Échelle de gravité", "f": "f5", "d": "Note de 0 à 4 attribuée à un problème selon sa fréquence, son impact et sa persistance."}, {"t": "Recommandation", "f": "f5", "d": "Correction concrète, et priorisée, proposée pour chaque problème relevé lors d’un audit."}];
+const CAS2=[{"notion": "Efficacité", "choices": ["Efficacité", "Efficience", "Satisfaction", "Accessibilité"], "situations": [{"s": "Lors d’un test d’un site de train, 4 participants sur 10 réservent un billet pour la mauvaise date sans s’en rendre compte.", "intruse": false}, {"s": "Tous les participants réussissent à changer leur adresse, mais il leur faut en moyenne 14 clics et 4 minutes.", "intruse": true}, {"s": "Sur le site d’une mutuelle, la moitié des testeurs ne parviennent pas à télécharger leur attestation.", "intruse": false}, {"s": "Après un test, l’équipe calcule que 92 % des participants ont envoyé le formulaire complet et sans erreur.", "intruse": false}], "e": "Les trois situations mesurent si le but est atteint, complètement et sans erreur : c’est l’efficacité (taux de réussite). L’intruse décrit un but atteint au prix d’un effort élevé : c’est l’efficience."}, {"notion": "Efficience", "choices": ["Efficience", "Efficacité", "Satisfaction", "Utilité"], "situations": [{"s": "Le changement de mot de passe passe de 9 écrans à 3 : tout le monde réussissait déjà, mais deux fois plus vite désormais.", "intruse": false}, {"s": "Après le test, les participants notent le site 2 sur 5 et le jugent « stressant », alors qu’ils ont tout réussi rapidement.", "intruse": true}, {"s": "Trouver un horaire de bus prend en moyenne 2 min 40 sur le site, contre 40 secondes sur celui du réseau voisin.", "intruse": false}, {"s": "Une saisie d’adresse oblige à retaper trois fois le code postal : les utilisateurs y arrivent, au prix d’actions inutiles.", "intruse": false}], "e": "Les trois situations portent sur les ressources dépensées (temps, nombre d’écrans, actions) pour un but atteint : c’est l’efficience. L’intruse décrit le ressenti des participants : c’est la satisfaction."}, {"notion": "Satisfaction", "choices": ["Satisfaction", "Efficacité", "Efficience", "Taux de conversion"], "situations": [{"s": "Le questionnaire SUS rempli après un test donne un score de 48 sur 100.", "intruse": false}, {"s": "Le tableau de bord indique que 3 % des visiteurs du site finalisent une commande.", "intruse": true}, {"s": "En entretien, une utilisatrice confie : « J’y arrive, mais je me sens perdue à chaque fois, c’est pénible. »", "intruse": false}, {"s": "Les avis laissés sur le store reviennent souvent aux mêmes mots : « rassurant », « agréable », « enfin simple ».", "intruse": false}], "e": "Les trois situations recueillent le confort et l’acceptabilité perçus par les utilisateurs : c’est la satisfaction. L’intruse est un indicateur business : le taux de conversion."}, {"notion": "Visibilité de l’état du système", "choices": ["Visibilité de l’état du système", "Contrôle et liberté de l’utilisateur", "Prévention des erreurs", "Aide et documentation"], "situations": [{"s": "Pendant l’envoi d’une vidéo, une barre indique 45 % et le temps restant estimé.", "intruse": false}, {"s": "Après la suppression d’un e-mail, un bandeau propose « Annuler » pendant 10 secondes.", "intruse": true}, {"s": "Après le clic sur « Ajouter au panier », le compteur du panier passe à 1 et un court message confirme l’ajout.", "intruse": false}, {"s": "Un tunnel de commande affiche en permanence « Étape 2 sur 4 : Livraison ».", "intruse": false}], "e": "Les trois situations informent l’utilisateur de ce qui se passe ou de l’endroit où il se trouve : c’est la visibilité de l’état du système. L’intruse offre une sortie de secours après une action : c’est le contrôle et la liberté de l’utilisateur."}, {"notion": "Prévention des erreurs", "choices": ["Prévention des erreurs", "Reconnaissance plutôt que rappel", "Visibilité de l’état du système", "Contrôle et liberté de l’utilisateur"], "situations": [{"s": "Le calendrier de réservation grise les dates passées : il est impossible de les sélectionner.", "intruse": false}, {"s": "Dès qu’on clique dans la barre de recherche, elle propose les cinq dernières recherches effectuées.", "intruse": true}, {"s": "Avant de supprimer son compte, l’utilisateur doit taper le mot « SUPPRIMER » pour confirmer.", "intruse": false}, {"s": "Le champ « Quantité » n’accepte que des chiffres, entre 1 et 10.", "intruse": false}], "e": "Les trois situations empêchent l’erreur avant qu’elle se produise (contrainte, confirmation, saisie limitée) : c’est la prévention des erreurs. L’intruse évite à l’utilisateur de se souvenir de ses recherches : c’est la reconnaissance plutôt que le rappel."}, {"notion": "Homogénéité / cohérence", "choices": ["Homogénéité / cohérence", "Signifiance des codes et dénominations", "Compatibilité", "Guidage"], "situations": [{"s": "Sur un intranet, « Valider » est un bouton bleu à droite sur toutes les pages, sauf sur la page Congés où il est vert et à gauche.", "intruse": false}, {"s": "Un bouton affiche « Trt. lot » : personne ne comprend qu’il lance le traitement d’un lot de factures.", "intruse": true}, {"s": "Le même espace s’appelle « Mon compte » dans le menu, « Profil » dans le pied de page et « Espace client » dans les e-mails.", "intruse": false}, {"s": "Dans toute une application, les messages d’erreur apparaissent en rouge, juste sous le champ concerné.", "intruse": false}], "e": "Les trois situations concernent le maintien des mêmes codes, libellés et emplacements d’un écran à l’autre, qu’il soit respecté ou non : c’est l’homogénéité / cohérence. L’intruse porte sur la compréhension d’un libellé : c’est la signifiance des codes et dénominations."}];
+const AUDIT=[{"title": "Inscription — FitCity (salle de sport)", "task": "Créer son compte pour réserver un cours.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">fitcity.example / inscription</div><div class=\"mock-body\"><h4>Créer mon compte</h4><div class=\"mock-err\">Erreur de saisie. Veuillez recommencer.</div><div class=\"mock-field\"><span class=\"ml\">Nom</span><div class=\"mock-input\"><span>&nbsp;</span></div></div><div class=\"mock-field\"><span class=\"ml\">Adresse e-mail</span><div class=\"mock-input\"><span>&nbsp;</span></div></div><div class=\"mock-field\"><span class=\"ml\">Mot de passe</span><div class=\"mock-input\"><span>&nbsp;</span></div></div><div class=\"mock-actions\"><span class=\"mk-btn\">Créer mon compte</span></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> l’utilisateur avait rempli les 8 champs du formulaire. Après le clic, la page se recharge ainsi : tous les champs sont vidés et rien n’indique lequel pose problème.</div></div>", "bs": "Gestion des erreurs", "bsOpts": ["Gestion des erreurs", "Guidage", "Homogénéité / cohérence", "Adaptabilité"], "ni": "9 · Aider à reconnaître, diagnostiquer et corriger les erreurs", "niOpts": ["9 · Aider à reconnaître, diagnostiquer et corriger les erreurs", "1 · Visibilité de l’état du système", "8 · Design esthétique et minimaliste", "10 · Aide et documentation"], "grav": 3, "range": [3, 4], "constat": "Après une erreur, le message « Erreur de saisie » ne dit ni quel champ est en cause ni comment corriger, et toutes les saisies sont effacées.", "reco": "Afficher l’erreur sous le champ concerné, en langage clair (« Le mot de passe doit contenir au moins 12 caractères ») et conserver toutes les valeurs déjà saisies.", "justif": "Fréquent (toute erreur de saisie), impact fort (tout ressaisir, risque d’abandon), persistant : majeur, voire catastrophe si l’inscription est la porte d’entrée du service.", "note": ""}, {"title": "Paiement — ShopNow (e-commerce)", "task": "Payer une commande de 89,90 €.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">shopnow.example / paiement</div><div class=\"mock-body\"><h4>Paiement</h4><p style=\"margin:0 0 10px;color:#475569\">Total à régler : <strong>89,90 €</strong></p><div class=\"mock-field\"><span class=\"ml\">Numéro de carte</span><div class=\"mock-input\"><span>•••• •••• •••• 4417</span></div></div><div class=\"mock-field\"><span class=\"ml\">Expiration</span><div class=\"mock-input\"><span>08 / 28</span></div></div><div class=\"mock-actions\"><span class=\"mk-btn\">Payer 89,90 €</span></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> après le clic sur « Payer », l’écran reste identique pendant 6 secondes : bouton toujours actif, aucun indicateur. Une personne sur cinq clique une seconde fois ; certaines sont débitées deux fois.</div></div>", "bs": "Guidage", "bsOpts": ["Guidage", "Contrôle explicite", "Compatibilité", "Charge de travail"], "ni": "1 · Visibilité de l’état du système", "niOpts": ["1 · Visibilité de l’état du système", "3 · Contrôle et liberté de l’utilisateur", "4 · Cohérence et standards", "6 · Reconnaissance plutôt que rappel"], "grav": 4, "range": [3, 4], "constat": "Après le clic sur « Payer », aucun retour n’indique que le paiement est en cours : l’utilisateur recommence et peut être débité deux fois.", "reco": "Au clic : désactiver le bouton, afficher « Paiement en cours… » avec un indicateur, puis une page de confirmation explicite. Côté serveur, bloquer les doubles paiements.", "justif": "Touche beaucoup d’utilisateurs, conséquence financière directe, perte de confiance : catastrophe d’utilisabilité, à corriger avant toute mise en ligne.", "note": "Le critère de Bastien et Scapin précis est le sous-critère « feedback immédiat » du guidage."}, {"title": "Espace client — Énergix (fournisseur d’énergie)", "task": "Signaler un déménagement en 3 étapes.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">energix.example / demenagement / etape-3</div><div class=\"mock-body\"><h4>Étape 3 sur 3 — Confirmation</h4><div class=\"mock-field\"><span class=\"ml\">Numéro client (14 chiffres, affiché à l’étape 1)</span><div class=\"mock-input\"><span>&nbsp;</span></div></div><div class=\"mock-actions\"><span class=\"mk-btn\">Valider ma demande</span></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> le numéro client n’apparaît plus nulle part à cette étape. 6 participants sur 10 reviennent en arrière pour le recopier, deux font une faute de frappe.</div></div>", "bs": "Charge de travail", "bsOpts": ["Charge de travail", "Signifiance des codes et dénominations", "Adaptabilité", "Homogénéité / cohérence"], "ni": "6 · Reconnaissance plutôt que rappel", "niOpts": ["6 · Reconnaissance plutôt que rappel", "5 · Prévention des erreurs", "7 · Flexibilité et efficacité d’utilisation", "2 · Correspondance avec le monde réel"], "grav": 3, "range": [2, 3], "constat": "À l’étape 3, l’utilisateur doit ressaisir de mémoire un numéro client de 14 chiffres affiché à l’étape 1 et que le système connaît déjà.", "reco": "Pré-remplir le numéro client (l’utilisateur est connecté) ou, à défaut, le rappeler à l’écran. Ne jamais faire recopier une information que le système possède.", "justif": "Fréquent (chaque demande), impact modéré (retour en arrière, fautes de frappe), contournable : mineur à majeur selon le volume ; 3 si les erreurs bloquent la demande.", "note": ""}, {"title": "Article — L’Écho du jour (média en ligne)", "task": "Lire un article reçu par un lien.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">echodujour.example / article</div><div class=\"mock-body\"><div style=\"position:relative;min-height:170px\"><p style=\"margin:0;color:#cbd5e1;line-height:1.9\">▬▬▬▬▬▬ ▬▬▬▬ ▬▬▬▬▬▬▬▬ ▬▬▬▬ ▬▬▬▬▬▬▬<br>▬▬▬▬ ▬▬▬▬▬▬▬▬ ▬▬▬ ▬▬▬▬▬▬ ▬▬▬▬▬<br>▬▬▬▬▬▬▬ ▬▬▬▬▬ ▬▬▬▬▬▬▬▬▬ ▬▬▬▬</p><div style=\"position:absolute;inset:8px 24px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(15,23,42,.18);padding:16px;text-align:center\"><strong>Ne manquez plus rien !</strong><p style=\"margin:6px 0 12px;color:#475569;font-size:.82rem\">Recevez notre newsletter chaque matin.</p><div class=\"mock-input\" style=\"margin-bottom:10px\">votre@email.fr</div><span class=\"mk-btn\">Je m’abonne</span></div></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> la fenêtre s’ouvre dès l’arrivée sur la page et couvre l’article. Il n’y a ni croix, ni lien « Non merci » ; la touche Échap et le clic à l’extérieur sont sans effet. 38 % des visiteurs quittent la page.</div></div>", "bs": "Contrôle explicite", "bsOpts": ["Contrôle explicite", "Guidage", "Charge de travail", "Compatibilité"], "ni": "3 · Contrôle et liberté de l’utilisateur", "niOpts": ["3 · Contrôle et liberté de l’utilisateur", "1 · Visibilité de l’état du système", "4 · Cohérence et standards", "10 · Aide et documentation"], "grav": 4, "range": [3, 4], "constat": "Une fenêtre d’abonnement bloque la lecture de l’article et ne peut pas être fermée : la seule issue est de s’abonner ou de quitter la page.", "reco": "Ajouter une croix de fermeture visible et un lien « Non merci », accepter Échap et le clic à l’extérieur ; mieux, proposer l’abonnement en fin d’article.", "justif": "Touche tous les visiteurs, bloque l’accès au contenu, aucun contournement : catastrophe. C’est aussi un dark pattern, qui gagne un abonné en perdant la confiance des autres.", "note": "Le sous-critère précis de Bastien et Scapin est le « contrôle utilisateur » : pouvoir interrompre ou quitter."}, {"title": "Demande de congés — intranet RH", "task": "Envoyer une demande de congés.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">intranet.example / conges / nouvelle-demande</div><div class=\"mock-body\"><h4>Nouvelle demande de congés</h4><div class=\"mock-field\"><span class=\"ml\">Du</span><div class=\"mock-input\"><span>14/07/2027</span></div></div><div class=\"mock-field\"><span class=\"ml\">Au</span><div class=\"mock-input\"><span>25/07/2027</span></div></div><div class=\"mock-actions\"><span class=\"mock-ok\">Envoyer</span><span class=\"mk-btn\" style=\"margin-left:auto\">Annuler</span></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> sur toutes les autres pages de l’intranet, l’action principale est un bouton bleu arrondi, à droite, intitulé « Valider », et « Annuler » est un simple lien gris. Plusieurs salariés cliquent par réflexe sur « Annuler » et perdent leur demande.</div></div>", "bs": "Homogénéité / cohérence", "bsOpts": ["Homogénéité / cohérence", "Signifiance des codes et dénominations", "Adaptabilité", "Gestion des erreurs"], "ni": "4 · Cohérence et standards", "niOpts": ["4 · Cohérence et standards", "2 · Correspondance avec le monde réel", "7 · Flexibilité et efficacité d’utilisation", "9 · Aider à reconnaître, diagnostiquer et corriger les erreurs"], "grav": 3, "range": [2, 3], "constat": "Sur la page Congés, l’action principale (« Envoyer », vert, carré, à gauche) et « Annuler » (bouton bleu, à droite) inversent les codes utilisés partout ailleurs sur l’intranet.", "reco": "Réutiliser le composant « bouton principal » du site (bleu, arrondi, à droite, libellé « Valider ») et afficher « Annuler » comme lien secondaire, éloigné de l’action principale.", "justif": "Touche tous les salariés habitués au reste de l’intranet, fait perdre la saisie, mais l’erreur est rattrapable : mineur à majeur, plutôt majeur vu la perte de saisie.", "note": ""}, {"title": "Remboursements — MaMutuelle (application)", "task": "Envoyer une facture d’opticien pour être remboursé.", "mock": "<div class=\"mock\"><div class=\"mock-bar\">app.mamutuelle.example / accueil</div><div class=\"mock-body\"><h4>Bienvenue, Karim</h4><div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:8px\"><span style=\"border:1px solid #cbd5e1;border-radius:8px;padding:12px 4px;text-align:center;font-family:var(--mono);font-size:.78rem;color:#334155\">GED</span><span style=\"border:1px solid #cbd5e1;border-radius:8px;padding:12px 4px;text-align:center;font-family:var(--mono);font-size:.78rem;color:#334155\">Flux PEC</span><span style=\"border:1px solid #cbd5e1;border-radius:8px;padding:12px 4px;text-align:center;font-family:var(--mono);font-size:.78rem;color:#334155\">TP</span><span style=\"border:1px solid #cbd5e1;border-radius:8px;padding:12px 4px;text-align:center;font-family:var(--mono);font-size:.78rem;color:#334155\">DR</span></div></div><div class=\"mock-note\"><strong>Observé lors d’un test :</strong> aucun libellé n’est expliqué. Les testeurs ouvrent trois rubriques au hasard avant de trouver : il fallait aller dans « Flux PEC ». Le service client reçoit chaque semaine des appels sur ce point.</div></div>", "bs": "Signifiance des codes et dénominations", "bsOpts": ["Signifiance des codes et dénominations", "Homogénéité / cohérence", "Contrôle explicite", "Adaptabilité"], "ni": "2 · Correspondance avec le monde réel", "niOpts": ["2 · Correspondance avec le monde réel", "4 · Cohérence et standards", "1 · Visibilité de l’état du système", "5 · Prévention des erreurs"], "grav": 3, "range": [2, 3], "constat": "Les rubriques de l’accueil portent des sigles internes (GED, Flux PEC, TP, DR) que les adhérents ne comprennent pas : ils ne trouvent pas où envoyer une facture.", "reco": "Renommer les rubriques selon les tâches, en langage courant : « Envoyer une facture », « Mes remboursements », « Ma carte de tiers payant », « Mes documents ». Associer icône et libellé.", "justif": "Fréquent (tâche principale de l’application), impact important (recherche au hasard, appels au support) mais contournable : majeur.", "note": ""}];
+const ACTS=["cas1","cas2","cas3"];
+const params = new URLSearchParams(location.search);
+if (params.has('formateur') || location.hash === '#formateur') document.body.classList.add('formateur');
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(()=>toast('Copié dans le presse-papiers ✅')).catch(()=>fallbackCopy(txt)); }
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){ const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('Copié dans le presse-papiers ✅');}catch(e){toast('Copie impossible : sélectionnez le texte manuellement');} ta.remove(); }
+function download(name, txt){ const blob=new Blob([txt],{type:'text/markdown;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function setProgress(fillId, txtId, done, total, suffix){ const p = total ? Math.round(done/total*100) : 0; $('#'+fillId).style.width = p+'%'; $('#'+txtId).textContent = done+' / '+total+(suffix||''); }
+function scoreMsg(pct){ if(pct>=90) return 'Excellent : les notions sont acquises.'; if(pct>=70) return 'Bon résultat. Relisez les explications des erreurs pour consolider.'; if(pct>=50) return 'Des bases, mais plusieurs confusions. Relisez le chapitre puis recommencez.'; return 'Reprenez le chapitre, puis recommencez l\'activité.'; }
+const done = new Set();
+function markDone(act){
+  if(done.has(act)) return false;
+  done.add(act);
+  $$('.tab[data-act="'+act+'"]').forEach(t=>t.classList.add('done'));
+  const n = done.size;
+  $('#globalFill').style.width = Math.round(n/ACTS.length*100)+'%';
+  $('#globalPct').textContent = n+' / '+ACTS.length;
+  toast(n===ACTS.length ? '🎉 Toutes les activités sont validées !' : 'Activité validée ✅');
+  if(typeof onDone==='function') onDone(act);
+  return true;
+}
+function openTab(i){
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==i));
+  $$('.panel').forEach(p=>p.classList.toggle('active', p.dataset.panel==i));
+  const tw = $('.tabs-wrap'); window.scrollTo({top: tw.offsetTop, behavior: 'smooth'});
+  const at = $('.tab[data-tab="'+i+'"]'); if(at) at.scrollIntoView({inline:'center', block:'nearest'});
+}
+$$('.tab').forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.tab)));
+$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.goto)));
+
+/* Explorateurs */
+$$('[data-explorer]').forEach(box=>{
+  const E = EXPLORERS[box.dataset.explorer]; const seen=new Set();
+  const chain=$('.chain',box), detail=$('.concept-detail',box);
+  E.items.forEach((k,i)=>{
+    const b=document.createElement('button'); b.className='chain-node'; b.textContent=k.id; b.dataset.i=i;
+    b.addEventListener('click',()=>show(i)); chain.appendChild(b);
+  });
+  function show(i){
+    const k=E.items[i]; seen.add(i);
+    $$('.chain-node',box).forEach(n=>{ n.classList.toggle('active', n.dataset.i==i); if(seen.has(+n.dataset.i)) n.classList.add('seen'); });
+    detail.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><span class="term-item">'+esc(k.id)+'</span><span class="famille-tag '+k.fam+'">'+esc(FAMILIES[k.fam]||'')+'</span></div>'+
+      k.rows.map(r=>'<div class="row"><span class="k">'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('');
+    const f=$('.progress-fill',box), t=$('.progress-label span:last-child',box);
+    f.style.width=Math.round(seen.size/E.items.length*100)+'%'; t.textContent=seen.size+' / '+E.items.length;
+  }
+  show(0);
+});
+/* ================= CAS 1 — CORRESPONDANCE ================= */
+const RSIZE = 10;
+let c1 = null;
+function initCas1(){
+  const order = shuffle(TERMS);
+  const rounds=[]; for(let i=0;i<order.length;i+=RSIZE) rounds.push(order.slice(i,i+RSIZE));
+  c1 = {rounds, r:0, scores:[], pairs:{}, active:null, checked:false, defOrder:[]};
+  $('#c1Result').classList.remove('show');
+  renderRound();
+}
+function renderRound(){
+  const R=c1.rounds[c1.r]; c1.pairs={}; c1.active=null; c1.checked=false; c1.defOrder=shuffle(R.map((_,i)=>i));
+  $('#c1Rounds').innerHTML=c1.rounds.map((_,i)=>'<span class="round-pill '+(i===c1.r?'cur':(i<c1.r?'ok':''))+'">Round '+(i+1)+(c1.scores[i]!==undefined?' · '+c1.scores[i]+'/'+c1.rounds[i].length:'')+'</span>').join('');
+  const tc=$('#c1Terms'), dc=$('#c1Defs'); tc.innerHTML='<h4>Termes</h4>'; dc.innerHTML='<h4>Définitions</h4>';
+  R.forEach((t,i)=>{ const b=document.createElement('button'); b.className='m-term'; b.dataset.i=i; b.innerHTML='<span>'+esc(t.t)+'</span><span class="pair-badge">'+(i+1)+'</span>'; b.addEventListener('click',()=>pickTerm(i)); tc.appendChild(b); });
+  c1.defOrder.forEach(di=>{ const b=document.createElement('button'); b.className='m-def'; b.dataset.d=di; b.innerHTML='<span class="pair-badge">·</span><span>'+esc(R[di].d)+'</span>'; b.addEventListener('click',()=>pickDef(di)); dc.appendChild(b); });
+  $('#c1Next').style.display='none'; $('#c1Check').disabled=false;
+  paintPairs();
+}
+function pickTerm(i){ if(c1.checked) return; c1.active = c1.active===i ? null : i; paintPairs(); }
+function pickDef(di){
+  if(c1.checked) return;
+  if(c1.active===null){ const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); if(owner!==undefined){ delete c1.pairs[owner]; paintPairs(); } else toast('Sélectionnez d\'abord un terme à gauche.'); return; }
+  Object.keys(c1.pairs).forEach(k=>{ if(c1.pairs[k]===di) delete c1.pairs[k]; });
+  c1.pairs[c1.active]=di; c1.active=null; paintPairs();
+}
+function paintPairs(){
+  $$('#c1Terms .m-term').forEach(b=>{ const i=+b.dataset.i; b.classList.toggle('active',c1.active===i); b.classList.toggle('paired',c1.pairs[i]!==undefined); });
+  $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); b.classList.toggle('paired',owner!==undefined); $('.pair-badge',b).textContent= owner!==undefined ? (+owner+1) : '·'; });
+  const n=Object.keys(c1.pairs).length, tot=c1.rounds[c1.r].length;
+  setProgress('c1Fill','c1Txt',n,tot,' associations');
+}
+function checkRound(silent){
+  const R=c1.rounds[c1.r];
+  if(!silent && Object.keys(c1.pairs).length<R.length){ toast('Associez les '+R.length+' termes avant de vérifier.'); return; }
+  let ok=0;
+  $$('#c1Terms .m-term').forEach(b=>{ const i=+b.dataset.i; const g=c1.pairs[i]===i; if(g) ok++; b.classList.remove('active'); b.classList.add(g?'good':'bad'); });
+  $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); const g= owner!==undefined && +owner===di; b.classList.add(g?'good':'bad'); if(!g){ $('.pair-badge',b).textContent='→'+(di+1); } });
+  c1.checked=true; c1.scores[c1.r]=ok; $('#c1Check').disabled=true;
+  const last = c1.r===c1.rounds.length-1;
+  const tot=c1.scores.reduce((a,b)=>a+b,0), max=c1.rounds.slice(0,c1.r+1).reduce((a,r)=>a+r.length,0);
+  $('#c1Result').innerHTML='<div class="score">'+ok+' / '+R.length+'</div><div class="msg">Round '+(c1.r+1)+' sur '+c1.rounds.length+'. Les définitions en rouge indiquent le numéro du bon terme. '+(last?'<br><strong style="color:#34d399">Score total : '+tot+' / '+max+'</strong> — '+scoreMsg(Math.round(tot/max*100)):'Score cumulé : '+tot+' / '+max+'.')+'</div>';
+  $('#c1Result').classList.add('show');
+  if(last){ if(!silent) markDone('cas1'); }
+  else $('#c1Next').style.display='inline-flex';
+}
+$('#c1Check').addEventListener('click',()=>checkRound(false));
+$('#c1Next').addEventListener('click',()=>{ c1.r++; $('#c1Result').classList.remove('show'); renderRound(); });
+$('#c1Reveal').addEventListener('click',()=>{ if(c1.checked) return; c1.rounds[c1.r].forEach((_,i)=>c1.pairs[i]=i); paintPairs(); checkRound(true); });
+$('#c1Reset').addEventListener('click',initCas1);
+initCas1();
+
+/* ================= CAS 2 — IDENTIFICATION + INTRUSE ================= */
+let c2=[];
+function initCas2(){
+  c2 = shuffle(CAS2).map(g=>({g, choices:shuffle(g.choices), sits:shuffle(g.situations)}));
+  const box=$('#c2Box'); box.innerHTML='';
+  c2.forEach((G,gi)=>{
+    const d=document.createElement('div'); d.className='group';
+    d.innerHTML='<div class="group-head"><strong><span class="q-num">G'+(gi+1)+'</span>Groupe '+(gi+1)+'</strong><span class="famille-tag f3">4 situations · 1 intruse</span></div>'+
+      G.sits.map((s,si)=>'<button type="button" class="sit" data-si="'+si+'"><span class="tag">S'+(si+1)+'</span><span>'+esc(s.s)+'</span></button>').join('')+
+      '<div class="g-label">1 · Quelle notion illustrent la majorité de ces situations ?</div><div class="choice-row">'+
+      G.choices.map((c,ci)=>'<button type="button" class="choice" data-ci="'+ci+'">'+esc(c)+'</button>').join('')+'</div>'+
+      '<div class="g-label">2 · Cliquez sur la situation intruse ci-dessus.</div><div class="expl"></div>';
+    $$('.choice',d).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.choice',d).forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); d.dataset.ch=b.dataset.ci; upd2(); }));
+    $$('.sit',d).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.sit',d).forEach(x=>{x.classList.remove('sel');$('.tag',x).textContent='S'+(+x.dataset.si+1);}); b.classList.add('sel'); $('.tag',b).textContent='Intruse ?'; d.dataset.si=b.dataset.si; upd2(); }));
+    box.appendChild(d);
+  });
+  $('#c2Result').classList.remove('show'); upd2();
+}
+function upd2(){ const gs=$$('#c2Box .group'); let n=0; gs.forEach(g=>{ if(g.dataset.ch!==undefined) n++; if(g.dataset.si!==undefined) n++; }); setProgress('c2Fill','c2Txt',n,gs.length*2,' réponses'); }
+function check2(silent){
+  const gs=$$('#c2Box .group');
+  if(!silent && gs.some(g=>g.dataset.ch===undefined||g.dataset.si===undefined)){ toast('Choisissez une notion et une intruse pour chaque groupe.'); return; }
+  let ok=0;
+  gs.forEach((d,gi)=>{
+    const G=c2[gi]; const goodCi=G.choices.indexOf(G.g.notion); const goodSi=G.sits.findIndex(s=>s.intruse);
+    const a=+d.dataset.ch===goodCi, b=+d.dataset.si===goodSi; ok+=(a?1:0)+(b?1:0);
+    $$('.choice',d).forEach((x,ci)=>{ x.classList.toggle('good',ci===goodCi); x.classList.toggle('bad',ci===+d.dataset.ch&&!a); });
+    $$('.sit',d).forEach((x,si)=>{ x.classList.remove('sel'); x.classList.toggle('good',si===goodSi); x.classList.toggle('bad',si===+d.dataset.si&&!b); $('.tag',x).textContent= si===goodSi?'Intruse':(si===+d.dataset.si&&!b?'Pas l\'intruse':'S'+(si+1)); });
+    d.classList.remove('correct','wrong','half'); d.classList.add('checked', a&&b?'correct':(a||b?'half':'wrong'));
+    $('.expl',d).innerHTML=(a?'✅':'❌')+' Notion : <strong>'+esc(G.g.notion)+'</strong> · '+(b?'✅':'❌')+' Intruse : <strong>S'+(goodSi+1)+'</strong><br>'+esc(G.g.e);
+  });
+  const max=gs.length*2;
+  $('#c2Result').innerHTML='<div class="score">'+ok+' / '+max+'</div><div class="msg">1 point par notion identifiée, 1 point par intruse repérée. '+scoreMsg(Math.round(ok/max*100))+'</div>';
+  $('#c2Result').classList.add('show');
+  if(!silent) markDone('cas2');
+}
+$('#c2Check').addEventListener('click',()=>check2(false));
+$('#c2Reveal').addEventListener('click',()=>{ $$('#c2Box .group').forEach((d,gi)=>{ const G=c2[gi]; d.dataset.ch=G.choices.indexOf(G.g.notion); d.dataset.si=G.sits.findIndex(s=>s.intruse); }); upd2(); check2(true); });
+$('#c2Reset').addEventListener('click',initCas2);
+initCas2();
+
+
+/* ================= CAS 3 — AUDIT FLASH ================= */
+let au=[];
+function initAudit(){
+  au = AUDIT.map(S=>({S, bs:shuffle(S.bsOpts), ni:shuffle(S.niOpts)}));
+  const box=$('#auBox'); box.innerHTML='';
+  au.forEach((A,i)=>{
+    const S=A.S, d=document.createElement('div'); d.className='group'; d.dataset.i=i;
+    d.innerHTML='<div class="group-head"><strong><span class="q-num">É'+(i+1)+'</span>Écran '+(i+1)+' · '+esc(S.title)+'</strong><span class="famille-tag f5">Audit flash</span></div>'+
+      '<p class="muted" style="margin:0 0 4px"><strong>Tâche auditée :</strong> '+esc(S.task)+'</p>'+S.mock+
+      '<div class="g-label">1 · Critère de Bastien & Scapin enfreint</div><div class="choice-row" data-k="bs">'+A.bs.map((c,ci)=>'<button type="button" class="choice" data-ci="'+ci+'">'+esc(c)+'</button>').join('')+'</div>'+
+      '<div class="g-label">2 · Heuristique de Nielsen enfreinte</div><div class="choice-row" data-k="ni">'+A.ni.map((c,ci)=>'<button type="button" class="choice" data-ci="'+ci+'">'+esc(c)+'</button>').join('')+'</div>'+
+      '<div class="g-label">3 · Gravité</div><div class="choice-row" data-k="gr">'+[0,1,2,3,4].map(g=>'<button type="button" class="choice" data-ci="'+g+'">'+g+'</button>').join('')+'</div>'+
+      '<label class="g-label" for="auC'+i+'" style="display:block">4 · Votre constat (où, quoi, factuel)</label><textarea class="f-input" id="auC'+i+'" rows="2" placeholder="Sur l’écran…, le… (fait observable, sans jugement de goût)"></textarea>'+
+      '<label class="g-label" for="auR'+i+'" style="display:block">5 · Votre recommandation</label><textarea class="f-input" id="auR'+i+'" rows="2" placeholder="Correction concrète et réalisable"></textarea>'+
+      '<div class="expl"></div>';
+    $$('.choice-row',d).forEach(row=>{ $$('.choice',row).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.choice',row).forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); d.dataset[row.dataset.k]=b.dataset.ci; updAudit(); })); });
+    box.appendChild(d);
+  });
+  $('#auResult').classList.remove('show'); $('#auWrap').style.display='none'; updAudit();
+}
+function updAudit(){ const gs=$$('#auBox .group'); let n=0; gs.forEach(g=>['bs','ni','gr'].forEach(k=>{ if(g.dataset[k]!==undefined) n++; })); setProgress('auFill','auTxt',n,gs.length*3,' réponses'); }
+function checkAudit(silent){
+  const gs=$$('#auBox .group');
+  if(!silent && gs.some(g=>['bs','ni','gr'].some(k=>g.dataset[k]===undefined))){ toast('Choisissez critère, heuristique et gravité pour chaque écran.'); return; }
+  let ok=0;
+  gs.forEach((d,i)=>{
+    const A=au[i], S=A.S; const gBs=A.bs.indexOf(S.bs), gNi=A.ni.indexOf(S.ni), gr=+d.dataset.gr;
+    const a=+d.dataset.bs===gBs, b=+d.dataset.ni===gNi, c=gr>=S.range[0]&&gr<=S.range[1]; ok+=(a?1:0)+(b?1:0)+(c?1:0);
+    const paint=(k,good,isOk)=>$$('.choice-row[data-k="'+k+'"] .choice',d).forEach((x,ci)=>{ x.classList.remove('sel'); x.classList.toggle('good',good(ci)); x.classList.toggle('bad',ci===+d.dataset[k]&&!isOk); });
+    paint('bs',ci=>ci===gBs,a); paint('ni',ci=>ci===gNi,b); paint('gr',g=>g>=S.range[0]&&g<=S.range[1],c);
+    const n=a+b+c; d.classList.remove('correct','wrong','half'); d.classList.add('checked', n===3?'correct':(n===0?'wrong':'half'));
+    $('.expl',d).innerHTML=(a?'✅':'❌')+' Critère : <strong>'+esc(S.bs)+'</strong> · '+(b?'✅':'❌')+' Heuristique : <strong>'+esc(S.ni)+'</strong> · '+(c?'✅':'❌')+' Gravité : <strong>'+S.grav+'</strong> (acceptée de '+S.range[0]+' à '+S.range[1]+')'+
+      '<br><strong>Constat type.</strong> '+esc(S.constat)+'<br><strong>Gravité.</strong> '+esc(S.justif)+'<br><strong>Recommandation type.</strong> '+esc(S.reco)+(S.note?'<br><em>'+esc(S.note)+'</em>':'');
+  });
+  const max=gs.length*3;
+  $('#auResult').innerHTML='<div class="score">'+ok+' / '+max+'</div><div class="msg">1 point par critère, 1 point par heuristique, 1 point par gravité dans la fourchette. '+scoreMsg(Math.round(ok/max*100))+'<br>Comparez maintenant vos constats et recommandations à la correction de chaque écran, ajustez-les si besoin, puis générez votre fiche.</div>';
+  $('#auResult').classList.add('show');
+  if(!silent) markDone('cas3');
+}
+function cell(s){ return String(s||'').replace(/\s*\n\s*/g,' ').replace(/\|/g,'\\|').trim(); }
+function auditMd(){
+  const gs=$$('#auBox .group'); const name=$('#auName').value.trim();
+  const rows=gs.map((d,i)=>{ const A=au[i]; return {i:i+1, t:A.S.title, c:$('#auC'+i).value, r:$('#auR'+i).value,
+    bs: d.dataset.bs!==undefined?A.bs[+d.dataset.bs]:'', ni: d.dataset.ni!==undefined?A.ni[+d.dataset.ni]:'', g: d.dataset.gr!==undefined?+d.dataset.gr:null}; });
+  const todo='_À compléter_';
+  let md='# Fiche d’audit flash — Séance 1\n\n- **Auteur(s)** : '+(name||todo)+'\n- **Date** : '+new Date().toLocaleDateString('fr-FR')+'\n- **Grilles** : critères de Bastien & Scapin, heuristiques de Nielsen, gravité de 0 à 4\n\n';
+  md+='| # | Écran / zone | Problème observé (factuel) | Critère (B&S) | Heuristique (Nielsen) | Gravité (0-4) | Recommandation |\n|---|---|---|---|---|---|---|\n';
+  rows.forEach(r=>{ md+='| '+r.i+' | '+cell(r.t)+' | '+(cell(r.c)||todo)+' | '+(cell(r.bs)||todo)+' | '+(cell(r.ni)||todo)+' | '+(r.g===null?todo:r.g)+' | '+(cell(r.r)||todo)+' |\n'; });
+  const pr=rows.filter(r=>r.g!==null).sort((a,b)=>b.g-a.g||a.i-b.i);
+  md+='\n## Priorités (gravité décroissante)\n\n'+(pr.length?pr.map((r,k)=>(k+1)+'. **Écran '+r.i+'** — '+cell(r.t)+' (gravité '+r.g+')').join('\n'):todo)+'\n';
+  return md;
+}
+$('#auCheck').addEventListener('click',()=>checkAudit(false));
+$('#auReveal').addEventListener('click',()=>{ $$('#auBox .group').forEach((d,i)=>{ const A=au[i]; d.dataset.bs=A.bs.indexOf(A.S.bs); d.dataset.ni=A.ni.indexOf(A.S.ni); d.dataset.gr=A.S.grav; }); updAudit(); checkAudit(true); });
+$('#auReset').addEventListener('click',initAudit);
+$('#auGen').addEventListener('click',()=>{ $('#auOut').textContent=auditMd(); $('#auWrap').style.display='block'; });
+$('#auCopy').addEventListener('click',()=>copyText(auditMd()));
+$('#auDl').addEventListener('click',()=>download('fiche-audit-flash.md',auditMd()));
+initAudit();
+
+/* ================= GLOSSAIRE VERROUILLÉ ================= */
+let glossFilter='all';
+function renderGloss(){
+  const items=TERMS.slice().sort((a,b)=>a.t.localeCompare(b.t,'fr')).filter(t=>glossFilter==='all'||t.f===glossFilter);
+  $('#gloss').innerHTML=items.map(g=>'<div class="gloss-item"><div class="gt"><span class="term-item">'+esc(g.t)+'</span><span class="famille-tag '+g.f+'">'+esc(FAMILIES[g.f])+'</span></div><div>'+esc(g.d)+'</div></div>').join('');
+}
+function unlockGloss(){
+  $('#glossLocked').style.display='none'; $('#glossOpen').style.display='block';
+  const t=$('.tab[data-tab="gl"] .lock-mark'); if(t) t.textContent='🔓';
+  renderGloss();
+}
+function onDone(act){
+  const p=$('.lock-pill[data-lock="'+act+'"]'); if(p){ p.classList.add('ok'); p.textContent=p.textContent.replace('⏳','✅'); }
+  if(['cas1','cas2','cas3'].every(a=>done.has(a))){ unlockGloss(); toast('📖 Glossaire débloqué !'); }
+}
+$$('#glossFilters button').forEach(b=>b.addEventListener('click',()=>{ glossFilter=b.dataset.f; $$('#glossFilters button').forEach(x=>x.classList.toggle('on',x===b)); renderGloss(); }));
+$('#glossForce').addEventListener('click',unlockGloss);
+
+})();
+</script>
+</body>
+</html>
