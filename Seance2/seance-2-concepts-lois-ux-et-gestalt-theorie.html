@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Séance 2 — Concepts, lois UX et Gestalt · Théorie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --secondary:#059669;--secondary-light:#d1fae5;
+  --accent:#d97706;--accent-light:#fef3c7;
+  --danger:#dc2626;--danger-light:#fee2e2;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --dark:#0f172a;--dark2:#1e293b;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f1f5f9;--card:#ffffff;--radius:14px;
+  --sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+code,.mono{font-family:var(--mono)}
+code{background:#f1f5f9;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.84em}
+pre code,.key-box code,.nest.n4 code{background:transparent;border:none;padding:0;color:inherit}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+
+header{background:linear-gradient(135deg,#0f172a 0%,#4c1d95 60%,#6d28d9 100%);color:#fff;padding:42px 24px 34px;position:relative;overflow:hidden}
+header.practice{background:linear-gradient(135deg,#0f172a 0%,#6d28d9 60%,#7c3aed 100%)}
+header::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.25),transparent 70%)}
+.header-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+header h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:10px}
+header .subtitle{color:#cbd5e1;max-width:720px;font-size:1rem}
+.meta-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.meta-pill{background:rgba(15,23,42,.45);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:999px;font-size:.8rem;display:inline-flex;align-items:center;gap:6px}
+.global-progress{margin-top:24px;max-width:520px}
+.global-progress .label{display:flex;justify-content:space-between;font-size:.8rem;color:#cbd5e1;margin-bottom:6px}
+.global-progress .track{height:8px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.global-progress .fill{height:100%;width:0;background:linear-gradient(90deg,#10b981,#34d399);border-radius:999px;transition:width .5s ease}
+.mode-flag{display:none;margin-top:14px;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;width:max-content}
+body.formateur .mode-flag{display:block}
+
+.tabs-wrap{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.tabs{max-width:1100px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 16px;scrollbar-width:thin}
+.tab{border:none;background:none;padding:15px 14px;font-size:.85rem;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--primary)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab .done-mark{display:none;color:var(--secondary)}
+.tab.done .done-mark{display:inline}
+.tab .lock-mark{font-size:.8rem}
+
+main{max-width:1100px;margin:0 auto;padding:28px 16px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel.active{animation:none}.global-progress .fill,.progress-fill{transition:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+@media(max-width:600px){.card{padding:20px 16px}}
+.section-title{display:flex;align-items:center;gap:14px;font-size:1.3rem;font-weight:700;margin-bottom:18px;color:var(--dark)}
+.icon-bg{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;background:var(--primary-light)}
+.icon-bg.green{background:var(--secondary-light)}.icon-bg.amber{background:var(--accent-light)}.icon-bg.purple{background:var(--purple-light)}.icon-bg.red{background:var(--danger-light)}
+h3{font-size:1.05rem;font-weight:700;margin:22px 0 10px;color:var(--dark)}
+p{margin-bottom:10px}
+.lead{font-size:1.05rem;color:var(--dark2)}
+.muted{color:var(--muted);font-size:.88rem}
+ul.clean{list-style:none}
+ul.clean li{padding:6px 0 6px 26px;position:relative}
+ul.clean li::before{content:"▸";position:absolute;left:6px;color:var(--primary);font-weight:700}
+ol{padding-left:22px}ol li{padding:3px 0}
+
+.objectif-box{background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid var(--primary);border-radius:10px;padding:18px 20px;margin:16px 0}
+.objectif-box strong.title{display:block;color:var(--primary-dark);margin-bottom:8px}
+.instruction-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid var(--accent);border-radius:10px;padding:18px 20px;margin:16px 0}
+.instruction-box strong.title{display:block;color:#92400e;margin-bottom:8px}
+.key-box{background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin:18px 0;border-left:5px solid #10b981}
+.key-box .big{font-size:1.15rem;font-weight:700;color:#fff}
+.warn-box{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid var(--danger);border-radius:10px;padding:16px 20px;margin:16px 0}
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.mini-card{border:1px solid var(--border);border-radius:12px;padding:18px;background:#fff}
+.mini-card h4{font-size:1rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mini-card.bad{border-color:#fecaca;background:#fef2f2}
+.mini-card.good{border-color:#a7f3d0;background:#f0fdf4}
+.mini-card pre.prompt{margin-top:8px}
+
+.famille-tag{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.2px}
+.f1{background:var(--primary-light);color:#1e40af}
+.f2{background:var(--secondary-light);color:#065f46}
+.f3{background:var(--accent-light);color:#92400e}
+.f4{background:var(--purple-light);color:#5b21b6}
+.f5{background:var(--danger-light);color:#991b1b}
+
+.term-item{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.85rem;padding:10px 14px;border-radius:8px;display:inline-block}
+.chain .term-item,.objectif-box .term-item{padding:6px 12px}
+pre.prompt{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:18px 20px;border-radius:10px;white-space:pre-wrap;word-break:break-word;line-height:1.65;overflow-x:auto;position:relative;margin:12px 0}
+pre.prompt .hl{color:#34d399}
+pre.prompt .hl2{color:#fbbf24}
+pre.prompt .hl3{color:#93c5fd}
+
+.btn{border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:8px;transition:transform .1s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--secondary);color:#fff}.btn-success:hover{background:#047857}
+.btn-ghost{background:#fff;color:var(--dark2);border:1px solid var(--border)}.btn-ghost:hover{background:#f8fafc}
+.btn-warning{background:var(--accent);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.btn-reveal{display:none}
+body.formateur .btn-reveal{display:inline-flex}
+.reveal-content{display:none}
+.reveal-content.shown{display:block}
+
+.progress-wrap{margin:14px 0 4px}
+.progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+.progress-track{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#059669,#10b981);border-radius:999px;transition:width .4s ease}
+
+.result-panel{display:none;background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin-top:20px}
+.result-panel.show{display:block}
+.result-panel .score{font-family:var(--mono);font-size:2rem;font-weight:700;color:#34d399}
+.result-panel .msg{margin-top:6px;color:#cbd5e1}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0}
+.chain-node{border:2px solid var(--border);background:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--dark2)}
+.chain-node:hover{border-color:var(--primary)}
+.chain-node.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chain-node.seen:not(.active){border-color:#93c5fd}
+.chain-arrow{color:var(--muted);font-weight:700}
+.concept-detail{border:1px solid var(--border);border-radius:12px;padding:22px;background:#f8fafc;min-height:180px}
+.concept-detail .row{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.concept-detail .row:last-child{border-bottom:none}
+.concept-detail .k{font-weight:700;font-size:.82rem;color:var(--muted)}
+@media(max-width:600px){.concept-detail .row{grid-template-columns:1fr;gap:2px}}
+
+/* QCM */
+.qcm-q{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.qcm-q .qt{font-weight:600;margin-bottom:10px}
+.qcm-opts{display:grid;gap:8px}
+.qcm-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;font-size:.9rem;background:#fff;text-align:left;width:100%;color:var(--text)}
+.qcm-opt:hover{background:#f8fafc;border-color:#93c5fd}
+.qcm-opt .l{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:18px}
+.qcm-opt.sel{border-color:var(--primary);background:#eff6ff}
+.qcm-q.checked .qcm-opt{cursor:default}
+.qcm-opt.good{border-color:#6ee7b7;background:#ecfdf5}
+.qcm-opt.bad{border-color:#fca5a5;background:#fef2f2}
+.qcm-q.correct{border-color:#6ee7b7}
+.qcm-q.wrong{border-color:#fca5a5}
+.qcm-q .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:8px;border-top:1px dashed var(--border)}
+.qcm-q.checked .expl{display:block}
+.q-num{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-right:6px}
+
+/* V/F */
+.vf-row{padding:16px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#fff}
+.vf-row .vf-q{font-weight:500;margin-bottom:10px}
+.vf-btns{display:flex;gap:8px}
+.vf-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 18px;font-weight:600;font-size:.85rem;color:var(--text)}
+.vf-btn.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.vf-row.correct{border-color:#6ee7b7;background:#ecfdf5}
+.vf-row.wrong{border-color:#fca5a5;background:#fef2f2}
+.vf-row .expl{display:none;margin-top:10px;font-size:.85rem}
+.vf-row.checked .expl{display:block}
+
+/* Cas 1 matching */
+.match-grid{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:16px;margin-top:10px}
+@media(max-width:760px){.match-grid{grid-template-columns:1fr}}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-col h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.m-term{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:10px 12px;border-radius:8px;border:2px solid var(--dark);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.m-term:hover{border-color:#60a5fa}
+.m-term.active{border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.35)}
+.m-def{background:#fff;border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.86rem;text-align:left;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.m-def:hover{border-color:#93c5fd}
+.pair-badge{font-family:var(--mono);font-size:.72rem;font-weight:700;min-width:24px;height:24px;border-radius:6px;display:inline-grid;place-items:center;background:#e2e8f0;color:var(--muted);flex-shrink:0}
+.paired .pair-badge{background:var(--primary);color:#fff}
+.m-def.paired{border-color:#93c5fd;background:#eff6ff}
+.m-term.good,.m-def.good{border-color:#10b981}
+.m-def.good{background:#ecfdf5}
+.m-term.bad,.m-def.bad{border-color:#ef4444}
+.m-def.bad{background:#fef2f2}
+.round-pills{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.round-pill{font-family:var(--mono);font-size:.75rem;padding:4px 10px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border);color:var(--muted)}
+.round-pill.cur{background:var(--primary);color:#fff;border-color:var(--primary)}
+.round-pill.ok{background:var(--secondary-light);color:#065f46;border-color:#6ee7b7}
+
+/* Cas 2 */
+.group{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff}
+.group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.group-head strong{font-size:1rem}
+.g-label{font-size:.8rem;font-weight:700;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.choice-row{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:600;color:var(--dark2)}
+.choice.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.choice.good{background:#10b981;color:#fff;border-color:#10b981}
+.choice.bad{background:#ef4444;color:#fff;border-color:#ef4444}
+.sit{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--border);border-radius:9px;padding:10px 12px;background:#f8fafc;font-size:.88rem;margin-bottom:8px;color:var(--text)}
+.sit:hover{border-color:#fbbf24}
+.sit .tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:#e2e8f0;color:var(--muted);white-space:nowrap}
+.sit.sel{border-color:var(--accent);background:#fffbeb}
+.sit.sel .tag{background:var(--accent);color:#fff}
+.sit.good{border-color:#10b981;background:#ecfdf5}
+.sit.good .tag{background:#10b981;color:#fff}
+.sit.bad{border-color:#ef4444;background:#fef2f2}
+.sit.bad .tag{background:#ef4444;color:#fff}
+.group .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:10px;border-top:1px dashed var(--border)}
+.group.checked .expl{display:block}
+.group.correct{border-color:#6ee7b7}
+.group.wrong{border-color:#fca5a5}
+.group.half{border-color:#fcd34d}
+
+/* forms */
+label.f-label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:var(--dark2)}
+input.f-input,textarea.f-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;font-family:var(--sans);font-size:.9rem;background:#fff;color:var(--text)}
+textarea.f-input{min-height:78px;resize:vertical}
+
+.steps{margin:14px 0}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step input[type=checkbox]{width:20px;height:20px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+.step .s-num{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:24px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:8px;cursor:pointer}
+.checklist label:hover{background:#f8fafc}
+.checklist input{width:18px;height:18px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}
+th{background:var(--dark);color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+th:first-child{border-top-left-radius:10px}th:last-child{border-top-right-radius:10px}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;background:#fff}
+tr:nth-child(even) td{background:#f8fafc}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.75rem;background:#f1f5f9;border:1px solid var(--border);padding:3px 10px;border-radius:999px;color:var(--dark2)}
+
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:14px 0}
+.route-step{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.route-step .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.route-step .t{font-weight:700;font-size:.9rem;color:var(--dark)}
+.route-step .c{font-size:.75rem;color:var(--muted)}
+.route-step.past{background:#ecfdf5;border-color:#a7f3d0}
+.route-step.here{background:var(--primary);border-color:var(--primary)}
+.route-step.here .t,.route-step.here .n,.route-step.here .c{color:#fff}
+
+.levels{display:grid;gap:8px;margin:14px 0}
+.level{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#fff}
+.level .lv{font-family:var(--mono);font-weight:700;font-size:1.1rem;color:var(--primary)}
+.level .risk{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px}
+@media(max-width:600px){.level{grid-template-columns:40px 1fr}.level .risk{grid-column:2;justify-self:start}}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.pillar{border-radius:12px;padding:16px;background:#fff;border:1px solid var(--border);border-top:4px solid var(--primary)}
+.pillar:nth-child(5n+2){border-top-color:var(--purple)}
+.pillar:nth-child(5n+3){border-top-color:var(--secondary)}
+.pillar:nth-child(5n+4){border-top-color:var(--accent)}
+.pillar:nth-child(5n+5){border-top-color:var(--danger)}
+.pillar .n{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.pillar h4{font-size:1rem;margin:4px 0 6px}
+.pillar p{font-size:.84rem;color:var(--dark2);margin:0}
+.pillar .q{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px}
+
+details.acc{border:1px solid var(--border);border-radius:10px;margin:10px 0;background:#fff}
+details.acc summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-family:var(--mono);color:var(--primary);font-weight:700}
+details.acc[open] summary::after{content:"−"}
+details.acc[open] summary{border-bottom:1px dashed var(--border)}
+details.acc > div{padding:12px 16px;font-size:.9rem}
+
+.gloss{display:grid;gap:10px;margin-top:10px}
+.gloss-item{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.gloss-item .gt{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+@media(max-width:620px){.gloss-item{grid-template-columns:1fr}}
+.lock-wrap{text-align:center;padding:30px 10px}
+.lock-wrap .big-lock{font-size:3rem}
+.lock-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.lock-pill{font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border)}
+.lock-pill.ok{background:var(--secondary-light);border-color:#6ee7b7;color:#065f46}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.filter-row button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600;color:var(--dark2)}
+.filter-row button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+.score-table td:last-child{font-family:var(--mono);font-weight:700}
+.link-card{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f8fafc;border:1px dashed #93c5fd;border-radius:12px;padding:16px 18px;margin-top:16px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.nav-bottom{display:flex;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:30px 16px 50px}
+@media print{.tabs-wrap,.actions-row,.nav-bottom{display:none}.panel{display:block!important}}
+
+
+/* ---- ajouts Ergonomie web ---- */
+.f-only{display:none}
+body.formateur .f-only{display:block}
+.mock{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;max-width:540px;margin:14px auto;font-size:.88rem;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.mock-bar{background:#e2e8f0;color:#475569;font-family:var(--mono);font-size:.72rem;padding:6px 12px}
+.mock-body{padding:18px 20px}
+.mock-body h4{margin:0 0 12px;font-size:1.05rem}
+.mock-field{margin-bottom:12px}
+.mock-field .ml{display:block;font-size:.78rem;color:#475569;margin-bottom:3px}
+.mock-input{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;color:#94a3b8;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:8px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-actions{display:flex;gap:10px;align-items:center}
+.mock-ok{background:#16a34a;color:#fff;padding:8px 24px;font-weight:700;display:inline-block}
+.mock-note{font-size:.74rem;color:#64748b;padding:8px 20px 14px;border-top:1px dashed var(--border)}
+.mk-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.mk-demo{display:flex;align-items:center;justify-content:center;min-height:84px;border-radius:10px;background:#f8fafc;border:1px dashed var(--border);margin-bottom:8px;padding:10px}
+.mk-link{color:#2563eb;text-decoration:underline}
+.mk-btn{background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;box-shadow:0 2px 0 #1d4ed8;display:inline-block}
+.chunk{font-family:var(--mono);font-size:1.25rem;letter-spacing:.08em;text-align:center;padding:14px 8px;background:#f8fafc;border-radius:10px;border:1px solid var(--border);word-break:break-all}
+.vr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:10px 0}
+.vr-grid span{background:#e2e8f0;color:#475569;border-radius:8px;padding:10px 6px;text-align:center;font-size:.78rem;font-weight:600}
+.vr-grid span.vr{background:#f59e0b;color:#fff}
+.fitts-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.fitts-zone{position:relative;height:190px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;overflow:hidden;touch-action:manipulation}
+.fitts-target{position:absolute;border-radius:50%;background:#dc2626;border:none;padding:0;box-shadow:0 0 0 3px rgba(220,38,38,.2)}
+.hick-bar{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:6px}
+.hick-bar>div{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);width:0;transition:width .25s}
+input[type=range]{width:100%;accent-color:var(--primary)}
+.g-stage{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;margin-top:10px}
+.g-stage svg{max-width:100%;height:auto}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.pair{grid-template-columns:1fr}}
+.legend-line{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){.hick-bar>div{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <span class="badge">🧭 Ergonomie web — Séance 2 · Support théorique</span>
+    <h1>Concepts, lois UX et Gestalt</h1>
+    <p class="subtitle">Comprendre pourquoi une interface fonctionne : affordance, charge cognitive, lois psychologiques et principes de la Gestalt, pour justifier chaque choix de conception.</p>
+    <div class="meta-pills"><span class="meta-pill">🧭 Séance 2 sur 4</span><span class="meta-pill">📚 Support théorique</span><span class="meta-pill">📖 6 chapitres</span><span class="meta-pill">❓ 30 questions de QCM</span><span class="meta-pill">🎮 Mini-démos interactives</span></div>
+    <div class="global-progress">
+      <div class="label"><span>QCM de chapitre validés</span><span id="globalPct">0 / 6</span></div>
+      <div class="track"><div class="fill" id="globalFill"></div></div>
+    </div>
+    <div class="mode-flag">Mode formateur actif — boutons « Révéler » visibles</div>
+  </div>
+</header>
+<div class="tabs-wrap"><nav class="tabs" role="tablist" aria-label="Chapitres de la séance"><button class="tab active" data-tab="0" role="tab">🚀 Démarrage</button><button class="tab" data-tab="c0" data-act="ch0" role="tab">🧩 Concepts <span class="done-mark">✅</span></button><button class="tab" data-tab="c1" data-act="ch1" role="tab">📐 Boucher <span class="done-mark">✅</span></button><button class="tab" data-tab="c2" data-act="ch2" role="tab">🧠 Mémoire & attention <span class="done-mark">✅</span></button><button class="tab" data-tab="c3" data-act="ch3" role="tab">🎯 Décision & action <span class="done-mark">✅</span></button><button class="tab" data-tab="c4" data-act="ch4" role="tab">🧭 Comportement <span class="done-mark">✅</span></button><button class="tab" data-tab="c5" data-act="ch5" role="tab">👁️ Gestalt <span class="done-mark">✅</span></button><button class="tab" data-tab="syn" role="tab">🏁 Synthèse</button></nav></div>
+<main>
+<section class="panel active" data-panel="0">
+<div class="card"><div class="section-title"><span class="icon-bg ">🎯</span>Où en est-on dans le module ?</div><div class="key-box"><div class="big">Je sais justifier un choix de conception.</div><p style="margin:8px 0 0">« Je préfère » n’est pas un argument. Aujourd’hui, vous apprenez les concepts et les lois qui permettent de dire pourquoi un choix fonctionne, et dans quelles limites.</p></div><div class="route"><div class="route-step past"><div class="n">1</div><div class="t">Évaluer</div><div class="c">Critères & audit</div></div><div class="route-step here"><div class="n">2</div><div class="t">Justifier</div><div class="c">Concepts, lois, Gestalt</div></div><div class="route-step"><div class="n">3</div><div class="t">Comprendre</div><div class="c">Persona, parcours, architecture</div></div><div class="route-step"><div class="n">4</div><div class="t">Auditer</div><div class="c">Projet de groupe</div></div></div><p class="muted">En vert : l’étape déjà franchie. En bleu : l’étape travaillée dans cette séance.</p><h3>Le fil pédagogique</h3><div class="table-wrap"><table><tr><th>Étape</th><th>Ce que vous saurez faire</th></tr><tr><td>Séance 1</td><td>Je sais évaluer une interface.</td></tr><tr><td><strong>Séance 2</strong> — aujourd’hui</td><td><strong>Je sais justifier un choix de conception.</strong></td></tr><tr><td>Séance 3</td><td>Je sais penser à partir de l’utilisateur.</td></tr><tr><td>Séance 4</td><td>Je sais auditer un site et défendre mes recommandations.</td></tr></table></div></div><div class="card"><div class="section-title"><span class="icon-bg green">✅</span>Objectifs de la séance</div><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Distinguer affordance, signifiant, modèle mental, charge cognitive, nombre magique et feedback ;</li><li>Utiliser les 12 critères d’ergonomie web d’Amélie Boucher comme grille d’évaluation ;</li><li>Énoncer et illustrer les lois de l’UX majeures : mémoire et attention, décision et action (focus sur la loi de Fitts), comportement et attentes ;</li><li>Appliquer les principes de la Gestalt (proximité, similarité, continuité, clôture…) à une mise en page ;</li><li>Nuancer une loi UX : son contexte, ses limites et ses mauvaises interprétations courantes.</li></ul></div><div class="grid grid-2"><div class="mini-card"><h4>🎒 À avoir avec vous</h4><ul class="clean"><li>Vos notes d’audit de la séance 1 : vous les relirez avec de nouveaux outils ;</li><li>Un site que vous trouvez particulièrement réussi : vous chercherez pourquoi ;</li><li>Un écran (ordinateur ou téléphone) pour tester les mini-démos.</li></ul></div><div class="mini-card"><h4>🧩 Les 5 familles de notions</h4><div class="chips" style="margin-top:4px"><span class="famille-tag f1">Concepts & critères</span><span class="famille-tag f2">Mémoire & attention</span><span class="famille-tag f3">Décision & action</span><span class="famille-tag f4">Comportement & attentes</span><span class="famille-tag f5">Gestalt & mise en page</span></div><p class="muted" style="margin-top:10px">Ces familles organisent les chapitres, les cas pratiques et le glossaire.</p></div></div><div class="instruction-box"><strong class="title">Un esprit critique avant tout</strong>Les « lois » de l’UX ne sont pas des lois physiques : ce sont des principes issus de la psychologie, d’études et d’observations, avec des limites. Dans chaque fiche, la ligne <strong>Nuance</strong> vous dit ce qu’il ne faut pas leur faire dire. C’est là que se joue la qualité d’un argument.</div><div class="instruction-box"><strong class="title">Comment utiliser ce support</strong>Chaque onglet est un chapitre. Lisez-le, explorez les fiches et les démos, puis répondez au <strong>QCM de fin de chapitre</strong> : sa validation fait avancer la barre de progression. La mise en application se fait ensuite dans le <strong>support pratique</strong>.</div><div class="link-card"><span><strong>🛠️ Support pratique associé</strong><br><span class="muted">Cas pratiques, quelle loi ?, glossaire de la séance.</span></span><a class="btn btn-success" href="seance-2-concepts-lois-ux-et-gestalt-pratique.html">Ouvrir le support pratique ▸</a></div><div class="nav-bottom"><span></span><button class="btn btn-primary" data-goto="c0">Commencer : 🧩 Concepts ▸</button></div></div></section>
+<section class="panel" data-panel="c0">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 1 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🧩</span>Les concepts qui expliquent l’usage</div><p class="lead">Avant les lois, des concepts : ils décrivent comment une personne perçoit un objet, s’en fait une idée et décide d’agir. Ce sont eux qui permettent de comprendre <em>pourquoi</em> un bouton est cliqué, ou ignoré.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Définir affordance, signifiant, modèle mental, charge cognitive, nombre magique et feedback, et savoir en repérer l’absence dans une interface.</div><h3>Du signifiant faible au signifiant fort <span class="famille-tag f1">Concepts</span></h3><p>Les trois éléments ci-dessous disent tous « Envoyer ». Lequel invite le mieux à l’action ?</p><div class="grid grid-3"><div class="mini-card"><div class="mk-demo"><span>Envoyer</span></div><h4>Signifiant absent</h4><p class="muted">Un simple mot : rien n’indique qu’on peut agir dessus.</p></div><div class="mini-card"><div class="mk-demo"><span class="mk-link">Envoyer</span></div><h4>Signifiant moyen</h4><p class="muted">Couleur et soulignement : la convention du lien est reconnue.</p></div><div class="mini-card"><div class="mk-demo"><span class="mk-btn">Envoyer</span></div><h4>Signifiant fort</h4><p class="muted">Forme, contraste et relief : l’action principale est évidente.</p></div></div></div><div class="card" data-explorer="x0"><div class="section-title"><span class="icon-bg ">🧩</span>Explorateur — les concepts clés</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Ce qui semble cliquable doit l’être ; ce qui l’est doit sembler l’être.</div><p style="margin:8px 0 0">L’affordance dit ce qu’on peut faire, le signifiant dit où et comment le faire, le feedback confirme que c’est fait : sans l’un des trois, l’utilisateur hésite.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 1</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm0"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt0">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill0"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="0">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="0">👁 Révéler</button><button class="btn btn-ghost" data-qreset="0">↺ Recommencer</button></div><div class="result-panel" id="qres0"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="0">◂ Précédent</button><button class="btn btn-primary" data-goto="c1">Suite : 📐 Critères d’Amélie Boucher ▸</button></div></div></section>
+<section class="panel" data-panel="c1">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 2 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">📐</span>Les 12 critères d’ergonomie web d’Amélie Boucher</div><p class="lead">Amélie Boucher, ergonome, est l’auteure de <em>Ergonomie web</em>, ouvrage de référence en français. Elle y propose <strong>12 critères</strong> pensés pour le web, qui complètent les grilles de Bastien et Scapin et de Nielsen vues en séance 1.</p><div class="f-only"><div class="warn-box"><strong>Note formateur.</strong> Les intitulés des 12 critères proviennent d’une fiche universitaire (jeu JADE, LIRIS) qui reprend la grille d’Amélie Boucher. Les questions et exemples sont une reformulation : confronte-les à ton exemplaire de l’ouvrage et ajuste si besoin.</div></div><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Citer les 12 critères, les relier aux grilles de la séance 1 et savoir choisir une grille adaptée à un audit.</div></div><div class="card" data-explorer="x1"><div class="section-title"><span class="icon-bg purple">📐</span>Explorateur — les 12 critères</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 12</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg green">🧰</span>Quelle grille choisir ?</div><div class="table-wrap"><table><tr><th>Grille</th><th>Taille</th><th>Particularité</th></tr><tr><td><span class="famille-tag f1">Bastien & Scapin</span></td><td>8 critères, 18 sous-critères</td><td>Très détaillée, référence académique francophone.</td></tr><tr><td><span class="famille-tag f4">Nielsen</span></td><td>10 heuristiques</td><td>Courte, mondiale, très utilisée dans l’industrie.</td></tr><tr><td><span class="famille-tag f3">Boucher</span></td><td>12 critères</td><td>Pensée pour le web : contenu, architecture, rapidité, satisfaction.</td></tr></table></div><div class="key-box"><div class="big">Peu importe la grille, pourvu qu’elle soit explicite.</div><p style="margin:8px 0 0">Citez toujours la grille utilisée, appliquez-la avec constance et croisez-en plusieurs : c’est ce que vous ferez dans le projet de la séance 4.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 2</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm1"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt1">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill1"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="1">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="1">👁 Révéler</button><button class="btn btn-ghost" data-qreset="1">↺ Recommencer</button></div><div class="result-panel" id="qres1"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c0">◂ Précédent</button><button class="btn btn-primary" data-goto="c2">Suite : 🧠 Mémoire & attention ▸</button></div></div></section>
+<section class="panel" data-panel="c2">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 3 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🧠</span>Ce que notre cerveau retient (et ignore)</div><p class="lead">La plupart des lois de l’UX viennent de la psychologie cognitive. Celles de ce chapitre décrivent comment la mémoire et l’attention fonctionnent, ce qui permet de prévoir ce que l’utilisateur remarquera, retiendra, oubliera.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Énoncer six principes de mémoire et d’attention et en tirer des choix concrets de présentation.</div><h3>Le chunking en action <span class="famille-tag f2">Mémoire & attention</span></h3><div class="pair"><div><div class="chunk">1234567890123456</div><p class="muted">Seize chiffres d’un bloc : difficile à lire, à vérifier, à retenir.</p></div><div><div class="chunk">1234 5678 9012 3456</div><p class="muted">Quatre blocs de quatre : chaque bloc devient une unité.</p></div></div><h3>L’effet Von Restorff : se distinguer pour être retenu</h3><div class="vr-grid" aria-label="Huit boutons dont un se distingue"><span>Basique</span><span>Standard</span><span>Famille</span><span>Essentiel</span><span>Pro</span><span class="vr">Recommandé</span><span>Équipe</span><span>Sur mesure</span></div><p class="muted">Un seul élément différent, et c’est lui qu’on retient. Si tout était orange, plus rien ne se distinguerait.</p></div><div class="card" data-explorer="x2"><div class="section-title"><span class="icon-bg purple">🧠</span>Explorateur — mémoire et attention</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Montrer plutôt que faire retenir ; regrouper plutôt qu’empiler ; distinguer plutôt que tout mettre en avant.</div><p style="margin:8px 0 0">Ces principes réduisent l’effort de mémoire et dirigent l’attention vers l’essentiel.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 3</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm2"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt2">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill2"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="2">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="2">👁 Révéler</button><button class="btn btn-ghost" data-qreset="2">↺ Recommencer</button></div><div class="result-panel" id="qres2"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c1">◂ Précédent</button><button class="btn btn-primary" data-goto="c3">Suite : 🎯 Décision & action ▸</button></div></div></section>
+<section class="panel" data-panel="c3">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 4 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🎯</span>Décider vite, agir juste</div><p class="lead">Ces lois concernent le moment où l’utilisateur choisit puis agit : combien de choix lui présente-t-on, quelle est la taille et la place de ce qu’il doit atteindre, combien de temps l’interface met-elle à répondre ?</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Expliquer les lois de Hick, Fitts, Doherty, Tesler, Postel et le principe de Pareto, et en tirer des règles de mise en page. Focus sur la loi de Fitts.</div><h3>Loi de Hick : tester l’effet du nombre de choix <span class="famille-tag f3">Décision & action</span></h3><p>Le temps de décision croît avec le nombre de choix, de façon logarithmique : <code>T = b × log₂(n + 1)</code> (la constante <em>b</em> dépend du contexte). Déplacez le curseur :</p><label class="f-label" for="hickRange">Nombre de choix proposés : <strong id="hickN">8</strong></label><input type="range" id="hickRange" min="2" max="32" value="8"><div class="hick-bar"><div id="hickBar"></div></div><p class="muted" style="margin-top:8px">log₂(n + 1) = <strong id="hickBits">3,17</strong> · temps de décision relatif par rapport à 2 choix : <strong id="hickRel">×2,0</strong>. Doubler le nombre de choix n’ajoute qu’un incrément fixe : la croissance est lente, mais réelle.</p></div><div class="card"><div class="section-title"><span class="icon-bg red">🏹</span>Focus : la loi de Fitts</div><p>Paul Fitts (1954) a montré que le temps pour atteindre une cible dépend de sa <strong>distance</strong> et de sa <strong>taille</strong> : <code>T = a + b × log₂(D / W + 1)</code>, où D est la distance et W la largeur de la cible. Plus c’est loin et petit, plus c’est long.</p><div class="instruction-box"><strong class="title">Mini-jeu</strong>Cliquez sur « Démarrer ». Une cible rouge apparaît à gauche, puis à droite : cliquez-la le plus vite possible, 7 fois par taille (le premier clic lance le chronomètre). Trois tailles se suivent, de la plus grande à la plus petite.</div><div class="fitts-bar"><span id="fittsInfo" class="muted">Prêt ? Cliquez sur « Démarrer ».</span><button class="btn btn-primary btn-sm" id="fittsStart">▶ Démarrer</button></div><div class="fitts-zone" id="fittsZone" aria-label="Zone du test de Fitts"></div><div class="table-wrap"><table id="fittsTable"><tr><th>Cible</th><th>Taille</th><th>Distance</th><th>Difficulté (bits)</th><th>Temps moyen</th></tr><tr><td colspan="5" class="muted">Les résultats s’afficheront ici à la fin du test.</td></tr></table></div><p class="muted" id="fittsMsg"></p><h3>Conséquences concrètes</h3><div class="grid grid-2"><div class="mini-card good"><h4>✅ À faire</h4><ul class="clean"><li>Rendre les actions principales grandes et proches du pouce sur mobile ;</li><li>Profiter des bords et des coins de l’écran, que le curseur n’a pas à viser avec précision ;</li><li>Espacer les cibles voisines, surtout une action destructrice d’une action courante ;</li><li>Rendre cliquable toute la zone d’un libellé ou d’une carte.</li></ul></div><div class="mini-card bad"><h4>❌ À éviter</h4><ul class="clean"><li>Des liens minuscules serrés les uns contre les autres ;</li><li>Un « Supprimer » collé à un « Enregistrer » ;</li><li>Des cibles tactiles plus petites que le doigt ;</li><li>Une action fréquente reléguée loin de la zone d’attention.</li></ul></div></div><div class="table-wrap"><table><tr><th>Référence</th><th>Taille minimale de cible tactile</th></tr><tr><td>WCAG 2.2, niveau AA (critère 2.5.8)</td><td>24 × 24 pixels CSS</td></tr><tr><td>WCAG 2.2, niveau AAA (critère 2.5.5)</td><td>44 × 44 pixels CSS</td></tr><tr><td>Recommandation Apple</td><td>44 × 44 points</td></tr><tr><td>Recommandation Material Design</td><td>48 × 48 dp</td></tr></table></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">⏱️</span>Le temps de réponse : seuil de Doherty et limites de Nielsen</div><div class="levels"><div class="level" style="grid-template-columns:76px 1fr"><span class="lv" style="font-size:.9rem">0,1 s</span><span>Réponse perçue comme <strong>instantanée</strong> : aucun retour particulier n’est nécessaire.</span></div><div class="level" style="grid-template-columns:76px 1fr"><span class="lv" style="font-size:.9rem">0,4 s</span><span><strong>Seuil de Doherty</strong> : en dessous, l’échange garde son rythme et la productivité augmente.</span></div><div class="level" style="grid-template-columns:76px 1fr"><span class="lv" style="font-size:.9rem">1 s</span><span>Limite pour que le <strong>fil de pensée</strong> de l’utilisateur reste ininterrompu : il remarque l’attente.</span></div><div class="level" style="grid-template-columns:76px 1fr"><span class="lv" style="font-size:.9rem">10 s</span><span>Limite de l’<strong>attention</strong> : au-delà, l’utilisateur décroche ; afficher une progression.</span></div></div><p class="muted">Le seuil de 400 ms est un repère de réactivité de l’interaction, pas un objectif de chargement complet de page. Quand l’attente est inévitable, montrez qu’elle est prise en compte (indicateur, squelette de page).</p></div><div class="card" data-explorer="x3"><div class="section-title"><span class="icon-bg purple">🎯</span>Explorateur — décision et action</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 7</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Réduire l’effort de choix, de pointage et d’attente.</div><p style="margin:8px 0 0">Structurer plutôt que supprimer, rapprocher et agrandir ce qui compte, répondre vite ou montrer que l’on travaille.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 4</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm3"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt3">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill3"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="3">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="3">👁 Révéler</button><button class="btn btn-ghost" data-qreset="3">↺ Recommencer</button></div><div class="result-panel" id="qres3"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c2">◂ Précédent</button><button class="btn btn-primary" data-goto="c4">Suite : 🧭 Comportement & attentes ▸</button></div></div></section>
+<section class="panel" data-panel="c4">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 5 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🧭</span>Ce que les utilisateurs attendent et font vraiment</div><p class="lead">Les utilisateurs ne lisent pas les modes d’emploi, jugent beaucoup sur l’émotion et arrivent avec les habitudes prises ailleurs. Ce chapitre rassemble les lois qui décrivent ces comportements, puis prend du recul sur leur valeur.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Énoncer six lois de comportement et d’attentes et adopter un regard critique sur le niveau de preuve des lois UX.</div></div><div class="card" data-explorer="x4"><div class="section-title"><span class="icon-bg purple">🧭</span>Explorateur — comportement et attentes</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg red">🔬</span>Esprit critique : que valent les lois UX ?</div><div class="grid grid-3"><div class="mini-card"><h4>🧪 Des origines variées</h4><p class="muted">Psychologie expérimentale (Fitts, Miller), observations de terrain (Jakob), formules d’ingénieurs ou de praticiens (Tesler, Postel).</p></div><div class="mini-card"><h4>⚖️ Un niveau de preuve inégal</h4><p class="muted">Fitts est solide et mesurable. D’autres, comme l’effet Zeigarnik ou la surcharge de choix, ont des résultats contrastés.</p></div><div class="mini-card"><h4>🎯 Un usage mesuré</h4><p class="muted">Une loi est un argument pour justifier et une hypothèse à tester, pas un verdict. Le contexte et la cible comptent toujours.</p></div></div><div class="key-box"><div class="big">Justifier avec une loi, vérifier avec des utilisateurs.</div><p style="margin:8px 0 0">Citer « la loi de Hick » ne remplace pas l’observation. Dans votre audit, nommez la loi, décrivez le problème observé et dites ce qui reste à vérifier.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 5</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm4"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt4">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill4"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="4">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="4">👁 Révéler</button><button class="btn btn-ghost" data-qreset="4">↺ Recommencer</button></div><div class="result-panel" id="qres4"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c3">◂ Précédent</button><button class="btn btn-primary" data-goto="c5">Suite : 👁️ Gestalt ▸</button></div></div></section>
+<section class="panel" data-panel="c5">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 6 sur 6</span></div><div class="card"><div class="section-title"><span class="icon-bg ">👁️</span>La Gestalt : comment l’œil organise la page</div><p class="lead"><em>Gestalt</em> signifie « forme » en allemand. Cette école de psychologie (Wertheimer, Köhler, Koffka, début du XXᵉ siècle) a montré que nous percevons d’abord des <strong>ensembles organisés</strong>, avant des éléments isolés. Pour un designer, c’est la grammaire du regroupement : ce qui est proche, semblable ou encadré est perçu comme lié.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Reconnaître les principes de la Gestalt, les appliquer à une mise en page et en tirer des règles de hiérarchie, de contraste et de simplicité.</div><h3>Le laboratoire <span class="famille-tag f5">Gestalt & mise en page</span></h3><p class="muted">Choisissez un principe, puis basculez entre les variantes : observez ce que vous voyez, avant de lire la légende.</p><div id="gLab"><div class="chain" id="gMenu"></div><div class="choice-row" id="gVar" style="margin-top:8px"></div><div class="g-stage" id="gStage"></div><p class="muted" id="gSay" style="margin-top:8px" aria-live="polite"></p></div></div><div class="card" data-explorer="x5"><div class="section-title"><span class="icon-bg purple">👁️</span>Explorateur — les principes de la Gestalt</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 8</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card" data-explorer="x6"><div class="section-title"><span class="icon-bg green">📐</span>Explorateur — mettre en page</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 3</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Plus de blanc entre les groupes qu’à l’intérieur des groupes.</div><p style="margin:8px 0 0">Proximité, similarité, cadre commun : ces trois leviers disent à l’œil ce qui va ensemble, avant même qu’il ait lu un mot.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 6</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm5"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt5">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill5"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="5">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="5">👁 Révéler</button><button class="btn btn-ghost" data-qreset="5">↺ Recommencer</button></div><div class="result-panel" id="qres5"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c4">◂ Précédent</button><button class="btn btn-primary" data-goto="syn">Suite : 🏁 Synthèse ▸</button></div></div></section>
+<section class="panel" data-panel="syn">
+<div class="card"><div class="section-title"><span class="icon-bg green">📊</span>Vos résultats aux QCM</div><div class="table-wrap score-table"><table><tr><th>Chapitre</th><th>Thème</th><th>Meilleur score</th></tr><tr><td>Chapitre 1</td><td>🧩 Concepts</td><td id="score0">—</td></tr><tr><td>Chapitre 2</td><td>📐 Critères d’Amélie Boucher</td><td id="score1">—</td></tr><tr><td>Chapitre 3</td><td>🧠 Mémoire & attention</td><td id="score2">—</td></tr><tr><td>Chapitre 4</td><td>🎯 Décision & action</td><td id="score3">—</td></tr><tr><td>Chapitre 5</td><td>🧭 Comportement & attentes</td><td id="score4">—</td></tr><tr><td>Chapitre 6</td><td>👁️ Gestalt</td><td id="score5">—</td></tr><tr><td colspan="2"><strong>Total</strong></td><td id="scoreTotal">0 / 30</td></tr></table></div><p class="muted">Un chapitre sous 4 / 5 ? Relisez-le et refaites son QCM avant de passer au support pratique.</p></div><div class="card"><div class="section-title"><span class="icon-bg ">🔑</span>Le message clé</div><div class="key-box"><div class="big">Une loi UX est un argument, pas un verdict.</div><p style="margin:8px 0 0">Nommer le principe, décrire ce que l’on observe, dire ce qui reste à vérifier : voilà ce qui rend une justification solide.</p></div><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Distinguer affordance, signifiant, modèle mental, charge cognitive, nombre magique et feedback ;</li><li>Utiliser les 12 critères d’ergonomie web d’Amélie Boucher comme grille d’évaluation ;</li><li>Énoncer et illustrer les lois de l’UX majeures : mémoire et attention, décision et action (focus sur la loi de Fitts), comportement et attentes ;</li><li>Appliquer les principes de la Gestalt (proximité, similarité, continuité, clôture…) à une mise en page ;</li><li>Nuancer une loi UX : son contexte, ses limites et ses mauvaises interprétations courantes.</li></ul></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">📦</span>À la fin de la séance, vous devez pouvoir</div><div class="checklist" id="finCheck"><label><input type="checkbox"> Distinguer affordance, signifiant et feedback, et citer un exemple de chacun ;</label><label><input type="checkbox"> Citer les 12 critères d’ergonomie web d’Amélie Boucher et les rapprocher de Bastien & Scapin et de Nielsen ;</label><label><input type="checkbox"> Énoncer les lois de Hick, Fitts, Jakob, Miller et le seuil de Doherty, avec leur nuance ;</label><label><input type="checkbox"> Expliquer la loi de Fitts et en tirer des règles de taille et de placement des cibles ;</label><label><input type="checkbox"> Reconnaître la proximité, la similarité, la continuité, la clôture et la région commune sur un écran ;</label><label><input type="checkbox"> Formuler une justification du type « loi + observation + limite ».</label></div><div class="link-card"><span><strong>🛠️ Passez à la pratique</strong><br><span class="muted">Cas 1, 2, 3, « Quelle loi ? » et glossaire à débloquer.</span></span><a class="btn btn-success" href="seance-2-concepts-lois-ux-et-gestalt-pratique.html">Ouvrir le support pratique ▸</a></div><div class="objectif-box"><strong class="title">Prochaine séance — Je sais penser à partir de l’utilisateur</strong>Vous modéliserez un persona à partir d’entretiens, construirez une carte d’empathie, décrirez un parcours utilisateur avec ses émotions et ses frustrations, et structurerez l’information (tri par cartes, arborescence). Pensez au site que votre groupe pourrait auditer en séance 4 : le choix sera validé à la fin de la séance 3.</div></div></section>
+</main>
+<footer>Ergonomie web — Séance 2 — Concepts, lois UX et Gestalt — Théorie<br>Mode formateur : ajoutez <code>?formateur</code> à l'adresse de la page.</footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+"use strict";
+const FAMILIES={"f1": "Concepts & critères", "f2": "Mémoire & attention", "f3": "Décision & action", "f4": "Comportement & attentes", "f5": "Gestalt & mise en page"};
+const EXPLORERS={"x0": {"items": [{"id": "Affordance", "fam": "f1", "rows": [["Définition", "Possibilité d’action offerte par un objet et perçue par la personne. Concept du psychologue J. J. Gibson, popularisé en design par Don Norman."], ["Exemple", "Un bouton en relief invite à être pressé ; une poignée invite à être tirée."], ["Nuance", "Une action possible n’est utile que si elle est perçue : un lien de la même couleur que le texte, sans soulignement, offre l’action mais ne la montre pas."], ["À retenir", "Une action possible doit aussi être perceptible."]]}, {"id": "Signifiant", "fam": "f1", "rows": [["Définition", "Indice perceptible qui indique où et comment agir. Norman insiste, dans l’édition révisée de son ouvrage, sur son importance pour le concepteur."], ["Exemple", "Soulignement d’un lien, flèche, libellé « Ajouter au panier », curseur en forme de main."], ["Nuance", "Une icône seule, sans libellé, est un signifiant fragile si sa signification n’est pas universellement connue."], ["À retenir", "L’affordance dit ce qui est possible ; le signifiant montre où et comment."]]}, {"id": "Modèle mental", "fam": "f1", "rows": [["Définition", "Représentation que l’utilisateur se fait du fonctionnement d’un système, nourrie par ses expériences passées."], ["Exemple", "Un panier d’achat : on y ajoute, on retire, on reprend plus tard, comme dans un magasin."], ["Nuance", "Concevoir selon le modèle du développeur (la base de données) plutôt que celui de l’utilisateur."], ["À retenir", "Plus l’interface épouse le modèle mental, moins elle a besoin d’explications."]]}, {"id": "Charge cognitive", "fam": "f1", "rows": [["Définition", "Quantité de ressources mentales (attention, mémoire de travail) mobilisées par une tâche. Notion issue des travaux de John Sweller."], ["Exemple", "Un formulaire en trois étapes avec indicateur de progression, plutôt que trente champs d’un coup."], ["Nuance", "On distingue la charge intrinsèque (difficulté propre à la tâche) et la charge extrinsèque (due à la présentation) : seule la seconde peut être réduite par le design."], ["À retenir", "Chaque élément superflu consomme une ressource limitée."]]}, {"id": "Nombre magique", "fam": "f1", "rows": [["Définition", "Titre d’un article de George Miller (1956) : la mémoire immédiate retient environ 7 ± 2 éléments (« paquets », ou chunks)."], ["Exemple", "Un numéro de téléphone découpé en cinq groupes de deux chiffres."], ["Nuance", "Des travaux ultérieurs situent plutôt la limite autour de 4 éléments. Et la règle « 7 entrées maximum dans un menu » est une mauvaise lecture : un menu visible n’a pas à être mémorisé."], ["À retenir", "Regrouper pour aider la mémoire ; ce n’est pas un quota magique."]]}, {"id": "Feedback", "fam": "f1", "rows": [["Définition", "Réponse du système indiquant qu’une action a été prise en compte et quel en est le résultat."], ["Exemple", "Un bouton qui change d’état au clic, un message « Enregistré », une barre de progression."], ["Nuance", "Un retour trop tardif, ou trop discret (par exemple uniquement un changement de couleur) pose problème, notamment pour l’accessibilité."], ["À retenir", "Toute action doit recevoir une réponse perceptible."]]}]}, "x1": {"items": [{"id": "1 · Architecture", "fam": "f1", "rows": [["Question à se poser", "Le contenu est-il organisé et nommé de façon logique, de sorte qu’on sache où chercher ?"], ["Exemple", "Des rubriques construites autour des besoins des visiteurs plutôt que de l’organigramme de l’entreprise."], ["Lien avec les autres grilles", "Compatibilité (B&S) ; travaillée en séance 3 (architecture de l’information)."]]}, {"id": "2 · Organisation visuelle", "fam": "f1", "rows": [["Question à se poser", "La page hiérarchise-t-elle l’information (regroupements, alignements, priorités) pour guider le regard ?"], ["Exemple", "Titre, sous-titre, bloc d’action principal bien visible, sections séparées par des espaces."], ["Lien avec les autres grilles", "Guidage / groupement (B&S) ; principes de la Gestalt (chapitre 6)."]]}, {"id": "3 · Cohérence", "fam": "f1", "rows": [["Question à se poser", "Les éléments identiques se présentent-ils toujours de la même façon ?"], ["Exemple", "Le même gabarit pour toutes les fiches produit ; les mêmes boutons partout."], ["Lien avec les autres grilles", "Homogénéité (B&S) ; heuristique 4 de Nielsen."]]}, {"id": "4 · Conventions", "fam": "f1", "rows": [["Question à se poser", "Respecte-t-on les habitudes du web ?"], ["Exemple", "Logo qui ramène à l’accueil, panier en haut à droite, lien souligné."], ["Lien avec les autres grilles", "Heuristique 4 de Nielsen ; loi de Jakob (chapitre 5)."]]}, {"id": "5 · Information", "fam": "f1", "rows": [["Question à se poser", "Les informations nécessaires sont-elles présentes, au bon moment et au bon endroit ?"], ["Exemple", "Les frais de livraison affichés avant la dernière étape, pas à la toute fin."], ["Lien avec les autres grilles", "Guidage et charge de travail (B&S)."]]}, {"id": "6 · Compréhension", "fam": "f1", "rows": [["Question à se poser", "Les textes, libellés et icônes sont-ils compréhensibles par la cible, sans jargon ?"], ["Exemple", "« Réserver la salle » plutôt que « OK » ; une icône accompagnée de son libellé."], ["Lien avec les autres grilles", "Signifiance des codes (B&S) ; heuristique 2 de Nielsen."]]}, {"id": "7 · Guidage / assistance", "fam": "f1", "rows": [["Question à se poser", "L’utilisateur sait-il où il est, ce qu’il doit faire et ce qui l’attend ?"], ["Exemple", "Étapes numérotées, fil d’Ariane, aide contextuelle près d’un champ complexe."], ["Lien avec les autres grilles", "Guidage (B&S) ; heuristiques 1 et 10 de Nielsen."]]}, {"id": "8 · Gestion des erreurs", "fam": "f1", "rows": [["Question à se poser", "Les erreurs sont-elles évitées, expliquées, faciles à corriger ?"], ["Exemple", "« La date doit être postérieure à aujourd’hui », avec le champ conservé."], ["Lien avec les autres grilles", "Gestion des erreurs (B&S) ; heuristiques 5 et 9 de Nielsen."]]}, {"id": "9 · Rapidité", "fam": "f1", "rows": [["Question à se poser", "Le site répond-il assez vite et la tâche s’accomplit-elle sans détours ?"], ["Exemple", "Une recherche qui suggère des résultats pendant la saisie ; un tunnel de commande en peu d’étapes."], ["Lien avec les autres grilles", "Efficience (ISO 9241-11) ; seuil de Doherty (chapitre 4)."]]}, {"id": "10 · Liberté", "fam": "f1", "rows": [["Question à se poser", "L’utilisateur garde-t-il la main : annuler, revenir, refuser, choisir ?"], ["Exemple", "Un bouton « Annuler » ; la possibilité de refuser les cookies aussi facilement que de les accepter."], ["Lien avec les autres grilles", "Contrôle explicite (B&S) ; heuristique 3 de Nielsen."]]}, {"id": "11 · Accessibilité", "fam": "f1", "rows": [["Question à se poser", "Le site est-il utilisable par tous, quels que soient le handicap, l’appareil ou le contexte ?"], ["Exemple", "Contraste suffisant, navigation au clavier, texte alternatif sur les images."], ["Lien avec les autres grilles", "Accessibilité (séance 1) ; référentiel RGAA et WCAG."]]}, {"id": "12 · Satisfaction de l’internaute", "fam": "f1", "rows": [["Question à se poser", "Le site inspire-t-il confiance et plaisir, donne-t-il envie de revenir ?"], ["Exemple", "Un ton rassurant, une confirmation soignée après un achat."], ["Lien avec les autres grilles", "Satisfaction (ISO 9241-11) ; UX."]]}]}, "x2": {"items": [{"id": "Mémoire de travail", "fam": "f2", "rows": [["Énoncé", "Système de mémoire à capacité très limitée et de courte durée, qui conserve et traite l’information en cours d’utilisation."], ["Exemple web", "Devoir retenir un code reçu par SMS pendant qu’on change d’écran pour le saisir."], ["Nuance", "Les estimations de capacité varient selon les travaux ; mieux vaut ne jamais faire dépendre une tâche de la mémoire de l’utilisateur."], ["À retenir", "Montrer l’information au lieu de la faire retenir (Nielsen 6)."]]}, {"id": "Chunking", "fam": "f2", "rows": [["Énoncé", "Regrouper l’information en unités signifiantes plus petites pour faciliter son traitement et sa mémorisation."], ["Exemple web", "Un numéro de carte en blocs de quatre ; un formulaire divisé en sections nommées."], ["Nuance", "Des blocs mal délimités ou trop nombreux n’aident pas : il faut des regroupements qui ont du sens."], ["À retenir", "Découper pour faciliter, pas pour cacher."]]}, {"id": "Attention sélective", "fam": "f2", "rows": [["Énoncé", "Nous filtrons notre environnement pour ne traiter que ce qui sert notre but du moment. Conséquence connue : la cécité aux bannières."], ["Exemple web", "Une information utile placée dans un encadré qui ressemble à une publicité n’est pas vue."], ["Nuance", "Ce n’est pas une fatalité : une zone bien intégrée à la tâche est regardée."], ["À retenir", "Ce qui n’est pas lié à la tâche en cours n’est pas vu."]]}, {"id": "Effet de position sérielle", "fam": "f2", "rows": [["Énoncé", "Dans une série, on retient mieux les premiers éléments (primauté) et les derniers (récence) que ceux du milieu."], ["Exemple web", "Dans une barre de navigation mobile, les destinations clés aux extrémités."], ["Nuance", "Cela ne justifie pas de ranger les contenus selon leur place plutôt que selon leur logique."], ["À retenir", "Les extrémités sont des places fortes ; le milieu est une zone faible."]]}, {"id": "Effet Von Restorff", "fam": "f2", "rows": [["Énoncé", "Parmi des éléments semblables, celui qui se distingue est mieux mémorisé (effet d’isolation, Hedwig von Restorff, 1933)."], ["Exemple web", "Le bouton principal dans une couleur d’accent unique ; l’offre « recommandée » mise en avant."], ["Nuance", "Si tout est mis en valeur, plus rien ne l’est."], ["À retenir", "Un seul élément d’accentuation par zone."]]}, {"id": "Effet Zeigarnik", "fam": "f2", "rows": [["Énoncé", "Les tâches interrompues ou inachevées sont mieux mémorisées que les tâches terminées (Bluma Zeigarnik, 1927)."], ["Exemple web", "Une barre « Profil complété à 70 % » ; un fil d’étapes dans un tunnel."], ["Nuance", "Les travaux de réplication donnent des résultats mitigés, et il ne faut pas l’utiliser pour harceler l’utilisateur de rappels."], ["À retenir", "Montrer qu’une tâche est en cours incite à la terminer."]]}]}, "x3": {"items": [{"id": "Loi de Hick", "fam": "f3", "rows": [["Énoncé", "Le temps de décision augmente avec le nombre et la complexité des choix (Hick et Hyman, 1952)."], ["Exemple web", "Une navigation principale limitée aux rubriques essentielles ; un choix recommandé mis en avant."], ["Nuance", "Ce n’est pas « toujours moins de choix » : supprimer des options utiles est pire que les structurer, et l’effet est faible pour des choix familiers et bien classés."], ["À retenir", "Structurer, hiérarchiser et recommander plutôt que supprimer à tout prix."]]}, {"id": "Surcharge de choix", "fam": "f3", "rows": [["Énoncé", "Un trop grand nombre d’options peut retarder la décision, la rendre pénible ou faire renoncer (étude des confitures d’Iyengar et Lepper, 2000)."], ["Exemple web", "Une page de tarifs avec douze offres et aucune recommandation."], ["Nuance", "Des études ultérieures ont obtenu des résultats plus contrastés : l’effet dépend du contexte et de l’expertise."], ["À retenir", "Limiter, comparer, recommander."]]}, {"id": "Loi de Fitts", "fam": "f3", "rows": [["Énoncé", "Le temps pour atteindre une cible est fonction de la distance à la cible et de sa taille (Paul Fitts, 1954)."], ["Exemple web", "Un bouton principal large et proche du pouce ; un « Valider » et un « Annuler » bien séparés."], ["Nuance", "Plus grand n’est pas toujours mieux : une cible énorme occupe l’espace, et deux cibles serrées provoquent des erreurs."], ["À retenir", "Actions importantes : grandes et proches ; actions destructrices : distinctes et éloignées."]]}, {"id": "Seuil de Doherty", "fam": "f3", "rows": [["Énoncé", "La productivité augmente quand l’ordinateur et l’utilisateur interagissent à un rythme inférieur à environ 400 ms (Doherty et Thadani, IBM, 1982)."], ["Exemple web", "Un filtre de liste qui réagit à la saisie ; un écran « squelette » pendant le chargement."], ["Nuance", "C’est un repère de réactivité des interactions, pas un budget de temps de chargement de page."], ["À retenir", "Répondre vite ou, à défaut, montrer que le système travaille."]]}, {"id": "Loi de Tesler", "fam": "f3", "rows": [["Énoncé", "Loi de conservation de la complexité : tout système comporte une part de complexité incompressible ; la question est de savoir qui la porte (Larry Tesler)."], ["Exemple web", "La ville est déduite du code postal : le système porte la complexité à la place de l’utilisateur."], ["Nuance", "Absorber la complexité côté système a un coût de conception et de développement."], ["À retenir", "Déplacer la complexité de l’utilisateur vers le concepteur."]]}, {"id": "Loi de Postel", "fam": "f3", "rows": [["Énoncé", "« Soyez conservateur dans ce que vous émettez, libéral dans ce que vous acceptez » (Jon Postel, principe de robustesse issu des protocoles réseau)."], ["Exemple web", "Un champ téléphone qui accepte « 06 12 34 56 78 » comme « 0612345678 » et normalise lui-même."], ["Nuance", "La tolérance ne doit pas devenir de l’ambiguïté : face à une saisie douteuse, demander confirmation."], ["À retenir", "Absorber la variété des saisies humaines."]]}, {"id": "Principe de Pareto", "fam": "f3", "rows": [["Énoncé", "Environ 80 % des effets proviennent de 20 % des causes."], ["Exemple web", "Une petite part des fonctionnalités concentre l’essentiel de l’usage : on la place au premier plan."], ["Nuance", "C’est un ordre de grandeur, pas un ratio exact ; il faut le vérifier avec des données d’usage."], ["À retenir", "Identifier les usages majeurs avant de choisir ce que l’on met en avant."]]}]}, "x4": {"items": [{"id": "Loi de Jakob", "fam": "f4", "rows": [["Énoncé", "Les utilisateurs passent la plupart de leur temps sur d’autres sites : ils préfèrent que le vôtre fonctionne comme ceux qu’ils connaissent (Jakob Nielsen)."], ["Exemple web", "Le panier en haut à droite, le logo qui ramène à l’accueil."], ["Nuance", "Elle n’interdit pas d’innover : on rompt avec la convention quand le gain est net, et on accompagne le changement."], ["À retenir", "Conventions d’abord, singularité là où elle apporte de la valeur."]]}, {"id": "Effet esthétique-utilisabilité", "fam": "f4", "rows": [["Énoncé", "Les utilisateurs perçoivent une interface esthétique comme plus utilisable (Kurosu et Kashimura, 1995)."], ["Exemple web", "Un site soigné est jugé plus fiable qu’un site brut au contenu identique."], ["Nuance", "Une belle interface peut masquer des défauts lors des tests : les gens pardonnent davantage. Elle ne remplace pas l’utilisabilité."], ["À retenir", "Le beau fait pardonner, il ne dispense pas de bien faire."]]}, {"id": "Effet de gradient d’objectif", "fam": "f4", "rows": [["Énoncé", "Plus on se rapproche d’un but, plus on accélère (Clark Hull, 1932)."], ["Exemple web", "Une barre de progression dans un tunnel d’inscription ; une carte de fidélité dont deux cases sont déjà tamponnées."], ["Nuance", "Une progression artificielle déçoit quand elle est découverte."], ["À retenir", "Montrer l’avancement, honnêtement."]]}, {"id": "Règle du pic et de la fin", "fam": "f4", "rows": [["Énoncé", "On juge une expérience surtout d’après son moment le plus intense (pic) et sa fin, davantage que d’après sa moyenne (Daniel Kahneman)."], ["Exemple web", "Une page de confirmation de commande soignée ; une dernière étape d’inscription réussie."], ["Nuance", "Une belle fin ne rattrape pas un parcours pénible : elle atténue le souvenir sans corriger le problème."], ["À retenir", "Soigner les moments forts et la sortie."]]}, {"id": "Paradoxe de l’utilisateur actif", "fam": "f4", "rows": [["Énoncé", "Les utilisateurs veulent se lancer et ne lisent pas les modes d’emploi, même si les lire leur ferait gagner du temps (Carroll et Rosson, 1987)."], ["Exemple web", "Une aide contextuelle au moment du besoin plutôt qu’un tutoriel de 12 écrans à l’ouverture."], ["Nuance", "Il ne s’agit pas de supprimer l’aide, mais de la placer là où l’utilisateur en a besoin."], ["À retenir", "Aide courte, contextuelle, au bon moment."]]}, {"id": "Loi de Parkinson", "fam": "f4", "rows": [["Énoncé", "Toute tâche s’étend jusqu’à occuper le temps disponible (Cyril Northcote Parkinson, 1955)."], ["Exemple web", "Un formulaire pré-rempli et en peu d’étapes se termine plus vite qu’un formulaire ouvert."], ["Nuance", "Observation née de l’organisation du travail, transposée à l’UX : utile surtout pour raccourcir les parcours."], ["À retenir", "Réduire le temps nécessaire à la tâche, tout en laissant le contrôle à l’utilisateur."]]}]}, "x5": {"items": [{"id": "Proximité", "fam": "f5", "rows": [["Principe", "Les éléments proches sont perçus comme appartenant au même groupe."], ["Exemple web", "Un libellé collé à son champ ; un espace plus grand entre deux sections qu’à l’intérieur d’une section."], ["Piège", "Un espacement uniforme : tout paraît lié, ou un libellé équidistant de deux champs devient ambigu."], ["À retenir", "Plus de blanc entre les groupes qu’à l’intérieur des groupes."]]}, {"id": "Similarité", "fam": "f5", "rows": [["Principe", "Les éléments semblables (forme, couleur, taille) sont perçus comme liés ou de même nature."], ["Exemple web", "Tous les liens en bleu souligné ; tous les boutons secondaires dans le même style."], ["Piège", "Donner le même style à des éléments de fonctions différentes (un titre et un bouton)."], ["À retenir", "Même apparence, même fonction."]]}, {"id": "Continuité", "fam": "f5", "rows": [["Principe", "L’œil suit les lignes et les courbes et préfère les trajectoires continues."], ["Exemple web", "Des champs alignés sur une même verticale ; un carrousel qui déborde pour suggérer une suite."], ["Piège", "Des ruptures d’alignement fortuites qui cassent la lecture."], ["À retenir", "Aligner pour guider le regard."]]}, {"id": "Clôture", "fam": "f5", "rows": [["Principe", "Le cerveau complète les formes incomplètes pour y voir un tout."], ["Exemple web", "Une icône dessinée en trait discontinu est reconnue comme un cercle ; un logo à contour ouvert."], ["Piège", "Laisser trop d’information à compléter nuit à la lisibilité."], ["À retenir", "On peut suggérer sans tout tracer."]]}, {"id": "Figure-fond", "fam": "f5", "rows": [["Principe", "Nous distinguons un élément qui ressort (la figure) d’un arrière-plan (le fond)."], ["Exemple web", "Une fenêtre modale sur un fond assombri ; une carte sur un fond contrasté."], ["Piège", "Figure et fond qui se confondent, par exemple du texte sur une image chargée."], ["À retenir", "Une figure claire sur un fond calme."]]}, {"id": "Destin commun", "fam": "f5", "rows": [["Principe", "Les éléments qui bougent ensemble dans la même direction sont perçus comme un groupe."], ["Exemple web", "Les lignes d’une liste qui glissent ensemble lors d’un tri ou d’une suppression."], ["Piège", "Des animations incohérentes entre éléments pourtant liés."], ["À retenir", "Animer ensemble ce qui va ensemble."]]}, {"id": "Région commune", "fam": "f5", "rows": [["Principe", "Les éléments situés dans une même zone délimitée sont perçus comme un groupe (Palmer, 1992)."], ["Exemple web", "Une carte produit avec cadre ou fond commun pour l’image, le titre et le prix."], ["Piège", "Multiplier les cadres imbriqués, qui alourdissent la page."], ["À retenir", "Un cadre ou un fond commun rassemble."]]}, {"id": "Prégnance", "fam": "f5", "rows": [["Principe", "Nous percevons spontanément la forme la plus simple possible (loi de Prägnanz, ou de la bonne forme)."], ["Exemple web", "Un logo composé de formes basiques, reconnu en une fraction de seconde."], ["Piège", "Des formes complexes ou ambiguës qui obligent à réfléchir."], ["À retenir", "Simplifier les formes pour être compris plus vite."]]}]}, "x6": {"items": [{"id": "Hiérarchie visuelle", "fam": "f5", "rows": [["Définition", "Organisation des éléments par ordre d’importance, grâce à la taille, la graisse, la couleur, la position et l’espace."], ["Exemple web", "Un titre large, un sous-titre plus petit, un bouton d’action principal bien visible."], ["Piège", "Tout rendre important : plus rien ne ressort."], ["À retenir", "L’œil doit pouvoir lire la page en trois niveaux."]]}, {"id": "Contraste", "fam": "f5", "rows": [["Définition", "Différence de luminosité ou de couleur entre un élément et son fond. Les WCAG AA demandent 4,5:1 pour le texte courant et 3:1 pour le grand texte."], ["Exemple web", "Un texte gris foncé sur fond blanc ; un bouton dont le libellé est bien lisible."], ["Piège", "Du gris clair sur du blanc, très répandu mais illisible pour beaucoup de personnes."], ["À retenir", "Vérifier le contraste de chaque couple texte / fond."]]}, {"id": "Rasoir d’Ockham", "fam": "f5", "rows": [["Définition", "Entre plusieurs solutions équivalentes, la plus simple est préférable : n’ajoutez rien qui ne soit nécessaire."], ["Exemple web", "Supprimer un champ de formulaire qui ne sert à aucune décision."], ["Piège", "Simplifier au point de rendre l’interface incompréhensible (une icône sans libellé)."], ["À retenir", "Retirer ce qui n’apporte rien, jamais ce qui explique."]]}]}};
+const QCMS=[[{"q": "Un lien est écrit dans la même couleur que le texte, sans soulignement. Quel concept est en cause ?", "o": ["Un signifiant absent ou trop faible", "Le nombre magique", "La charge intrinsèque", "Le feedback"], "a": 0, "e": "Rien dans l’apparence n’indique qu’on peut cliquer : le signifiant est insuffisant."}, {"q": "Qui est à l’origine du concept d’affordance, avant sa popularisation en design par Don Norman ?", "o": ["Le psychologue J. J. Gibson", "Jakob Nielsen", "George Miller", "Paul Fitts"], "a": 0, "e": "Gibson a introduit l’affordance en psychologie de la perception ; Norman l’a transposée au design des objets et des interfaces."}, {"q": "Quelle lecture du nombre magique de Miller est correcte ?", "o": ["Un menu ne doit jamais dépasser 7 entrées.", "La mémoire immédiate retient un nombre limité d’éléments, d’où l’intérêt de regrouper l’information.", "Une page doit contenir 7 sections.", "Un formulaire doit comporter 7 champs."], "a": 1, "e": "Miller parle de mémoire à court terme, pas de longueur de menus. Le principe utile est le regroupement en unités signifiantes."}, {"q": "Quelle situation illustre une charge cognitive extrinsèque évitable ?", "o": ["Comprendre un concept complexe de comptabilité.", "Remplir un formulaire de 30 champs affichés d’un bloc, sans regroupement.", "Apprendre une langue étrangère.", "Résoudre une équation difficile."], "a": 1, "e": "La difficulté vient de la présentation, pas de la tâche : on peut la réduire en découpant et en regroupant."}, {"q": "Un bouton ne change pas d’aspect au clic et rien ne s’affiche ensuite. Quel concept est négligé ?", "o": ["Le feedback", "Le modèle mental", "L’affordance", "Le nombre magique"], "a": 0, "e": "Le bouton peut inviter au clic (affordance), mais aucune réponse ne confirme que l’action a été prise en compte."}], [{"q": "Combien de critères d’ergonomie web comporte la grille d’Amélie Boucher présentée en cours ?", "o": ["8", "10", "12", "18"], "a": 2, "e": "12 critères. Les 8 critères sont ceux de Bastien et Scapin, les 10 heuristiques celles de Nielsen."}, {"q": "Un site n’affiche les frais de livraison qu’à la toute dernière étape du paiement. Quel critère est d’abord en cause ?", "o": ["Information", "Rapidité", "Conventions", "Architecture"], "a": 0, "e": "L’information nécessaire à la décision n’est pas présente au bon moment."}, {"q": "Le logo d’un site ne ramène pas à la page d’accueil, contrairement à l’usage. Quel critère est enfreint ?", "o": ["Conventions", "Liberté", "Satisfaction de l’internaute", "Gestion des erreurs"], "a": 0, "e": "Le web a des habitudes que les utilisateurs connaissent : ne pas les respecter provoque de l’hésitation."}, {"q": "Quel critère examine la possibilité d’annuler, de revenir en arrière ou de refuser ?", "o": ["Liberté", "Architecture", "Organisation visuelle", "Accessibilité"], "a": 0, "e": "La liberté recouvre le contrôle de l’utilisateur sur ses actions."}, {"q": "Quel critère est le plus lié à la notion de temps de réponse de l’interface ?", "o": ["Rapidité", "Cohérence", "Compréhension", "Information"], "a": 0, "e": "La rapidité concerne à la fois la réactivité du site et la fluidité de la tâche."}], [{"q": "Un numéro de carte s’affiche « 1234567890123456 », puis « 1234 5678 9012 3456 ». Quel principe justifie la seconde présentation ?", "o": ["Le chunking", "L’effet Von Restorff", "L’attention sélective", "Le seuil de Doherty"], "a": 0, "e": "Regrouper en blocs de quatre transforme seize éléments en quatre unités."}, {"q": "Des visiteurs ne remarquent pas une information importante placée dans un encadré qui ressemble à une publicité. Quel phénomène est à l’œuvre ?", "o": ["L’attention sélective", "L’effet Zeigarnik", "La loi de Hick", "Le chunking"], "a": 0, "e": "Les utilisateurs filtrent ce qui ressemble à de la publicité : c’est la cécité aux bannières."}, {"q": "Dans une barre de navigation mobile à cinq icônes, quelles positions sont les plus mémorables selon l’effet de position sérielle ?", "o": ["La première et la dernière", "Celle du milieu", "Les deuxième et quatrième", "Aucune : toutes sont égales"], "a": 0, "e": "On retient mieux le début (primauté) et la fin (récence) d’une série."}, {"q": "Quelle est la principale limite de l’effet Von Restorff ?", "o": ["Il ne fonctionne qu’en noir et blanc.", "Si l’on met tout en valeur, plus rien ne se distingue.", "Il ne concerne que le texte.", "Il date de 2010."], "a": 1, "e": "L’effet repose sur le contraste avec ce qui entoure : trop d’éléments « spéciaux » annulent l’effet."}, {"q": "Une barre « Profil complété à 70 % » exploite surtout...", "o": ["L’effet Zeigarnik : une tâche inachevée reste en tête", "L’effet Von Restorff", "La position sérielle", "Le chunking"], "a": 0, "e": "Le fait que le profil soit inachevé incite à le terminer."}], [{"q": "Selon la loi de Fitts, de quoi dépend le temps pour atteindre une cible ?", "o": ["De sa taille et de sa distance", "De sa couleur", "Du nombre d’éléments à l’écran", "De la fréquence d’utilisation"], "a": 0, "e": "T = a + b × log₂(D / W + 1) : plus la cible est petite et éloignée, plus le temps augmente."}, {"q": "Sur une page de confirmation, quelle disposition respecte à la fois la loi de Fitts et la prévention des erreurs ?", "o": ["« Valider » et « Supprimer » collés, de même taille", "Action principale grande et proche du pouce, action destructrice plus éloignée et distincte", "Tous les boutons minuscules", "Tous les boutons au centre de l’écran"], "a": 1, "e": "On facilite l’action fréquente et on met de la distance avec l’action risquée."}, {"q": "Quelle conclusion tirée de la loi de Hick est la plus juste ?", "o": ["Il ne faut jamais dépasser 5 options.", "Il faut structurer, hiérarchiser et recommander plutôt que supprimer des options utiles.", "La loi ne s’applique pas au web.", "Il faut toujours proposer le maximum de choix."], "a": 1, "e": "La loi décrit une croissance du temps de décision ; elle invite à organiser les choix, pas à les amputer."}, {"q": "À quoi sert le repère de 400 ms (seuil de Doherty) ?", "o": ["À repérer le temps de réaction attendu d’une interaction : au-delà, il faut donner un retour", "À fixer le temps de chargement maximal d’une page", "À limiter la durée d’une session", "À définir la durée d’une animation"], "a": 0, "e": "C’est un repère de réactivité de l’interaction. Pour des attentes plus longues, on affiche une progression."}, {"q": "Un champ téléphone refuse « 06 12 34 56 78 » parce qu’il contient des espaces. Quelle loi est négligée ?", "o": ["Loi de Postel", "Loi de Tesler", "Principe de Pareto", "Seuil de Doherty"], "a": 0, "e": "Il faut être libéral dans ce que l’on accepte et normaliser soi-même. (La loi de Tesler s’en rapproche, mais Postel est la plus directe.)"}], [{"q": "Un site de e-commerce place son panier en bas à gauche de la page. Quelle loi est enfreinte ?", "o": ["Loi de Jakob", "Loi de Parkinson", "Effet Zeigarnik", "Loi de Tesler"], "a": 0, "e": "Les utilisateurs s’attendent à retrouver les conventions des autres sites, où le panier se trouve en haut à droite."}, {"q": "Quelle affirmation sur la loi de Jakob est correcte ?", "o": ["Elle interdit toute innovation.", "Elle invite à respecter les conventions, et à ne s’en écarter que lorsque le gain est net.", "Elle impose d’imiter le leader du marché.", "Elle ne concerne que les sites de e-commerce."], "a": 1, "e": "On innove là où cela apporte de la valeur, en accompagnant le changement."}, {"q": "Une application impose 12 écrans de présentation avant de pouvoir l’utiliser. Quel principe suggère de revoir ce choix ?", "o": ["Le paradoxe de l’utilisateur actif", "L’effet Von Restorff", "La règle du pic et de la fin", "Le principe de Pareto"], "a": 0, "e": "Les utilisateurs veulent agir tout de suite : l’aide doit venir au moment du besoin."}, {"q": "Une page de confirmation de commande très soignée améliore le souvenir de tout le parcours. Quel effet est à l’œuvre ?", "o": ["La règle du pic et de la fin", "La loi de Hick", "L’attention sélective", "La loi de Tesler"], "a": 0, "e": "La fin d’une expérience pèse davantage que sa moyenne dans le souvenir qu’on en garde."}, {"q": "Quelle précaution prendre avec les lois UX ?", "o": ["Les appliquer comme des lois physiques.", "Les utiliser comme arguments et hypothèses, en vérifiant le contexte et leur niveau de preuve.", "Les ignorer car elles sont démodées.", "Les citer sans donner d’exemple."], "a": 1, "e": "Une loi UX justifie un choix mais ne remplace pas la vérification auprès d’utilisateurs."}], [{"q": "Un libellé est situé à égale distance de deux champs : on ne sait pas auquel il se rapporte. Quel principe est négligé ?", "o": ["La proximité", "La clôture", "La continuité", "Le destin commun"], "a": 0, "e": "Un libellé doit être plus proche de son champ que de l’autre."}, {"q": "Tous les liens d’un site sont en bleu souligné, et seuls les liens le sont. Quel principe est exploité ?", "o": ["La similarité", "La clôture", "La proximité", "La figure-fond"], "a": 0, "e": "Même apparence, même fonction : c’est la similarité."}, {"q": "Une icône dessinée avec un trait discontinu reste reconnue comme un cercle. Quel principe l’explique ?", "o": ["La clôture", "La région commune", "Le destin commun", "La hiérarchie visuelle"], "a": 0, "e": "Le cerveau complète les formes incomplètes."}, {"q": "Une fiche produit regroupe image, titre et prix dans un cadre commun. Quel principe est surtout mobilisé ?", "o": ["La région commune", "La continuité", "Le chunking", "La loi de Hick"], "a": 0, "e": "Le cadre indique que les éléments qu’il contient forment un tout."}, {"q": "Quel contraste minimal demandent les WCAG, niveau AA, pour du texte courant ?", "o": ["2:1", "3:1", "4,5:1", "7:1"], "a": 2, "e": "4,5:1 pour le texte courant, 3:1 pour le grand texte. Le rapport 7:1 correspond au niveau AAA."}]];
+const ACTS=["ch0", "ch1", "ch2", "ch3", "ch4", "ch5"];
+const params = new URLSearchParams(location.search);
+if (params.has('formateur') || location.hash === '#formateur') document.body.classList.add('formateur');
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(()=>toast('Copié dans le presse-papiers ✅')).catch(()=>fallbackCopy(txt)); }
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){ const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('Copié dans le presse-papiers ✅');}catch(e){toast('Copie impossible : sélectionnez le texte manuellement');} ta.remove(); }
+function download(name, txt){ const blob=new Blob([txt],{type:'text/markdown;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function setProgress(fillId, txtId, done, total, suffix){ const p = total ? Math.round(done/total*100) : 0; $('#'+fillId).style.width = p+'%'; $('#'+txtId).textContent = done+' / '+total+(suffix||''); }
+function scoreMsg(pct){ if(pct>=90) return 'Excellent : les notions sont acquises.'; if(pct>=70) return 'Bon résultat. Relisez les explications des erreurs pour consolider.'; if(pct>=50) return 'Des bases, mais plusieurs confusions. Relisez le chapitre puis recommencez.'; return 'Reprenez le chapitre, puis recommencez l\'activité.'; }
+const done = new Set();
+function markDone(act){
+  if(done.has(act)) return false;
+  done.add(act);
+  $$('.tab[data-act="'+act+'"]').forEach(t=>t.classList.add('done'));
+  const n = done.size;
+  $('#globalFill').style.width = Math.round(n/ACTS.length*100)+'%';
+  $('#globalPct').textContent = n+' / '+ACTS.length;
+  toast(n===ACTS.length ? '🎉 Toutes les activités sont validées !' : 'Activité validée ✅');
+  if(typeof onDone==='function') onDone(act);
+  return true;
+}
+function openTab(i){
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==i));
+  $$('.panel').forEach(p=>p.classList.toggle('active', p.dataset.panel==i));
+  const tw = $('.tabs-wrap'); window.scrollTo({top: tw.offsetTop, behavior: 'smooth'});
+  const at = $('.tab[data-tab="'+i+'"]'); if(at) at.scrollIntoView({inline:'center', block:'nearest'});
+}
+$$('.tab').forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.tab)));
+$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.goto)));
+
+/* Explorateurs */
+$$('[data-explorer]').forEach(box=>{
+  const E = EXPLORERS[box.dataset.explorer]; const seen=new Set();
+  const chain=$('.chain',box), detail=$('.concept-detail',box);
+  E.items.forEach((k,i)=>{
+    const b=document.createElement('button'); b.className='chain-node'; b.textContent=k.id; b.dataset.i=i;
+    b.addEventListener('click',()=>show(i)); chain.appendChild(b);
+  });
+  function show(i){
+    const k=E.items[i]; seen.add(i);
+    $$('.chain-node',box).forEach(n=>{ n.classList.toggle('active', n.dataset.i==i); if(seen.has(+n.dataset.i)) n.classList.add('seen'); });
+    detail.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><span class="term-item">'+esc(k.id)+'</span><span class="famille-tag '+k.fam+'">'+esc(FAMILIES[k.fam]||'')+'</span></div>'+
+      k.rows.map(r=>'<div class="row"><span class="k">'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('');
+    const f=$('.progress-fill',box), t=$('.progress-label span:last-child',box);
+    f.style.width=Math.round(seen.size/E.items.length*100)+'%'; t.textContent=seen.size+' / '+E.items.length;
+  }
+  show(0);
+});
+const qState = {};
+const L = ['A','B','C','D','E'];
+function renderQCM(ci){
+  const box=$('#qcm'+ci); box.innerHTML='';
+  const qs = shuffle(QCMS[ci]).map(q=>{ const opts=shuffle(q.o.map((t,i)=>({t,good:i===q.a}))); return {q:q.q,e:q.e,opts}; });
+  qState[ci]={qs};
+  qs.forEach((q,qi)=>{
+    const d=document.createElement('div'); d.className='qcm-q';
+    d.innerHTML='<div class="qt"><span class="q-num">Q'+(qi+1)+'</span>'+esc(q.q)+'</div><div class="qcm-opts" role="radiogroup">'+
+      q.opts.map((o,oi)=>'<button type="button" class="qcm-opt" role="radio" aria-checked="false" data-oi="'+oi+'"><span class="l">'+L[oi]+'</span><span>'+esc(o.t)+'</span></button>').join('')+
+      '</div><div class="expl"></div>';
+    $$('.qcm-opt',d).forEach(b=>b.addEventListener('click',()=>{
+      if(d.classList.contains('checked')) return;
+      $$('.qcm-opt',d).forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-checked','false');});
+      b.classList.add('sel'); b.setAttribute('aria-checked','true'); d.dataset.ans=b.dataset.oi; updQ(ci);
+    }));
+    box.appendChild(d);
+  });
+  $('#qres'+ci).classList.remove('show'); updQ(ci);
+}
+function updQ(ci){ const rows=$$('#qcm'+ci+' .qcm-q'); setProgress('qfill'+ci,'qtxt'+ci,rows.filter(r=>r.dataset.ans!==undefined).length,rows.length); }
+const scores = {};
+function checkQCM(ci, silent){
+  const rows=$$('#qcm'+ci+' .qcm-q');
+  if(!silent && rows.some(r=>r.dataset.ans===undefined)){ toast('Répondez à toutes les questions avant de vérifier.'); return; }
+  let ok=0;
+  rows.forEach((r,qi)=>{
+    const q=qState[ci].qs[qi]; const ans=r.dataset.ans===undefined?-1:+r.dataset.ans;
+    const gi=q.opts.findIndex(o=>o.good); const good=ans===gi; if(good) ok++;
+    r.classList.remove('correct','wrong'); r.classList.add('checked', good?'correct':'wrong');
+    $$('.qcm-opt',r).forEach((b,oi)=>{ b.classList.toggle('good',oi===gi); b.classList.toggle('bad',oi===ans&&!good); });
+    $('.expl',r).innerHTML=(good?'✅ ':'❌ Bonne réponse : <strong>'+L[gi]+'</strong>. ')+esc(q.e);
+  });
+  const pct=Math.round(ok/rows.length*100);
+  $('#qres'+ci).innerHTML='<div class="score">'+ok+' / '+rows.length+'</div><div class="msg">'+scoreMsg(pct)+'</div>';
+  $('#qres'+ci).classList.add('show');
+  if(!silent){ scores[ci]=Math.max(scores[ci]||0,ok); updScores(); markDone('ch'+ci); }
+}
+function revealQCM(ci){
+  $$('#qcm'+ci+' .qcm-q').forEach((r,qi)=>{ const gi=qState[ci].qs[qi].opts.findIndex(o=>o.good); r.dataset.ans=gi; $$('.qcm-opt',r).forEach((b,oi)=>b.classList.toggle('sel',oi===gi)); });
+  updQ(ci); checkQCM(ci,true);
+}
+function updScores(){
+  let tot=0,max=0;
+  QCMS.forEach((q,ci)=>{ const c=$('#score'+ci); if(scores[ci]!==undefined){ c.textContent=scores[ci]+' / '+q.length; tot+=scores[ci]; } max+=q.length; });
+  $('#scoreTotal').textContent=tot+' / '+max;
+}
+QCMS.forEach((_,ci)=>renderQCM(ci));
+$$('[data-qcheck]').forEach(b=>b.addEventListener('click',()=>checkQCM(+b.dataset.qcheck)));
+$$('[data-qreveal]').forEach(b=>b.addEventListener('click',()=>revealQCM(+b.dataset.qreveal)));
+$$('[data-qreset]').forEach(b=>b.addEventListener('click',()=>renderQCM(+b.dataset.qreset)));
+$$('#finCheck input').forEach(c=>c.addEventListener('change',()=>{}));
+
+
+/* ---------- Hick ---------- */
+(function(){
+  const r=$('#hickRange'); if(!r) return;
+  const fr=x=>x.toFixed(2).replace('.',',');
+  function upd(){
+    const n=+r.value, b=Math.log2(n+1), base=Math.log2(3);
+    $('#hickN').textContent=n; $('#hickBits').textContent=fr(b);
+    $('#hickRel').textContent='×'+(b/base).toFixed(1).replace('.',',');
+    $('#hickBar').style.width=Math.round(b/Math.log2(33)*100)+'%';
+  }
+  r.addEventListener('input',upd); upd();
+})();
+
+/* ---------- Fitts ---------- */
+(function(){
+  const zone=$('#fittsZone'); if(!zone) return;
+  const info=$('#fittsInfo'), startBtn=$('#fittsStart'), tbl=$('#fittsTable'), msg=$('#fittsMsg');
+  const SIZES=[{n:'Grande',w:56},{n:'Moyenne',w:28},{n:'Petite',w:12}];
+  const PER=7;
+  let stage=0,k=0,last=0,side=0,times=[],results=[],btn=null;
+  function place(){
+    const W=zone.clientWidth,H=zone.clientHeight,w=SIZES[stage].w,cx=side===0?W*0.15:W*0.85;
+    btn.style.width=btn.style.height=w+'px';
+    btn.style.left=(cx-w/2)+'px'; btn.style.top=(H/2-w/2)+'px';
+  }
+  function start(){
+    zone.innerHTML=''; results=[]; stage=0; times=[]; k=0; side=0; msg.textContent='';
+    tbl.innerHTML='<tr><th>Cible</th><th>Taille</th><th>Distance</th><th>Difficulté (bits)</th><th>Temps moyen</th></tr><tr><td colspan="5" class="muted">Les résultats s’afficheront ici à la fin du test.</td></tr>';
+    btn=document.createElement('button'); btn.type='button'; btn.className='fitts-target'; btn.setAttribute('aria-label','Cible à cliquer');
+    zone.appendChild(btn); place(); btn.addEventListener('click',hit);
+    info.textContent='Cible '+SIZES[0].n.toLowerCase()+' : cliquez-la d’un côté à l’autre.';
+    startBtn.textContent='↺ Recommencer';
+  }
+  function hit(){
+    const now=performance.now();
+    if(k>0) times.push(now-last);
+    last=now; k++;
+    if(times.length>=PER){
+      const mean=times.reduce((a,b)=>a+b,0)/times.length, D=Math.round(zone.clientWidth*0.7), w=SIZES[stage].w;
+      results.push({n:SIZES[stage].n,w:w,D:D,id:Math.log2(D/w+1),ms:Math.round(mean)});
+      stage++; times=[]; k=0;
+      if(stage>=SIZES.length){ finish(); return; }
+      info.textContent='Cible '+SIZES[stage].n.toLowerCase()+' : continuez.';
+    }
+    side=1-side; place();
+  }
+  function finish(){
+    zone.innerHTML='<div style="display:grid;place-items:center;height:100%;color:#065f46;font-weight:700">✅ Terminé : consultez le tableau ci-dessous</div>';
+    info.textContent='Terminé !';
+    let rows='<tr><th>Cible</th><th>Taille</th><th>Distance</th><th>Difficulté (bits)</th><th>Temps moyen</th></tr>';
+    results.forEach(r=>{ rows+='<tr><td>'+r.n+'</td><td>'+r.w+' px</td><td>'+r.D+' px</td><td>'+r.id.toFixed(2).replace('.',',')+'</td><td><strong>'+r.ms+' ms</strong></td></tr>'; });
+    tbl.innerHTML=rows;
+    msg.textContent='Plus la cible est petite pour une même distance, plus la difficulté augmente et plus le pointage s’allonge : c’est la loi de Fitts. Vos temps suivent-ils cette tendance ?';
+    startBtn.textContent='↺ Recommencer';
+  }
+  startBtn.addEventListener('click',start);
+})();
+
+/* ---------- Laboratoire Gestalt ---------- */
+(function(){
+  const LAB=$('#gLab'); if(!LAB) return;
+  const B='#2563eb',O='#d97706',D='#0f172a';
+  const svg=inner=>'<svg viewBox="0 0 420 210" role="img" aria-label="Démonstration d’un principe de la Gestalt">'+inner+'</svg>';
+  function grid(cols,rows,gx,gy,fill){
+    const w=(cols-1)*gx,h=(rows-1)*gy,x0=(420-w)/2,y0=(210-h)/2; let s='';
+    for(let i=0;i<rows;i++)for(let j=0;j<cols;j++) s+='<circle cx="'+(x0+j*gx)+'" cy="'+(y0+i*gy)+'" r="8" fill="'+fill(i,j)+'"/>';
+    return s;
+  }
+  const pr=i=>{ const x=Math.sin(i*91.7)*10000; return x-Math.floor(x); };
+  function contDots(v){
+    let s='';
+    for(let i=0;i<15;i++){
+      const x=40+i*24, ya=105+50*Math.sin((x-40)/340*Math.PI*2), yb=170-(x-40)/340*130;
+      const j1=v?(pr(i)-0.5)*70:0, j2=v?(pr(i+40)-0.5)*70:0;
+      s+='<circle cx="'+(x+(v?(pr(i+7)-0.5)*20:0))+'" cy="'+(ya+j1)+'" r="6" fill="'+B+'"/>';
+      s+='<circle cx="'+(x+(v?(pr(i+19)-0.5)*20:0))+'" cy="'+(yb+j2)+'" r="6" fill="'+O+'"/>';
+    }
+    return s;
+  }
+  function shapes(v){
+    const da=['','72 20','14 70'][v], at=da?' stroke-dasharray="'+da+'"':'';
+    return '<circle cx="120" cy="105" r="55" fill="none" stroke="'+D+'" stroke-width="5"'+at+'/>'+
+           '<polygon points="250,160 370,160 310,56" fill="none" stroke="'+D+'" stroke-width="5" stroke-linejoin="round"'+at+'/>';
+  }
+  const DEMOS={
+    prox:{label:'Proximité',variants:['Lignes rapprochées','Colonnes rapprochées'],
+      draw:v=>svg(grid(6,4,v===0?24:48,v===0?48:24,()=>B)),
+      say:['Les points d’une même ligne sont proches : on voit quatre lignes.','Les points d’une même colonne sont proches : on voit six colonnes.']},
+    sim:{label:'Similarité',variants:['Couleur par colonnes','Couleur par lignes'],
+      draw:v=>svg(grid(6,4,36,36,(i,j)=>((v===0?j:i)%2)?O:B)),
+      say:['Les points sont régulièrement espacés, mais la couleur les regroupe : on voit des colonnes.','Même grille, couleur par lignes : on voit des lignes.']},
+    reg:{label:'Région commune',variants:['Sans cadre','Avec cadres'],
+      draw:v=>svg((v===1?'<rect x="62" y="44" width="136" height="122" rx="12" fill="#dbeafe" stroke="#93c5fd"/><rect x="222" y="44" width="136" height="122" rx="12" fill="#d1fae5" stroke="#6ee7b7"/>':'')+grid(8,3,38,38,()=>D)),
+      say:['Tous les points sont équidistants : un seul ensemble.','Les cadres créent deux groupes, sans bouger un seul point.']},
+    cont:{label:'Continuité',variants:['Points alignés','Points en désordre'],
+      draw:v=>svg(contDots(v)),
+      say:['L’œil suit deux trajectoires continues, une courbe et une droite, qui se croisent.','Sans alignement, plus de trajectoire : on ne voit qu’un nuage de points.']},
+    clos:{label:'Clôture',variants:['Formes fermées','Formes interrompues','Trop lacunaires'],
+      draw:v=>svg(shapes(v)),
+      say:['Un cercle et un triangle complets.','Malgré les interruptions, l’esprit complète : on voit encore un cercle et un triangle.','Trop d’information manque : les formes deviennent difficiles à reconnaître.']}
+  };
+  let cur='prox',v=0;
+  const menu=$('#gMenu'),varRow=$('#gVar'),stage=$('#gStage'),say=$('#gSay');
+  function render(){
+    const d=DEMOS[cur];
+    $$('.chain-node',menu).forEach(n=>n.classList.toggle('active',n.dataset.k===cur));
+    varRow.innerHTML=''; d.variants.forEach((t,i)=>{
+      const b=document.createElement('button'); b.type='button'; b.className='choice'+(i===v?' sel':''); b.textContent=t;
+      b.addEventListener('click',()=>{ v=i; render(); }); varRow.appendChild(b);
+    });
+    stage.innerHTML=d.draw(v); say.textContent=d.say[v];
+  }
+  Object.keys(DEMOS).forEach(k=>{
+    const b=document.createElement('button'); b.type='button'; b.className='chain-node'; b.dataset.k=k; b.textContent=DEMOS[k].label;
+    b.addEventListener('click',()=>{ cur=k; v=0; render(); }); menu.appendChild(b);
+  });
+  render();
+})();
+
+})();
+</script>
+</body>
+</html>
