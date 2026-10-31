@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Séance 3 — Utilisateurs et architecture de l’information · Théorie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --secondary:#059669;--secondary-light:#d1fae5;
+  --accent:#d97706;--accent-light:#fef3c7;
+  --danger:#dc2626;--danger-light:#fee2e2;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --dark:#0f172a;--dark2:#1e293b;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f1f5f9;--card:#ffffff;--radius:14px;
+  --sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+code,.mono{font-family:var(--mono)}
+code{background:#f1f5f9;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.84em}
+pre code,.key-box code,.nest.n4 code{background:transparent;border:none;padding:0;color:inherit}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+
+header{background:linear-gradient(135deg,#0f172a 0%,#4c1d95 60%,#6d28d9 100%);color:#fff;padding:42px 24px 34px;position:relative;overflow:hidden}
+header.practice{background:linear-gradient(135deg,#0f172a 0%,#6d28d9 60%,#7c3aed 100%)}
+header::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.25),transparent 70%)}
+.header-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+header h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:10px}
+header .subtitle{color:#cbd5e1;max-width:720px;font-size:1rem}
+.meta-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.meta-pill{background:rgba(15,23,42,.45);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:999px;font-size:.8rem;display:inline-flex;align-items:center;gap:6px}
+.global-progress{margin-top:24px;max-width:520px}
+.global-progress .label{display:flex;justify-content:space-between;font-size:.8rem;color:#cbd5e1;margin-bottom:6px}
+.global-progress .track{height:8px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.global-progress .fill{height:100%;width:0;background:linear-gradient(90deg,#10b981,#34d399);border-radius:999px;transition:width .5s ease}
+.mode-flag{display:none;margin-top:14px;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;width:max-content}
+body.formateur .mode-flag{display:block}
+
+.tabs-wrap{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.tabs{max-width:1100px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 16px;scrollbar-width:thin}
+.tab{border:none;background:none;padding:15px 14px;font-size:.85rem;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--primary)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab .done-mark{display:none;color:var(--secondary)}
+.tab.done .done-mark{display:inline}
+.tab .lock-mark{font-size:.8rem}
+
+main{max-width:1100px;margin:0 auto;padding:28px 16px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel.active{animation:none}.global-progress .fill,.progress-fill{transition:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+@media(max-width:600px){.card{padding:20px 16px}}
+.section-title{display:flex;align-items:center;gap:14px;font-size:1.3rem;font-weight:700;margin-bottom:18px;color:var(--dark)}
+.icon-bg{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;background:var(--primary-light)}
+.icon-bg.green{background:var(--secondary-light)}.icon-bg.amber{background:var(--accent-light)}.icon-bg.purple{background:var(--purple-light)}.icon-bg.red{background:var(--danger-light)}
+h3{font-size:1.05rem;font-weight:700;margin:22px 0 10px;color:var(--dark)}
+p{margin-bottom:10px}
+.lead{font-size:1.05rem;color:var(--dark2)}
+.muted{color:var(--muted);font-size:.88rem}
+ul.clean{list-style:none}
+ul.clean li{padding:6px 0 6px 26px;position:relative}
+ul.clean li::before{content:"▸";position:absolute;left:6px;color:var(--primary);font-weight:700}
+ol{padding-left:22px}ol li{padding:3px 0}
+
+.objectif-box{background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid var(--primary);border-radius:10px;padding:18px 20px;margin:16px 0}
+.objectif-box strong.title{display:block;color:var(--primary-dark);margin-bottom:8px}
+.instruction-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid var(--accent);border-radius:10px;padding:18px 20px;margin:16px 0}
+.instruction-box strong.title{display:block;color:#92400e;margin-bottom:8px}
+.key-box{background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin:18px 0;border-left:5px solid #10b981}
+.key-box .big{font-size:1.15rem;font-weight:700;color:#fff}
+.warn-box{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid var(--danger);border-radius:10px;padding:16px 20px;margin:16px 0}
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.mini-card{border:1px solid var(--border);border-radius:12px;padding:18px;background:#fff}
+.mini-card h4{font-size:1rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mini-card.bad{border-color:#fecaca;background:#fef2f2}
+.mini-card.good{border-color:#a7f3d0;background:#f0fdf4}
+.mini-card pre.prompt{margin-top:8px}
+
+.famille-tag{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.2px}
+.f1{background:var(--primary-light);color:#1e40af}
+.f2{background:var(--secondary-light);color:#065f46}
+.f3{background:var(--accent-light);color:#92400e}
+.f4{background:var(--purple-light);color:#5b21b6}
+.f5{background:var(--danger-light);color:#991b1b}
+
+.term-item{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.85rem;padding:10px 14px;border-radius:8px;display:inline-block}
+.chain .term-item,.objectif-box .term-item{padding:6px 12px}
+pre.prompt{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:18px 20px;border-radius:10px;white-space:pre-wrap;word-break:break-word;line-height:1.65;overflow-x:auto;position:relative;margin:12px 0}
+pre.prompt .hl{color:#34d399}
+pre.prompt .hl2{color:#fbbf24}
+pre.prompt .hl3{color:#93c5fd}
+
+.btn{border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:8px;transition:transform .1s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--secondary);color:#fff}.btn-success:hover{background:#047857}
+.btn-ghost{background:#fff;color:var(--dark2);border:1px solid var(--border)}.btn-ghost:hover{background:#f8fafc}
+.btn-warning{background:var(--accent);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.btn-reveal{display:none}
+body.formateur .btn-reveal{display:inline-flex}
+.reveal-content{display:none}
+.reveal-content.shown{display:block}
+
+.progress-wrap{margin:14px 0 4px}
+.progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+.progress-track{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#059669,#10b981);border-radius:999px;transition:width .4s ease}
+
+.result-panel{display:none;background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin-top:20px}
+.result-panel.show{display:block}
+.result-panel .score{font-family:var(--mono);font-size:2rem;font-weight:700;color:#34d399}
+.result-panel .msg{margin-top:6px;color:#cbd5e1}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0}
+.chain-node{border:2px solid var(--border);background:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--dark2)}
+.chain-node:hover{border-color:var(--primary)}
+.chain-node.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chain-node.seen:not(.active){border-color:#93c5fd}
+.chain-arrow{color:var(--muted);font-weight:700}
+.concept-detail{border:1px solid var(--border);border-radius:12px;padding:22px;background:#f8fafc;min-height:180px}
+.concept-detail .row{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.concept-detail .row:last-child{border-bottom:none}
+.concept-detail .k{font-weight:700;font-size:.82rem;color:var(--muted)}
+@media(max-width:600px){.concept-detail .row{grid-template-columns:1fr;gap:2px}}
+
+/* QCM */
+.qcm-q{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.qcm-q .qt{font-weight:600;margin-bottom:10px}
+.qcm-opts{display:grid;gap:8px}
+.qcm-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;font-size:.9rem;background:#fff;text-align:left;width:100%;color:var(--text)}
+.qcm-opt:hover{background:#f8fafc;border-color:#93c5fd}
+.qcm-opt .l{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:18px}
+.qcm-opt.sel{border-color:var(--primary);background:#eff6ff}
+.qcm-q.checked .qcm-opt{cursor:default}
+.qcm-opt.good{border-color:#6ee7b7;background:#ecfdf5}
+.qcm-opt.bad{border-color:#fca5a5;background:#fef2f2}
+.qcm-q.correct{border-color:#6ee7b7}
+.qcm-q.wrong{border-color:#fca5a5}
+.qcm-q .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:8px;border-top:1px dashed var(--border)}
+.qcm-q.checked .expl{display:block}
+.q-num{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-right:6px}
+
+/* V/F */
+.vf-row{padding:16px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#fff}
+.vf-row .vf-q{font-weight:500;margin-bottom:10px}
+.vf-btns{display:flex;gap:8px}
+.vf-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 18px;font-weight:600;font-size:.85rem;color:var(--text)}
+.vf-btn.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.vf-row.correct{border-color:#6ee7b7;background:#ecfdf5}
+.vf-row.wrong{border-color:#fca5a5;background:#fef2f2}
+.vf-row .expl{display:none;margin-top:10px;font-size:.85rem}
+.vf-row.checked .expl{display:block}
+
+/* Cas 1 matching */
+.match-grid{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:16px;margin-top:10px}
+@media(max-width:760px){.match-grid{grid-template-columns:1fr}}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-col h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.m-term{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:10px 12px;border-radius:8px;border:2px solid var(--dark);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.m-term:hover{border-color:#60a5fa}
+.m-term.active{border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.35)}
+.m-def{background:#fff;border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.86rem;text-align:left;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.m-def:hover{border-color:#93c5fd}
+.pair-badge{font-family:var(--mono);font-size:.72rem;font-weight:700;min-width:24px;height:24px;border-radius:6px;display:inline-grid;place-items:center;background:#e2e8f0;color:var(--muted);flex-shrink:0}
+.paired .pair-badge{background:var(--primary);color:#fff}
+.m-def.paired{border-color:#93c5fd;background:#eff6ff}
+.m-term.good,.m-def.good{border-color:#10b981}
+.m-def.good{background:#ecfdf5}
+.m-term.bad,.m-def.bad{border-color:#ef4444}
+.m-def.bad{background:#fef2f2}
+.round-pills{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.round-pill{font-family:var(--mono);font-size:.75rem;padding:4px 10px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border);color:var(--muted)}
+.round-pill.cur{background:var(--primary);color:#fff;border-color:var(--primary)}
+.round-pill.ok{background:var(--secondary-light);color:#065f46;border-color:#6ee7b7}
+
+/* Cas 2 */
+.group{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff}
+.group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.group-head strong{font-size:1rem}
+.g-label{font-size:.8rem;font-weight:700;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.choice-row{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:600;color:var(--dark2)}
+.choice.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.choice.good{background:#10b981;color:#fff;border-color:#10b981}
+.choice.bad{background:#ef4444;color:#fff;border-color:#ef4444}
+.sit{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--border);border-radius:9px;padding:10px 12px;background:#f8fafc;font-size:.88rem;margin-bottom:8px;color:var(--text)}
+.sit:hover{border-color:#fbbf24}
+.sit .tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:#e2e8f0;color:var(--muted);white-space:nowrap}
+.sit.sel{border-color:var(--accent);background:#fffbeb}
+.sit.sel .tag{background:var(--accent);color:#fff}
+.sit.good{border-color:#10b981;background:#ecfdf5}
+.sit.good .tag{background:#10b981;color:#fff}
+.sit.bad{border-color:#ef4444;background:#fef2f2}
+.sit.bad .tag{background:#ef4444;color:#fff}
+.group .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:10px;border-top:1px dashed var(--border)}
+.group.checked .expl{display:block}
+.group.correct{border-color:#6ee7b7}
+.group.wrong{border-color:#fca5a5}
+.group.half{border-color:#fcd34d}
+
+/* forms */
+label.f-label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:var(--dark2)}
+input.f-input,textarea.f-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;font-family:var(--sans);font-size:.9rem;background:#fff;color:var(--text)}
+textarea.f-input{min-height:78px;resize:vertical}
+
+.steps{margin:14px 0}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step input[type=checkbox]{width:20px;height:20px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+.step .s-num{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:24px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:8px;cursor:pointer}
+.checklist label:hover{background:#f8fafc}
+.checklist input{width:18px;height:18px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}
+th{background:var(--dark);color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+th:first-child{border-top-left-radius:10px}th:last-child{border-top-right-radius:10px}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;background:#fff}
+tr:nth-child(even) td{background:#f8fafc}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.75rem;background:#f1f5f9;border:1px solid var(--border);padding:3px 10px;border-radius:999px;color:var(--dark2)}
+
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:14px 0}
+.route-step{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.route-step .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.route-step .t{font-weight:700;font-size:.9rem;color:var(--dark)}
+.route-step .c{font-size:.75rem;color:var(--muted)}
+.route-step.past{background:#ecfdf5;border-color:#a7f3d0}
+.route-step.here{background:var(--primary);border-color:var(--primary)}
+.route-step.here .t,.route-step.here .n,.route-step.here .c{color:#fff}
+
+.levels{display:grid;gap:8px;margin:14px 0}
+.level{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#fff}
+.level .lv{font-family:var(--mono);font-weight:700;font-size:1.1rem;color:var(--primary)}
+.level .risk{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px}
+@media(max-width:600px){.level{grid-template-columns:40px 1fr}.level .risk{grid-column:2;justify-self:start}}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.pillar{border-radius:12px;padding:16px;background:#fff;border:1px solid var(--border);border-top:4px solid var(--primary)}
+.pillar:nth-child(5n+2){border-top-color:var(--purple)}
+.pillar:nth-child(5n+3){border-top-color:var(--secondary)}
+.pillar:nth-child(5n+4){border-top-color:var(--accent)}
+.pillar:nth-child(5n+5){border-top-color:var(--danger)}
+.pillar .n{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.pillar h4{font-size:1rem;margin:4px 0 6px}
+.pillar p{font-size:.84rem;color:var(--dark2);margin:0}
+.pillar .q{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px}
+
+details.acc{border:1px solid var(--border);border-radius:10px;margin:10px 0;background:#fff}
+details.acc summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-family:var(--mono);color:var(--primary);font-weight:700}
+details.acc[open] summary::after{content:"−"}
+details.acc[open] summary{border-bottom:1px dashed var(--border)}
+details.acc > div{padding:12px 16px;font-size:.9rem}
+
+.gloss{display:grid;gap:10px;margin-top:10px}
+.gloss-item{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.gloss-item .gt{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+@media(max-width:620px){.gloss-item{grid-template-columns:1fr}}
+.lock-wrap{text-align:center;padding:30px 10px}
+.lock-wrap .big-lock{font-size:3rem}
+.lock-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.lock-pill{font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border)}
+.lock-pill.ok{background:var(--secondary-light);border-color:#6ee7b7;color:#065f46}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.filter-row button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600;color:var(--dark2)}
+.filter-row button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+.score-table td:last-child{font-family:var(--mono);font-weight:700}
+.link-card{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f8fafc;border:1px dashed #93c5fd;border-radius:12px;padding:16px 18px;margin-top:16px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.nav-bottom{display:flex;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:30px 16px 50px}
+@media print{.tabs-wrap,.actions-row,.nav-bottom{display:none}.panel{display:block!important}}
+
+
+/* ---- ajouts Ergonomie web ---- */
+.f-only{display:none}
+body.formateur .f-only{display:block}
+.mock{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;max-width:540px;margin:14px auto;font-size:.88rem;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.mock-bar{background:#e2e8f0;color:#475569;font-family:var(--mono);font-size:.72rem;padding:6px 12px}
+.mock-body{padding:18px 20px}
+.mock-body h4{margin:0 0 12px;font-size:1.05rem}
+.mock-field{margin-bottom:12px}
+.mock-field .ml{display:block;font-size:.78rem;color:#475569;margin-bottom:3px}
+.mock-input{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;color:#94a3b8;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:8px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-actions{display:flex;gap:10px;align-items:center}
+.mock-ok{background:#16a34a;color:#fff;padding:8px 24px;font-weight:700;display:inline-block}
+.mock-note{font-size:.74rem;color:#64748b;padding:8px 20px 14px;border-top:1px dashed var(--border)}
+.mk-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.mk-demo{display:flex;align-items:center;justify-content:center;min-height:84px;border-radius:10px;background:#f8fafc;border:1px dashed var(--border);margin-bottom:8px;padding:10px}
+.mk-link{color:#2563eb;text-decoration:underline}
+.mk-btn{background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;box-shadow:0 2px 0 #1d4ed8;display:inline-block}
+.chunk{font-family:var(--mono);font-size:1.25rem;letter-spacing:.08em;text-align:center;padding:14px 8px;background:#f8fafc;border-radius:10px;border:1px solid var(--border);word-break:break-all}
+.vr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:10px 0}
+.vr-grid span{background:#e2e8f0;color:#475569;border-radius:8px;padding:10px 6px;text-align:center;font-size:.78rem;font-weight:600}
+.vr-grid span.vr{background:#f59e0b;color:#fff}
+.fitts-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.fitts-zone{position:relative;height:190px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;overflow:hidden;touch-action:manipulation}
+.fitts-target{position:absolute;border-radius:50%;background:#dc2626;border:none;padding:0;box-shadow:0 0 0 3px rgba(220,38,38,.2)}
+.hick-bar{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:6px}
+.hick-bar>div{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);width:0;transition:width .25s}
+input[type=range]{width:100%;accent-color:var(--primary)}
+.g-stage{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;margin-top:10px}
+.g-stage svg{max-width:100%;height:auto}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.pair{grid-template-columns:1fr}}
+.legend-line{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){.hick-bar>div{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <span class="badge">🧭 Ergonomie web — Séance 3 · Support théorique</span>
+    <h1>Utilisateurs et architecture de l’information</h1>
+    <p class="subtitle">Recueillir des faits sur les utilisateurs, mener un entretien, en tirer une carte d’empathie, un persona et un parcours, puis organiser l’information pour qu’ils la trouvent.</p>
+    <div class="meta-pills"><span class="meta-pill">🧭 Séance 3 sur 4</span><span class="meta-pill">📚 Support théorique</span><span class="meta-pill">📖 5 chapitres</span><span class="meta-pill">❓ 25 questions de QCM</span><span class="meta-pill">🧪 Test d’arborescence interactif</span></div>
+    <div class="global-progress">
+      <div class="label"><span>QCM de chapitre validés</span><span id="globalPct">0 / 5</span></div>
+      <div class="track"><div class="fill" id="globalFill"></div></div>
+    </div>
+    <div class="mode-flag">Mode formateur actif — boutons « Révéler » visibles</div>
+  </div>
+</header>
+<div class="tabs-wrap"><nav class="tabs" role="tablist" aria-label="Chapitres de la séance"><button class="tab active" data-tab="0" role="tab">🚀 Démarrage</button><button class="tab" data-tab="c0" data-act="ch0" role="tab">📊 Utilisateurs <span class="done-mark">✅</span></button><button class="tab" data-tab="c1" data-act="ch1" role="tab">🎙️ Entretien <span class="done-mark">✅</span></button><button class="tab" data-tab="c2" data-act="ch2" role="tab">🧠 Empathie & persona <span class="done-mark">✅</span></button><button class="tab" data-tab="c3" data-act="ch3" role="tab">🛤️ Parcours <span class="done-mark">✅</span></button><button class="tab" data-tab="c4" data-act="ch4" role="tab">🗂️ Architecture <span class="done-mark">✅</span></button><button class="tab" data-tab="syn" role="tab">🏁 Synthèse</button></nav></div>
+<main>
+<section class="panel active" data-panel="0">
+<div class="card"><div class="section-title"><span class="icon-bg ">🎯</span>Où en est-on dans le module ?</div><div class="key-box"><div class="big">Je sais penser à partir de l’utilisateur.</div><p style="margin:8px 0 0">Les séances 1 et 2 vous ont appris à juger une interface. Mais on ne peut pas dire si une page est « bonne » sans savoir pour qui et pour quoi faire. Aujourd’hui, on part des utilisateurs : ce qu’ils vivent, ce qu’ils cherchent, et comment ranger l’information pour qu’ils la trouvent.</p></div><div class="route"><div class="route-step past"><div class="n">1</div><div class="t">Évaluer</div><div class="c">Critères & audit</div></div><div class="route-step past"><div class="n">2</div><div class="t">Justifier</div><div class="c">Concepts, lois, Gestalt</div></div><div class="route-step here"><div class="n">3</div><div class="t">Comprendre</div><div class="c">Persona, parcours, architecture</div></div><div class="route-step"><div class="n">4</div><div class="t">Auditer</div><div class="c">Projet de groupe</div></div></div><p class="muted">En vert : les étapes déjà franchies. En bleu : l’étape travaillée dans cette séance.</p><h3>Le fil pédagogique</h3><div class="table-wrap"><table><tr><th>Étape</th><th>Ce que vous saurez faire</th></tr><tr><td>Séance 1</td><td>Je sais évaluer une interface.</td></tr><tr><td>Séance 2</td><td>Je sais justifier un choix de conception.</td></tr><tr><td><strong>Séance 3</strong> — aujourd’hui</td><td><strong>Je sais penser à partir de l’utilisateur.</strong></td></tr><tr><td>Séance 4</td><td>Je sais auditer un site et défendre mes recommandations.</td></tr></table></div><div class="warn-box"><strong>Périmètre.</strong> Persona et parcours utilisateur sont vus ici dans leur version essentielle, au service de l’audit. La démarche UX complète (storyboard, experience map, user stories) sera approfondie dans le module de webdesign.</div></div><div class="card"><div class="section-title"><span class="icon-bg green">✅</span>Objectifs de la séance</div><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Distinguer données quantitatives et qualitatives, et choisir la méthode qui répond à une question donnée ;</li><li>Préparer et conduire un court entretien semi-directif, avec des questions ouvertes et sans biais ;</li><li>Synthétiser des entretiens dans une carte d’empathie, puis modéliser un persona fondé sur ces données ;</li><li>Décrire les étapes d’un parcours utilisateur, avec ses points de contact, ses émotions et ses frustrations ;</li><li>Définir une architecture de l’information structurée : arborescence, libellés, navigation, tri par cartes et test d’arborescence.</li></ul></div><div class="grid grid-2"><div class="mini-card"><h4>🎒 À avoir avec vous</h4><ul class="clean"><li>Un binôme : l’atelier pratique repose sur un entretien croisé ;</li><li>De quoi noter vite (papier ou document), pour capter des citations exactes ;</li><li>Une idée du site que votre groupe aimerait auditer en séance 4 : le choix sera validé en fin de séance.</li></ul></div><div class="mini-card"><h4>🧩 Les 5 familles de notions</h4><div class="chips" style="margin-top:4px"><span class="famille-tag f1">Données & persona</span><span class="famille-tag f2">Entretiens</span><span class="famille-tag f3">Carte d’empathie</span><span class="famille-tag f4">Parcours</span><span class="famille-tag f5">Architecture de l’information</span></div><p class="muted" style="margin-top:10px">Ces familles organisent les chapitres, les cas pratiques et le glossaire.</p></div></div><div class="instruction-box"><strong class="title">Comment utiliser ce support</strong>Chaque onglet est un chapitre. Lisez-le, explorez les fiches interactives, puis répondez au <strong>QCM de fin de chapitre</strong> : sa validation fait avancer la barre de progression. La mise en application se fait ensuite dans le <strong>support pratique</strong>.</div><div class="link-card"><span><strong>🛠️ Support pratique associé</strong><br><span class="muted">Cas pratiques, interview express et carte d’empathie, glossaire.</span></span><a class="btn btn-success" href="seance-3-utilisateurs-et-architecture-de-linformation-pratique.html">Ouvrir le support pratique ▸</a></div><div class="nav-bottom"><span></span><button class="btn btn-primary" data-goto="c0">Commencer : 📊 Connaître ses utilisateurs ▸</button></div></div></section>
+<section class="panel" data-panel="c0">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 1 sur 5</span></div><div class="card"><div class="section-title"><span class="icon-bg ">📊</span>Connaître ses utilisateurs</div><p class="lead">On conçoit rarement pour soi. Les utilisateurs n’ont ni notre vocabulaire, ni nos habitudes, ni notre connaissance du produit. Avant de dessiner quoi que ce soit, il faut donc <strong>recueillir des faits</strong> sur eux, et distinguer ce que l’on sait de ce que l’on suppose.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Distinguer données quantitatives et qualitatives, formuler une hypothèse vérifiable et choisir la méthode qui répond à une question donnée.</div><h3>Deux familles de données <span class="famille-tag f1">Données & persona</span></h3><div class="table-wrap"><table><tr><th></th><th>Quantitatif</th><th>Qualitatif</th></tr><tr><td><strong>Répond à</strong></td><td>Combien ? Où ? Quand ?</td><td>Pourquoi ? Comment ?</td></tr><tr><td><strong>Exemples</strong></td><td>Taux d’abandon, pages vues, réponses chiffrées à un questionnaire.</td><td>Entretiens, observations, citations, commentaires libres.</td></tr><tr><td><strong>Force</strong></td><td>Mesure l’ampleur d’un phénomène sur beaucoup de personnes.</td><td>Explique les causes et révèle ce qu’on n’avait pas imaginé.</td></tr><tr><td><strong>Limite</strong></td><td>Dit <em>ce qui</em> se passe, pas <em>pourquoi</em>.</td><td>Peu de personnes : ne permet pas de généraliser seul.</td></tr></table></div><div class="key-box"><div class="big">Les chiffres disent où ça coince, les entretiens disent pourquoi.</div><p style="margin:8px 0 0">Exemple : les analytics montrent que 60 % des visiteurs abandonnent à l’étape « Livraison » ; trois entretiens révèlent que les frais n’apparaissent qu’à ce moment-là.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🧭</span>Quelle méthode pour quelle question ?</div><div class="table-wrap"><table><tr><th>Méthode</th><th>Type</th><th>Utile pour…</th></tr><tr><td><strong>Analytics</strong></td><td>Quanti</td><td>Repérer les pages et les étapes où les visiteurs partent.</td></tr><tr><td><strong>Questionnaire</strong></td><td>Quanti (surtout)</td><td>Mesurer la fréquence d’un usage ou d’une opinion sur un grand nombre.</td></tr><tr><td><strong>Entretien</strong></td><td>Quali</td><td>Comprendre un vécu, des motivations, des contournements.</td></tr><tr><td><strong>Observation</strong></td><td>Quali</td><td>Voir ce que les gens font réellement, souvent différent de ce qu’ils disent.</td></tr><tr><td><strong>Test utilisateur</strong></td><td>Quali (et mesures)</td><td>Vérifier qu’une interface permet de réaliser une tâche.</td></tr></table></div><div class="warn-box"><strong>⚠️ « Les utilisateurs, c’est moi. »</strong> L’équipe connaît trop bien le produit pour voir ses difficultés. Ce que l’on croit savoir est une <strong>hypothèse</strong> à vérifier, pas un fait.</div></div><div class="card" data-explorer="x0"><div class="section-title"><span class="icon-bg green">📊</span>Explorateur — données et hypothèses</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 5</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Distinguer ce que l’on sait de ce que l’on suppose.</div><p style="margin:8px 0 0">Chaque affirmation sur les utilisateurs doit pouvoir répondre à la question : « D’où vient cette information ? »</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 1</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm0"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt0">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill0"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="0">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="0">👁 Révéler</button><button class="btn btn-ghost" data-qreset="0">↺ Recommencer</button></div><div class="result-panel" id="qres0"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="0">◂ Précédent</button><button class="btn btn-primary" data-goto="c1">Suite : 🎙️ Mener un entretien ▸</button></div></div></section>
+<section class="panel" data-panel="c1">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 2 sur 5</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🎙️</span>Mener un entretien</div><p class="lead">L’entretien est la méthode reine pour comprendre un vécu. Bien mené, il fait émerger des faits, des émotions et des contournements que personne n’avait anticipés. Mal mené, il ne fait que confirmer ce que l’on croyait déjà.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Préparer un guide d’entretien, poser des questions ouvertes sur des faits passés, relancer sans orienter, et noter des verbatims exploitables.</div><h3>Le déroulé d’un entretien semi-directif <span class="famille-tag f2">Entretiens</span></h3><div class="steps"><div class="step"><span class="s-num">1</span><span><strong>Accueillir.</strong> Remercier, expliquer le but, rassurer : « Il n’y a pas de bonne ou de mauvaise réponse, c’est le service qu’on évalue, pas vous. » Demander l’accord pour noter ou enregistrer.</span></div><div class="step"><span class="s-num">2</span><span><strong>Situer.</strong> Quelques questions de contexte : activité, rythme, outils utilisés.</span></div><div class="step"><span class="s-num">3</span><span><strong>Faire raconter.</strong> « Racontez-moi la dernière fois que… » : un épisode réel, du début à la fin.</span></div><div class="step"><span class="s-num">4</span><span><strong>Approfondir.</strong> Relancer sur les moments forts : « Et ensuite ? », « Comment avez-vous fait ? », « Qu’avez-vous ressenti ? », « Pourquoi ? ».</span></div><div class="step"><span class="s-num">5</span><span><strong>Conclure.</strong> « Y a-t-il quelque chose que je ne vous ai pas demandé et qui compte pour vous ? » Remercier.</span></div></div></div><div class="card"><div class="section-title"><span class="icon-bg green">📏</span>Les règles d’or</div><div class="grid grid-2"><div class="mini-card good"><h4>✅ À faire</h4><ul class="clean"><li>Interroger sur des <strong>faits passés</strong>, pas sur des intentions ;</li><li>Poser des questions <strong>ouvertes</strong>, puis relancer ;</li><li>Supporter les <strong>silences</strong> : la personne complète souvent d’elle-même ;</li><li>Noter des <strong>citations exactes</strong>, entre guillemets ;</li><li>Parler peu : l’interviewé parle 80 % du temps.</li></ul></div><div class="mini-card bad"><h4>❌ À éviter</h4><ul class="clean"><li>Présenter son idée et demander si elle plaît ;</li><li>Les questions orientées (« C’est pratique, non ? ») ;</li><li>Les questions hypothétiques (« Utiliseriez-vous… ? ») ;</li><li>Plusieurs questions dans une seule phrase ;</li><li>Corriger ou expliquer l’interface pendant l’entretien.</li></ul></div></div><h3>Combien d’entretiens ?</h3><p>Il n’existe pas de chiffre magique. On s’arrête quand de nouveaux entretiens n’apportent presque plus rien de nouveau : c’est la <strong>saturation</strong>. Le chiffre de « 5 utilisateurs » souvent cité concerne les <em>tests d’utilisabilité</em> itératifs (Nielsen), pas les entretiens exploratoires, et il suppose un public homogène : avec plusieurs segments, il faut quelques entretiens par segment.</p><div class="warn-box"><strong>⚖️ Éthique et RGPD.</strong> Consentement explicite, droit de refuser, pas de données sensibles inutiles, et des notes anonymisées (prénom fictif) avant de les partager.</div></div><div class="card"><div class="section-title"><span class="icon-bg red">🧪</span>Exercice : classer des questions d’entretien</div><div class="instruction-box"><strong class="title">Consigne</strong>Pour chaque question, choisissez sa nature : <strong>ouverte</strong>, <strong>fermée</strong>, <strong>orientée</strong> (elle suggère la réponse) ou <strong>hypothétique</strong> (elle porte sur un comportement imaginaire). Vérifiez, puis lisez les reformulations proposées.</div><div id="qsBox"></div><div class="actions-row"><button class="btn btn-primary" id="qsCheck">✔ Vérifier</button><button class="btn btn-ghost" id="qsReset">↺ Recommencer</button></div><div class="result-panel" id="qsRes"></div></div><div class="card" data-explorer="x1"><div class="section-title"><span class="icon-bg purple">🎙️</span>Explorateur — le vocabulaire de l’entretien</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Demander ce qui s’est passé, pas ce qui se passerait.</div><p style="margin:8px 0 0">Les gens racontent bien leur passé et prédisent mal leur futur. Un bon entretien collectionne des faits et des citations, pas des avis sur votre idée.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 2</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm1"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt1">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill1"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="1">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="1">👁 Révéler</button><button class="btn btn-ghost" data-qreset="1">↺ Recommencer</button></div><div class="result-panel" id="qres1"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c0">◂ Précédent</button><button class="btn btn-primary" data-goto="c2">Suite : 🧠 Carte d’empathie & persona ▸</button></div></div></section>
+<section class="panel" data-panel="c2">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 3 sur 5</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🧠</span>De l’entretien à la carte d’empathie</div><p class="lead">Après plusieurs entretiens, on dispose de pages de notes. Il faut les <strong>synthétiser</strong> pour en tirer des enseignements partagés par l’équipe. La carte d’empathie (proposée par Dave Gray) est un outil simple pour cela : on y range ce que l’on a appris d’un type d’utilisateur en six zones.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Ranger des observations dans les six zones de la carte d’empathie, puis modéliser un persona crédible, fondé sur les données et utile aux décisions.</div><div class="grid grid-3" style="margin-top:12px"><div class="mini-card"><h4>💭 Pense et ressent</h4><p class="muted">Préoccupations, inquiétudes, aspirations.</p></div><div class="mini-card"><h4>👀 Voit</h4><p class="muted">Son environnement, ce que proposent les autres.</p></div><div class="mini-card"><h4>👂 Entend</h4><p class="muted">Ce que disent ses proches, collègues, médias.</p></div><div class="mini-card"><h4>🗣️ Dit et fait</h4><p class="muted">Ses paroles et ses actes observables.</p></div><div class="mini-card bad"><h4>😣 Peines</h4><p class="muted">Frustrations, obstacles, risques redoutés.</p></div><div class="mini-card good"><h4>🎁 Gains</h4><p class="muted">Ce qu’il espère obtenir, ses critères de réussite.</p></div></div><p class="muted">Astuce : un écart entre « Dit et fait » et « Pense et ressent » est souvent la découverte la plus précieuse (« Je dis que ça va… mais je recommence trois fois »).</p></div><div class="card" data-explorer="x2"><div class="section-title"><span class="icon-bg purple">🗺️</span>Explorateur — les 6 zones de la carte d’empathie</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg green">👤</span>Le persona</div><p>Un <strong>persona</strong> est un personnage fictif mais réaliste qui représente un groupe d’utilisateurs aux besoins semblables. La notion a été popularisée par Alan Cooper. Il sert à prendre des décisions : « Est-ce que Nadia comprendrait ce libellé ? » est plus concret que « Est-ce que l’utilisateur comprendrait ? ».</p><div class="mini-card" style="border-left:5px solid var(--purple)"><h4>👤 Exemple — Nadia, 41 ans, mère de deux enfants, infirmière en horaires décalés</h4><p class="muted" style="margin:0 0 8px"><em>Construit à partir de 6 entretiens de parents (exemple pédagogique).</em></p><div class="table-wrap"><table><tr><td><strong>Contexte</strong></td><td>Gère les inscriptions scolaires et périscolaires, souvent depuis son téléphone, pendant ses pauses.</td></tr><tr><td><strong>Objectif</strong></td><td>Inscrire ses enfants à la cantine et au centre de loisirs sans se déplacer en mairie.</td></tr><tr><td><strong>Freins</strong></td><td>Ne trouve pas la bonne rubrique ; le formulaire exige des justificatifs qu’elle n’a pas sur elle ; pas de sauvegarde en cours de saisie.</td></tr><tr><td><strong>Scénario d’usage</strong></td><td>Pendant une pause de 15 minutes, elle doit inscrire son fils au centre de loisirs des vacances avant la date limite du soir.</td></tr><tr><td><strong>Citation</strong></td><td>« Je fais tout entre deux patients. Si je dois tout recommencer, j’abandonne et j’appelle la mairie. »</td></tr></table></div></div><div class="table-wrap" style="margin-top:14px"><table><tr><th>Bon persona</th><th>Mauvais persona</th></tr><tr><td>Fondé sur des entretiens et des données.</td><td>Inventé de tête en réunion.</td></tr><tr><td>Décrit des objectifs, des freins, un contexte d’usage.</td><td>Liste des goûts sans rapport (signe astrologique, couleur préférée).</td></tr><tr><td>Représente un comportement partagé par un groupe.</td><td>Fait la « moyenne » de profils différents : il ne ressemble à personne.</td></tr><tr><td>Peu nombreux : un persona principal, un ou deux secondaires.</td><td>Dix personas que personne n’utilise.</td></tr></table></div><div class="warn-box"><strong>Proto-persona.</strong> Un persona construit à partir d’un seul entretien, ou d’hypothèses de l’équipe, est un <em>proto-persona</em> : utile pour démarrer, à condition d’indiquer clairement ce qui reste à vérifier.</div></div><div class="card" data-explorer="x3"><div class="section-title"><span class="icon-bg green">👤</span>Explorateur — le vocabulaire du persona</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 6</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Un persona n’est pas un portrait, c’est un outil de décision.</div><p style="margin:8px 0 0">S’il ne vous aide pas à trancher entre deux options, il est trop vague ou ne repose pas sur des données.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 3</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm2"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt2">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill2"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="2">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="2">👁 Révéler</button><button class="btn btn-ghost" data-qreset="2">↺ Recommencer</button></div><div class="result-panel" id="qres2"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c1">◂ Précédent</button><button class="btn btn-primary" data-goto="c3">Suite : 🛤️ Parcours utilisateur ▸</button></div></div></section>
+<section class="panel" data-panel="c3">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 4 sur 5</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🛤️</span>Le parcours utilisateur</div><p class="lead">Un <strong>parcours utilisateur</strong> décrit, étape par étape, comment un persona accomplit un objectif, y compris en dehors de l’écran : ce qu’il fait, avec quel point de contact, ce qu’il pense et ce qu’il ressent. Il montre où l’expérience se dégrade et où agir en priorité.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Définir les étapes d’un parcours, identifier ses points de contact, tracer sa courbe d’émotion et en déduire des points de frustration et des opportunités.</div><h3>Construire un parcours en 5 étapes <span class="famille-tag f4">Parcours</span></h3><div class="steps"><div class="step"><span class="s-num">1</span><span><strong>Choisir</strong> un persona et un objectif précis (« commander un repas un soir de semaine »).</span></div><div class="step"><span class="s-num">2</span><span><strong>Découper</strong> en grandes étapes, du déclencheur au résultat (souvent 5 à 7).</span></div><div class="step"><span class="s-num">3</span><span><strong>Décrire</strong> pour chaque étape : action, point de contact, pensée (verbatim) et émotion.</span></div><div class="step"><span class="s-num">4</span><span><strong>Tracer</strong> la courbe d’émotion et repérer les creux.</span></div><div class="step"><span class="s-num">5</span><span><strong>Déduire</strong> les points de frustration, les moments de vérité et les opportunités d’amélioration.</span></div></div></div><div class="card"><div class="section-title"><span class="icon-bg green">📈</span>Exemple interactif : la courbe d’émotion</div><p class="muted">Sofia, 29 ans, commande un repas en ligne un soir de semaine. Cliquez sur un point ou une étape pour afficher le détail.</p><div class="g-stage" id="jrStage"></div><div class="chain" id="jrSteps" style="margin-top:10px"></div><div class="concept-detail" id="jrDetail" style="min-height:120px"></div></div><div class="card" data-explorer="x4"><div class="section-title"><span class="icon-bg purple">🛤️</span>Explorateur — le vocabulaire du parcours</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 7</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">Le creux de la courbe indique où agir en premier.</div><p style="margin:8px 0 0">Un parcours n’est pas un schéma d’écrans : il raconte ce que vit la personne, y compris hors du site. Pour l’audit, il permet de prioriser les problèmes selon leur moment.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 4</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm3"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt3">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill3"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="3">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="3">👁 Révéler</button><button class="btn btn-ghost" data-qreset="3">↺ Recommencer</button></div><div class="result-panel" id="qres3"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c2">◂ Précédent</button><button class="btn btn-primary" data-goto="c4">Suite : 🗂️ Architecture de l’information ▸</button></div></div></section>
+<section class="panel" data-panel="c4">
+<div class="card" style="padding:14px 22px;background:#f8fafc"><span class="muted" style="font-weight:600">Chapitre 5 sur 5</span></div><div class="card"><div class="section-title"><span class="icon-bg ">🗂️</span>L’architecture de l’information</div><p class="lead">Un site peut contenir une information parfaite… que personne ne trouve. L’<strong>architecture de l’information</strong> organise, nomme et relie les contenus pour que les utilisateurs trouvent ce qu’ils cherchent et comprennent où ils sont. Rosenfeld et Morville y distinguent quatre systèmes : <strong>organisation</strong>, <strong>étiquetage</strong> (libellés), <strong>navigation</strong> et <strong>recherche</strong>.</p><div class="objectif-box"><strong class="title">Objectif du chapitre</strong>Construire une arborescence lisible, choisir des libellés compréhensibles, distinguer les types de navigation, et savoir tester une architecture par tri par cartes et test d’arborescence.</div><h3>Organiser : selon quelle logique ? <span class="famille-tag f5">Architecture de l’information</span></h3><div class="table-wrap"><table><tr><th>Schéma</th><th>Exemple</th><th>Quand l’utiliser</th></tr><tr><td><strong>Exact</strong> : alphabétique, chronologique, géographique</td><td>Annuaire, archives, liste des agences</td><td>L’utilisateur connaît déjà le nom, la date ou le lieu.</td></tr><tr><td><strong>Par thème</strong></td><td>Sports et loisirs, Cadre de vie</td><td>Le cas le plus fréquent ; exige des libellés très clairs.</td></tr><tr><td><strong>Par tâche</strong></td><td>Payer, S’inscrire, Signaler</td><td>Sites de services, où l’on vient pour faire quelque chose.</td></tr><tr><td><strong>Par public</strong></td><td>Particuliers, Professionnels, Étudiants</td><td>Publics aux besoins très différents… et qui savent dans quelle case ils sont.</td></tr></table></div><div class="warn-box"><strong>⚠️ Le piège n° 1 :</strong> calquer le menu sur l’organigramme de l’organisation (« Direction des affaires scolaires ») au lieu du vocabulaire et des tâches des utilisateurs.</div></div><div class="card"><div class="section-title"><span class="icon-bg green">🌳</span>Profondeur, largeur… et la fausse règle des 3 clics</div><div class="grid grid-2"><div class="mini-card"><h4>🔻 Trop profond</h4><p class="muted">5 niveaux de 3 rubriques : chaque clic est un pari, on se perd.</p></div><div class="mini-card"><h4>↔️ Trop large</h4><p class="muted">40 rubriques au même niveau : choisir devient long (loi de Hick).</p></div></div><p>On cherche un équilibre : des rubriques de premier niveau peu nombreuses et distinctes, puis des sous-rubriques regroupées logiquement. La « règle des 3 clics » n’est pas fondée : ce qui compte n’est pas le nombre de clics, mais que <strong>chaque clic rapproche clairement du but</strong> (on parle de « parfum de l’information »).</p><h3>Les types de navigation</h3><div class="table-wrap"><table><tr><th>Navigation</th><th>Rôle</th><th>Exemple</th></tr><tr><td><strong>Globale</strong></td><td>Accéder aux grandes rubriques depuis toutes les pages.</td><td>Menu principal en haut de page.</td></tr><tr><td><strong>Locale</strong></td><td>Se déplacer à l’intérieur d’une rubrique.</td><td>Sous-menu latéral « Enfance et éducation ».</td></tr><tr><td><strong>Fil d’Ariane</strong></td><td>Savoir où l’on est et remonter d’un niveau.</td><td>Accueil › Démarches › Papiers d’identité</td></tr><tr><td><strong>Contextuelle</strong></td><td>Proposer des contenus liés au contenu lu.</td><td>« Voir aussi : Passeport ».</td></tr></table></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🃏</span>Concevoir et tester une architecture</div><div class="grid grid-3"><div class="mini-card"><h4>🃏 Tri par cartes ouvert</h4><p class="muted">Les participants regroupent des cartes de contenus et <strong>nomment eux-mêmes</strong> les groupes. Pour découvrir le modèle mental et le vocabulaire des utilisateurs.</p></div><div class="mini-card"><h4>🗃️ Tri par cartes fermé</h4><p class="muted">Les catégories sont <strong>imposées</strong> ; les participants y rangent les cartes. Pour vérifier qu’une structure existante est comprise.</p></div><div class="mini-card"><h4>🌳 Test d’arborescence</h4><p class="muted">On donne une tâche et l’arborescence <strong>sans aucun design</strong> : le participant indique où il chercherait. On mesure la réussite et les détours.</p></div></div><p class="muted">Variante : le tri <strong>hybride</strong> impose des catégories mais autorise d’en créer de nouvelles. Ces études se mènent souvent en ligne, avec plusieurs dizaines de participants.</p></div><div class="card"><div class="section-title"><span class="icon-bg red">🧪</span>Exercice : un test d’arborescence</div><div class="instruction-box"><strong class="title">Consigne</strong>Voici l’arborescence du site d’une ville fictive, sans aucun design. Pour chaque tâche, cliquez sur les rubriques pour les déplier, puis sur la page où vous pensez trouver la réponse. Vos clics sont comptés : un vrai test mesure la réussite <em>et</em> les détours.</div><div class="mini-card" style="margin-bottom:12px"><strong id="ttTaskN">Tâche 1 / 4</strong><p id="ttTask" style="margin:6px 0 0"></p></div><div id="ttTree" class="tt-tree"></div><div class="actions-row"><button class="btn btn-ghost" id="ttReset">↺ Recommencer le test</button></div><div class="result-panel" id="ttRes"></div></div><div class="card" data-explorer="x5"><div class="section-title"><span class="icon-bg purple">🗂️</span>Explorateur — le vocabulaire de l’architecture</div><p class="muted">Cliquez sur chaque notion pour afficher sa fiche.</p><div class="chain"></div><div class="concept-detail"></div><div class="progress-wrap"><div class="progress-label"><span>Notions consultées</span><span>0 / 10</span></div><div class="progress-track"><div class="progress-fill"></div></div></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🔑</span>À retenir</div><div class="key-box"><div class="big">On range selon la logique des utilisateurs, pas celle de l’organisation.</div><p style="margin:8px 0 0">Libellés tirés de leur vocabulaire, rubriques testées par tri par cartes, chemins vérifiés par test d’arborescence : l’architecture se prouve, elle ne se décrète pas.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">❓</span>QCM — Chapitre 5</div><div class="instruction-box"><strong class="title">Consigne</strong>Une seule bonne réponse par question. Répondez à tout, vérifiez, puis lisez les explications, y compris pour les bonnes réponses. Questions et options sont mélangées à chaque essai.</div><div id="qcm4"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="qtxt4">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="qfill4"></div></div></div><div class="actions-row"><button class="btn btn-primary" data-qcheck="4">✔ Vérifier</button><button class="btn btn-warning btn-reveal" data-qreveal="4">👁 Révéler</button><button class="btn btn-ghost" data-qreset="4">↺ Recommencer</button></div><div class="result-panel" id="qres4"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c3">◂ Précédent</button><button class="btn btn-primary" data-goto="syn">Suite : 🏁 Synthèse ▸</button></div></div></section>
+<section class="panel" data-panel="syn">
+<div class="card"><div class="section-title"><span class="icon-bg green">📊</span>Vos résultats aux QCM</div><div class="table-wrap score-table"><table><tr><th>Chapitre</th><th>Thème</th><th>Meilleur score</th></tr><tr><td>Chapitre 1</td><td>📊 Connaître ses utilisateurs</td><td id="score0">—</td></tr><tr><td>Chapitre 2</td><td>🎙️ Mener un entretien</td><td id="score1">—</td></tr><tr><td>Chapitre 3</td><td>🧠 Carte d’empathie & persona</td><td id="score2">—</td></tr><tr><td>Chapitre 4</td><td>🛤️ Parcours utilisateur</td><td id="score3">—</td></tr><tr><td>Chapitre 5</td><td>🗂️ Architecture de l’information</td><td id="score4">—</td></tr><tr><td colspan="2"><strong>Total</strong></td><td id="scoreTotal">0 / 25</td></tr></table></div><p class="muted">Un chapitre sous 4 / 5 ? Relisez-le et refaites son QCM avant de passer au support pratique.</p></div><div class="card"><div class="section-title"><span class="icon-bg ">🔑</span>Le message clé</div><div class="key-box"><div class="big">On ne conçoit pas pour « l’utilisateur », on conçoit pour des personnes qu’on a écoutées.</div><p style="margin:8px 0 0">Des faits recueillis en entretien, synthétisés en carte d’empathie et en persona, racontés en parcours, puis traduits en une architecture que les utilisateurs comprennent.</p></div><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Distinguer données quantitatives et qualitatives, et choisir la méthode qui répond à une question donnée ;</li><li>Préparer et conduire un court entretien semi-directif, avec des questions ouvertes et sans biais ;</li><li>Synthétiser des entretiens dans une carte d’empathie, puis modéliser un persona fondé sur ces données ;</li><li>Décrire les étapes d’un parcours utilisateur, avec ses points de contact, ses émotions et ses frustrations ;</li><li>Définir une architecture de l’information structurée : arborescence, libellés, navigation, tri par cartes et test d’arborescence.</li></ul></div></div><div class="card"><div class="section-title"><span class="icon-bg amber">📦</span>À la fin de la séance, vous devez pouvoir</div><div class="checklist" id="finCheck"><label><input type="checkbox"> Dire quand utiliser une méthode quantitative ou qualitative, et formuler une hypothèse vérifiable ;</label><label><input type="checkbox"> Transformer une question orientée ou hypothétique en question ouverte sur un fait passé ;</label><label><input type="checkbox"> Ranger une observation dans la bonne zone de la carte d’empathie ;</label><label><input type="checkbox"> Rédiger un persona avec objectif, freins, scénario d’usage et citation, en signalant ce qui reste à vérifier ;</label><label><input type="checkbox"> Décrire les étapes d’un parcours, ses points de contact, sa courbe d’émotion et ses opportunités ;</label><label><input type="checkbox"> Distinguer tri par cartes ouvert, tri fermé et test d’arborescence, et critiquer des libellés.</label></div><div class="link-card"><span><strong>🛠️ Passez à la pratique</strong><br><span class="muted">Correspondance, situations, interview express et carte d’empathie, glossaire à débloquer.</span></span><a class="btn btn-success" href="seance-3-utilisateurs-et-architecture-de-linformation-pratique.html">Ouvrir le support pratique ▸</a></div><div class="objectif-box"><strong class="title">Prochaine séance — Je sais auditer un site et défendre mes recommandations</strong>En groupe, vous auditerez un site réel : contexte et enjeux, arborescence reconstituée, problèmes qualifiés avec critères, lois et gravité, persona et parcours d’une tâche clé, puis présentation orale. Avant de partir, faites valider le site choisi par votre groupe.</div></div></section>
+<style>.tt-tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px dashed var(--border)}.tt-tree>ul{padding-left:0;border-left:none}.tt-tree li{margin:4px 0}.tt-node{border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px 12px;font-size:.88rem;font-weight:600;color:var(--dark2);text-align:left}.tt-node.branch::before{content:"▸ ";color:var(--primary)}.tt-node.branch.open::before{content:"▾ "}.tt-node.leaf{font-weight:500}.tt-node.leaf:hover,.tt-node.branch:hover{border-color:var(--primary)}.qs-row{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff}.qs-row.correct{border-color:#6ee7b7}.qs-row.wrong{border-color:#fca5a5}.qs-row .expl{display:none;font-size:.86rem;margin-top:8px}.qs-row.checked .expl{display:block}#jrStage svg circle{cursor:pointer}</style></main>
+<footer>Ergonomie web — Séance 3 — Utilisateurs et architecture de l’information — Théorie<br>Mode formateur : ajoutez <code>?formateur</code> à l'adresse de la page.</footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+"use strict";
+const FAMILIES={"f1": "Données & persona", "f2": "Entretiens", "f3": "Carte d’empathie", "f4": "Parcours", "f5": "Architecture de l’information"};
+const EXPLORERS={"x0": {"items": [{"id": "Donnée quantitative", "fam": "f1", "rows": [["Définition", "Information chiffrée, recueillie sur un grand nombre de personnes, qui mesure l’ampleur d’un phénomène."], ["Exemple", "62 % des visiteurs mobiles quittent le formulaire à l’étape 2."], ["Piège", "Conclure sur les causes à partir d’un chiffre seul : il dit ce qui se passe, pas pourquoi."], ["À retenir", "Elle répond à « combien ? », « où ? », « quand ? »."]]}, {"id": "Donnée qualitative", "fam": "f1", "rows": [["Définition", "Information descriptive (paroles, comportements observés) recueillie auprès de peu de personnes, qui explique les raisons."], ["Exemple", "« Je n’ai pas compris si “Valider” payait tout de suite ou non, alors j’ai fermé l’onglet. »"], ["Piège", "Généraliser à partir de deux entretiens, ou au contraire les écarter parce qu’ils « ne sont pas représentatifs »."], ["À retenir", "Elle répond à « pourquoi ? » et révèle l’inattendu."]]}, {"id": "Analytics", "fam": "f1", "rows": [["Définition", "Outils de mesure de l’audience et du comportement sur un site : pages vues, parcours, sources de trafic, taux d’abandon."], ["Exemple", "Un rapport qui montre que la page « Tarifs » est la plus consultée avant une inscription."], ["Piège", "Croire qu’ils montrent l’intention : un long temps passé sur une page peut signifier intérêt… ou confusion."], ["À retenir", "Ils indiquent où regarder ; les entretiens expliquent ce qu’on y voit."]]}, {"id": "Segment utilisateur", "fam": "f1", "rows": [["Définition", "Groupe d’utilisateurs qui partagent des caractéristiques ou des besoins utiles au projet."], ["Exemple", "Sur un site de location de vélos : touristes de passage, abonnés qui vont au travail, familles le week-end."], ["Piège", "Segmenter seulement par âge ou par sexe, alors que les besoins et les usages départagent mieux."], ["À retenir", "On segmente par besoins et comportements, pas par cases démographiques."]]}, {"id": "Hypothèse", "fam": "f1", "rows": [["Définition", "Affirmation provisoire sur les utilisateurs ou sur une solution, formulée pour être vérifiée."], ["Exemple", "« Nous pensons que les parents abandonnent l’inscription car ils n’ont pas le numéro d’allocataire sous la main. Nous le saurons si… »"], ["Piège", "La présenter comme un fait dans un livrable, ou la formuler de façon invérifiable."], ["À retenir", "Toute hypothèse indique comment on saura si elle est vraie."]]}]}, "x1": {"items": [{"id": "Entretien semi-directif", "fam": "f2", "rows": [["Définition", "Entretien guidé par une liste de thèmes et de questions, mais qui laisse la personne s’exprimer librement et autorise des relances imprévues."], ["Exemple", "Trois thèmes prévus (contexte, dernière réservation, difficultés), explorés dans l’ordre où la personne les aborde."], ["Piège", "Le transformer en questionnaire oral, en lisant les questions une à une sans écouter."], ["À retenir", "Un cadre pour ne rien oublier, une souplesse pour découvrir."]]}, {"id": "Guide d’entretien", "fam": "f2", "rows": [["Définition", "Document préparé avant l’entretien : objectifs, thèmes, questions ouvertes et relances possibles, durée de chaque partie."], ["Exemple", "Une page : accueil, 2 questions de contexte, « Racontez-moi la dernière fois que… », 4 relances, conclusion."], ["Piège", "Un guide de trente questions fermées, impossible à tenir en 20 minutes."], ["À retenir", "Court, ordonné, centré sur les faits."]]}, {"id": "Question ouverte", "fam": "f2", "rows": [["Définition", "Question qui ne peut pas se satisfaire d’un oui, d’un non ou d’un chiffre, et invite à raconter ou à expliquer."], ["Exemple", "« Comment avez-vous trouvé ce logement ? » ; « Que s’est-il passé ensuite ? »"], ["Piège", "Une question ouverte mais orientée (« Qu’est-ce qui vous a plu dans notre super appli ? »)."], ["À retenir", "Commence souvent par comment, qu’est-ce que, racontez-moi."]]}, {"id": "Question fermée", "fam": "f2", "rows": [["Définition", "Question à laquelle on répond par oui, non ou un choix parmi des réponses limitées."], ["Exemple", "« Avez-vous un compte ? » ; « Combien de fois par mois ? »"], ["Piège", "En abuser : l’entretien se transforme en sondage et ne révèle rien d’inattendu."], ["À retenir", "Utile pour vérifier un fait, à faire suivre d’une question ouverte."]]}, {"id": "Biais de confirmation", "fam": "f2", "rows": [["Définition", "Tendance à rechercher, retenir et interpréter les informations qui confirment ce que l’on pense déjà."], ["Exemple", "Ne noter que les remarques qui confirment que « le menu est le problème » et ignorer celles sur les frais de livraison."], ["Piège", "Croire qu’on y échappe parce qu’on est de bonne foi : il agit sans qu’on s’en rende compte."], ["À retenir", "Chercher activement ce qui contredit son hypothèse."]]}, {"id": "Verbatim", "fam": "f2", "rows": [["Définition", "Citation exacte d’une personne interrogée, notée mot pour mot."], ["Exemple", "« J’ai cru que le bouton “Valider” payait directement, alors j’ai abandonné. »"], ["Piège", "Reformuler ou résumer à sa façon (« le paiement l’inquiète ») : on perd la nuance et la force de la preuve."], ["À retenir", "Un verbatim est une preuve : il rend un constat crédible."]]}]}, "x2": {"items": [{"id": "Pense et ressent", "fam": "f3", "rows": [["Question à se poser", "Qu’est-ce qui la préoccupe vraiment ? Que craint-elle, qu’espère-t-elle, même sans le dire ?"], ["Exemple (Nadia)", "Peur d’oublier une date limite et que son fils n’ait pas de place."], ["Piège", "Y projeter ses propres sentiments au lieu de s’appuyer sur ce qui a été dit ou observé."], ["À retenir", "Le monde intérieur, déduit des entretiens."]]}, {"id": "Voit", "fam": "f3", "rows": [["Question à se poser", "Que voit-elle dans son environnement : lieux, écrans, offres concurrentes ?"], ["Exemple (Nadia)", "Le site de la mairie sur un petit écran ; les autres parents qui s’inscrivent via le groupe WhatsApp de l’école."], ["Piège", "Confondre avec ce qu’elle fait."], ["À retenir", "L’environnement visuel et concret."]]}, {"id": "Entend", "fam": "f3", "rows": [["Question à se poser", "Que lui disent ses proches, ses collègues, les médias, les institutions ?"], ["Exemple (Nadia)", "« Il faut s’inscrire dès l’ouverture, sinon c’est complet », répètent les autres parents."], ["Piège", "Oublier les influences : elles expliquent souvent un comportement."], ["À retenir", "Les influences et les rumeurs."]]}, {"id": "Dit et fait", "fam": "f3", "rows": [["Question à se poser", "Que dit-elle et que fait-elle, de façon observable ?"], ["Exemple (Nadia)", "Dit : « Je fais tout sur mon téléphone. » Fait : appelle la mairie quand le formulaire bloque."], ["Piège", "Ne noter que les paroles : les actes contredisent parfois le discours."], ["À retenir", "Les faits observables et les citations."]]}, {"id": "Peines", "fam": "f3", "rows": [["Question à se poser", "Quelles frustrations, quels obstacles ou risques rencontre-t-elle ?"], ["Exemple (Nadia)", "Le formulaire exige un justificatif qu’elle n’a pas sur elle ; perte de la saisie si la session expire."], ["Piège", "Lister des problèmes d’interface imaginés par l’équipe plutôt que ceux rapportés."], ["À retenir", "Ce qui l’empêche d’atteindre son but."]]}, {"id": "Gains", "fam": "f3", "rows": [["Question à se poser", "Qu’espère-t-elle obtenir ? À quoi reconnaîtrait-elle une réussite ?"], ["Exemple (Nadia)", "Inscrire ses deux enfants en moins de 10 minutes, depuis son téléphone, avec une confirmation écrite."], ["Piège", "Écrire des fonctionnalités (« une appli mobile ») au lieu de bénéfices."], ["À retenir", "Ses critères de réussite, pas nos solutions."]]}]}, "x3": {"items": [{"id": "Persona", "fam": "f1", "rows": [["Définition", "Personnage fictif, fondé sur des données réelles, qui représente un groupe d’utilisateurs partageant des objectifs et des comportements."], ["Exemple", "Nadia, infirmière en horaires décalés, qui fait ses démarches sur son téléphone pendant ses pauses."], ["Piège", "Le confondre avec une personne réelle interrogée, ou avec la moyenne de tous les profils."], ["À retenir", "Un archétype fondé sur des données, au service des décisions."]]}, {"id": "Persona principal / secondaire", "fam": "f1", "rows": [["Définition", "Le persona principal est celui pour qui on conçoit en priorité ; un persona secondaire a des besoins à satisfaire sans dégrader l’expérience du principal."], ["Exemple", "Principal : le parent qui inscrit ses enfants. Secondaire : l’agent de mairie qui vérifie les dossiers."], ["Piège", "Donner la même priorité à tous : on finit par ne satisfaire personne."], ["À retenir", "Un seul persona principal par interface."]]}, {"id": "Anti-persona", "fam": "f1", "rows": [["Définition", "Profil pour lequel on ne conçoit volontairement pas, ou dont on veut même empêcher certains usages."], ["Exemple", "Un revendeur qui réserve en masse des places de spectacle pour les revendre plus cher."], ["Piège", "Le confondre avec un persona secondaire."], ["À retenir", "Dire pour qui on ne conçoit pas aide à trancher."]]}, {"id": "Objectif", "fam": "f1", "rows": [["Définition", "Ce que le persona cherche à accomplir, indépendamment de l’interface."], ["Exemple", "« Inscrire mes enfants au centre de loisirs avant la date limite. »"], ["Piège", "Décrire une fonctionnalité (« utiliser le formulaire ») au lieu d’un but."], ["À retenir", "L’objectif existe avant le site et lui survivra."]]}, {"id": "Frein", "fam": "f1", "rows": [["Définition", "Obstacle, crainte ou contrainte qui empêche ou ralentit le persona dans l’atteinte de son objectif."], ["Exemple", "Ne pas avoir le numéro d’allocataire sous la main ; peur de perdre sa saisie."], ["Piège", "Inventer des freins sans les avoir entendus en entretien."], ["À retenir", "Chaque frein est une piste de conception."]]}, {"id": "Scénario d’usage", "fam": "f1", "rows": [["Définition", "Court récit d’une situation réaliste dans laquelle le persona utilise le service pour atteindre un objectif."], ["Exemple", "Pendant sa pause de 15 minutes, Nadia doit inscrire son fils avant la clôture du soir, depuis son téléphone."], ["Piège", "Raconter un scénario idéal où tout se passe bien : on ne découvre rien."], ["À retenir", "Il précise le contexte : où, quand, avec quel temps et quel appareil."]]}]}, "x4": {"items": [{"id": "Parcours utilisateur", "fam": "f4", "rows": [["Définition", "Représentation, étape par étape, de la façon dont un persona accomplit un objectif, avec ses actions, ses points de contact et ses émotions."], ["Exemple (Sofia)", "De l’envie de commander jusqu’à la réception du repas et la demande d’avis."], ["Piège", "Le réduire à l’enchaînement des écrans : on oublie l’avant, l’après et les émotions."], ["À retenir", "Un persona, un objectif, un parcours."]]}, {"id": "Étape", "fam": "f4", "rows": [["Définition", "Grande phase du parcours, définie du point de vue de l’utilisateur."], ["Exemple (Sofia)", "Envie, choix, panier, paiement, attente, réception."], ["Piège", "Nommer les étapes avec les noms des écrans ou des services internes."], ["À retenir", "Nommée par ce que vit l’utilisateur."]]}, {"id": "Point de contact", "fam": "f4", "rows": [["Définition", "Moment et canal par lesquels l’utilisateur interagit avec le service : écran, e-mail, SMS, appel, personne."], ["Exemple (Sofia)", "La notification, la page du restaurant, le SMS de suivi, le livreur."], ["Piège", "Ne lister que les écrans du site : un SMS ou un appel au support font partie de l’expérience."], ["À retenir", "L’expérience se joue aussi hors de l’écran."]]}, {"id": "Courbe d’émotion", "fam": "f4", "rows": [["Définition", "Ligne qui représente l’état émotionnel de l’utilisateur à chaque étape, du négatif au positif."], ["Exemple (Sofia)", "Un creux au paiement, une remontée pendant le suivi de livraison."], ["Piège", "La dessiner « au feeling » au lieu de s’appuyer sur des verbatims."], ["À retenir", "Elle rend visibles les moments à traiter en priorité."]]}, {"id": "Point de frustration", "fam": "f4", "rows": [["Définition", "Moment précis du parcours où l’utilisateur rencontre une difficulté, une attente ou une mauvaise surprise."], ["Exemple (Sofia)", "Des frais de service découverts au paiement."], ["Piège", "Les décrire en termes de solution (« manque un bouton ») au lieu du vécu."], ["À retenir", "Chaque point de frustration est appuyé par un fait ou un verbatim."]]}, {"id": "Moment de vérité", "fam": "f4", "rows": [["Définition", "Instant décisif où l’utilisateur se forge une opinion durable du service, positive ou négative (notion popularisée par Jan Carlzon)."], ["Exemple (Sofia)", "L’écran de paiement : c’est là que Sofia décide de commander… ou de fermer l’appli."], ["Piège", "Croire que tous les moments se valent."], ["À retenir", "On soigne en priorité les moments qui font basculer la décision."]]}, {"id": "Opportunité", "fam": "f4", "rows": [["Définition", "Piste d’amélioration déduite d’un point de frustration ou d’un besoin non satisfait."], ["Exemple (Sofia)", "Afficher tous les frais dès la page du restaurant."], ["Piège", "Proposer une opportunité sans lien avec un problème observé."], ["À retenir", "Une opportunité répond à un problème identifié."]]}]}, "x5": {"items": [{"id": "Architecture de l’information", "fam": "f5", "rows": [["Définition", "Organisation, étiquetage, navigation et recherche des contenus d’un site, pour qu’on trouve et comprenne l’information."], ["Exemple", "Le plan d’un site de mairie organisé par besoins : Démarches, Enfance, Sports, Cadre de vie."], ["Piège", "La réduire au menu : elle inclut aussi les libellés, la recherche et les liens entre pages."], ["À retenir", "Trouver, comprendre, se repérer."]]}, {"id": "Arborescence", "fam": "f5", "rows": [["Définition", "Représentation hiérarchique des pages d’un site, de l’accueil jusqu’aux pages les plus profondes."], ["Exemple", "Accueil › Démarches › Papiers d’identité › Carte d’identité."], ["Piège", "Une arborescence trop profonde (chaque clic est un pari) ou trop plate (des dizaines d’entrées au même niveau)."], ["À retenir", "Peu de rubriques de premier niveau, distinctes et compréhensibles."]]}, {"id": "Taxonomie", "fam": "f5", "rows": [["Définition", "Système de classement des contenus en catégories et sous-catégories, avec des règles de rangement."], ["Exemple", "Un site de recettes classé par type de plat, par ingrédient principal et par temps de préparation."], ["Piège", "Mélanger plusieurs logiques de classement dans un même niveau."], ["À retenir", "Une logique de classement claire et constante."]]}, {"id": "Libellé", "fam": "f5", "rows": [["Définition", "Mot ou groupe de mots qui nomme une rubrique, un lien ou un bouton."], ["Exemple", "« Inscrire mon enfant à la cantine » plutôt que « Restauration scolaire – DAS »."], ["Piège", "Les libellés vagues (« Services », « Divers ») ou issus du jargon interne."], ["À retenir", "Les mots des utilisateurs, précis et sans ambiguïté."]]}, {"id": "Navigation globale", "fam": "f5", "rows": [["Définition", "Système de navigation présent sur toutes les pages, qui donne accès aux grandes rubriques du site."], ["Exemple", "Le menu principal, en haut de chaque page."], ["Piège", "Un menu qui change d’une page à l’autre."], ["À retenir", "Stable et identique partout."]]}, {"id": "Navigation locale", "fam": "f5", "rows": [["Définition", "Système de navigation propre à une rubrique, qui permet de passer d’une page à ses voisines."], ["Exemple", "Le sous-menu latéral de la rubrique « Enfance et éducation »."], ["Piège", "La confondre avec la navigation globale et y répéter tout le menu."], ["À retenir", "Se déplacer à l’intérieur d’une rubrique."]]}, {"id": "Fil d’Ariane", "fam": "f5", "rows": [["Définition", "Suite de liens qui indique la position de la page dans l’arborescence et permet de remonter."], ["Exemple", "Accueil › Démarches › Papiers d’identité"], ["Piège", "Le remplacer par l’historique de navigation, qui ne dit pas où l’on est dans le site."], ["À retenir", "Où suis-je ? Comment remonter ?"]]}, {"id": "Tri par cartes ouvert", "fam": "f5", "rows": [["Définition", "Méthode où les participants regroupent des cartes de contenus et nomment eux-mêmes les groupes."], ["Exemple", "Trente cartes de contenus de la mairie, regroupées et nommées par 15 habitants."], ["Piège", "L’utiliser pour valider une structure déjà décidée : c’est le rôle du tri fermé."], ["À retenir", "Découvrir le modèle mental et le vocabulaire des utilisateurs."]]}, {"id": "Tri par cartes fermé", "fam": "f5", "rows": [["Définition", "Méthode où les participants rangent des cartes dans des catégories imposées."], ["Exemple", "Ranger « Cantine », « Piscine », « Passeport » dans les cinq rubriques prévues du futur menu."], ["Piège", "Croire qu’il fait découvrir de nouvelles catégories : il ne fait que tester celles qu’on propose."], ["À retenir", "Vérifier qu’une structure est comprise."]]}, {"id": "Test d’arborescence", "fam": "f5", "rows": [["Définition", "Test où l’on demande aux participants où ils chercheraient une information dans une arborescence présentée sans design."], ["Exemple", "« Où signaleriez-vous un nid-de-poule ? » : 40 % des participants vont dans « Démarches » au lieu de « Cadre de vie »."], ["Piège", "Le faire avec la maquette graphique : on ne sait plus si l’échec vient de la structure ou du design."], ["À retenir", "Mesurer la trouvabilité de la structure seule."]]}]}};
+const QCMS=[[{"q": "Les analytics montrent que 60 % des visiteurs abandonnent à l’étape « Livraison ». Que manque-t-il pour agir ?", "o": ["Rien, il suffit de supprimer l’étape.", "La raison de l’abandon, que des entretiens ou des observations peuvent révéler.", "Un deuxième outil d’analytics.", "Le nombre total de visiteurs du site."], "a": 1, "e": "Le chiffre localise le problème mais n’en donne pas la cause : il faut une méthode qualitative pour comprendre."}, {"q": "Quelle méthode est la plus adaptée pour comprendre comment des parents organisent l’inscription de leurs enfants aux activités ?", "o": ["Les analytics", "Des entretiens", "Un test A/B", "Le taux de rebond"], "a": 1, "e": "On cherche un vécu et des motivations : l’entretien est la méthode qualitative la plus adaptée."}, {"q": "Laquelle de ces phrases est une hypothèse correctement formulée ?", "o": ["« Les utilisateurs détestent notre site. »", "« Nous pensons que les étudiants abandonnent la réservation car le prix final n’apparaît qu’à la fin ; nous le vérifierons par 5 entretiens et le suivi de l’étape panier. »", "« Le site doit être plus moderne. »", "« Tout le monde utilise un smartphone. »"], "a": 1, "e": "Une hypothèse est précise, provisoire et indique comment la vérifier."}, {"q": "Pourquoi l’équipe projet n’est-elle pas un bon substitut aux utilisateurs ?", "o": ["Parce qu’elle n’a pas de goût.", "Parce qu’elle connaît trop le produit et son vocabulaire pour percevoir les difficultés des utilisateurs.", "Parce qu’elle n’utilise pas internet.", "Elle l’est : ses avis suffisent."], "a": 1, "e": "La connaissance du produit rend aveugle à ses difficultés : on conçoit pour des gens qui ne sont pas nous."}, {"q": "Comment segmenter utilement les utilisateurs d’un service de location de vélos ?", "o": ["Par tranche d’âge uniquement", "Par besoins et usages : trajet domicile-travail, tourisme, loisirs en famille", "Par couleur de vélo préférée", "Par ordre alphabétique"], "a": 1, "e": "Les besoins et comportements déterminent ce que l’interface doit offrir ; la démographie seule départage mal."}], [{"q": "Quelle question est la mieux adaptée pour démarrer la partie centrale d’un entretien ?", "o": ["« Aimez-vous notre site ? »", "« Racontez-moi la dernière fois que vous avez réservé un billet de train. »", "« Utiliseriez-vous une appli de réservation ? »", "« C’est compliqué de réserver, non ? »"], "a": 1, "e": "Elle porte sur un fait passé et précis, et laisse la personne raconter."}, {"q": "« Est-ce que vous utiliseriez une fonction de partage de panier ? » Quel est le défaut de cette question ?", "o": ["Elle est trop longue.", "Elle est hypothétique : les gens prédisent mal leur comportement futur.", "Elle est ouverte.", "Elle n’a aucun défaut."], "a": 1, "e": "Mieux vaut demander comment la personne a fait la dernière fois qu’elle a acheté à plusieurs."}, {"q": "Qu’est-ce que la saturation, en entretien ?", "o": ["Le moment où l’interviewé est fatigué.", "Le moment où de nouveaux entretiens n’apportent presque plus d’informations nouvelles.", "Le nombre maximum légal d’entretiens.", "Une question trop longue."], "a": 1, "e": "On arrête quand les entretiens se répètent ; le nombre dépend de la diversité des profils."}, {"q": "Pourquoi noter des verbatims plutôt que des résumés ?", "o": ["Pour remplir le rapport.", "Parce qu’une citation exacte garde la nuance et sert de preuve dans les livrables.", "Parce que c’est plus rapide.", "Parce que la loi l’impose."], "a": 1, "e": "Le verbatim rend le constat crédible et évite d’interpréter trop tôt."}, {"q": "Vous êtes convaincu que le menu est le problème et vous ne notez que les remarques sur le menu. Quel biais vous guette ?", "o": ["Le biais de confirmation", "L’effet Von Restorff", "La loi de Hick", "L’effet de position sérielle"], "a": 0, "e": "On retient ce qui confirme ce que l’on croit déjà : il faut chercher activement les contre-exemples."}], [{"q": "Dans quelle zone de la carte d’empathie classer la phrase « Les autres parents disent qu’il faut s’inscrire dès l’ouverture » ?", "o": ["Voit", "Entend", "Dit et fait", "Gains"], "a": 1, "e": "Ce sont les paroles de l’entourage : la zone « Entend »."}, {"q": "Quelle est la principale erreur dans un persona obtenu en faisant la moyenne de tous les profils interrogés ?", "o": ["Il est trop précis.", "Il ne ressemble à personne et ne correspond au comportement d’aucun groupe réel.", "Il est trop court.", "Il n’a pas de photo."], "a": 1, "e": "Un persona représente un comportement partagé ; une moyenne de profils hétérogènes produit un personnage qui n’existe pas."}, {"q": "À quoi sert un anti-persona ?", "o": ["À représenter l’utilisateur principal.", "À préciser pour qui on ne conçoit pas, et parfois quels usages empêcher.", "À remplacer les entretiens.", "À décrire l’équipe projet."], "a": 1, "e": "Dire explicitement qui n’est pas la cible aide à trancher les choix de conception."}, {"q": "Laquelle de ces informations a le plus sa place dans un persona ?", "o": ["Son signe astrologique", "Ses freins pour réaliser la tâche, relevés en entretien", "Sa couleur préférée", "Le nom de son chat"], "a": 1, "e": "Un persona décrit ce qui influence les décisions de conception : objectifs, freins, contexte d’usage."}, {"q": "Vous construisez un persona à partir d’un seul entretien. Comment le présenter honnêtement ?", "o": ["Comme un persona définitif.", "Comme un proto-persona, en indiquant ce qui reste à vérifier.", "Comme une personne réelle, avec son vrai nom.", "Il ne faut rien présenter."], "a": 1, "e": "Un seul entretien ne suffit pas à représenter un groupe : c’est une hypothèse de travail."}], [{"q": "Qu’est-ce qu’un point de contact ?", "o": ["Une personne de l’équipe projet.", "Un moment et un canal d’interaction entre l’utilisateur et le service : écran, e-mail, SMS, appel…", "Un bouton cliquable.", "Un lien hypertexte."], "a": 1, "e": "Les points de contact incluent tout ce qui touche l’utilisateur, y compris hors du site."}, {"q": "Sur une courbe d’émotion, à quoi correspond le creux le plus profond ?", "o": ["À l’étape la plus longue.", "Au moment le plus négatif vécu par l’utilisateur, souvent prioritaire à traiter.", "À la page la plus visitée.", "À rien de particulier."], "a": 1, "e": "Le creux montre le point de frustration majeur : c’est souvent là qu’il faut agir en premier."}, {"q": "Pourquoi un parcours utilisateur ne se résume-t-il pas à la liste des écrans ?", "o": ["Parce qu’il est toujours plus court.", "Parce qu’il inclut ce qui se passe avant, après et hors de l’écran, ainsi que les émotions.", "Parce qu’il ne contient pas d’étapes.", "Parce qu’il ne concerne que le mobile."], "a": 1, "e": "Le parcours suit la personne, pas l’interface : un SMS ou un appel au support en fait partie."}, {"q": "Dans le parcours de Sofia, pourquoi le paiement est-il un moment de vérité ?", "o": ["Parce que c’est la première étape.", "Parce que c’est l’instant où elle décide de commander ou d’abandonner, et où se forge son opinion du service.", "Parce qu’il y a beaucoup de texte.", "Parce que la couleur est rouge."], "a": 1, "e": "Un moment de vérité fait basculer la décision et l’opinion durable."}, {"q": "Quelle formulation d’opportunité est la plus juste ?", "o": ["« Refaire tout le site. »", "« Afficher tous les frais dès la page du restaurant, pour supprimer la mauvaise surprise au paiement. »", "« Ajouter une mascotte. »", "« Changer la couleur du logo. »"], "a": 1, "e": "Une opportunité répond à un point de frustration observé et précise ce qu’elle change."}], [{"q": "Quelle est la différence entre un tri par cartes ouvert et un tri par cartes fermé ?", "o": ["Il n’y en a pas.", "Dans le tri ouvert, les participants créent et nomment les groupes ; dans le tri fermé, les catégories sont imposées.", "Le tri ouvert se fait en ligne, le fermé sur papier.", "Le tri fermé se fait sans participants."], "a": 1, "e": "L’ouvert sert à découvrir le modèle mental et le vocabulaire ; le fermé à vérifier une structure."}, {"q": "Pourquoi réalise-t-on un test d’arborescence sans aucun design ?", "o": ["Pour aller plus vite à dessiner.", "Pour évaluer uniquement la structure et les libellés, sans que le graphisme influence le résultat.", "Parce que les participants n’aiment pas les couleurs.", "Parce que c’est obligatoire."], "a": 1, "e": "On isole la structure : si les participants se trompent, c’est l’organisation ou le libellé qui est en cause."}, {"q": "Que penser de la « règle des 3 clics » ?", "o": ["C’est une loi scientifique.", "Elle n’est pas fondée : l’important est que chaque clic rapproche clairement du but.", "Elle impose 3 niveaux exactement.", "Elle ne concerne que le mobile."], "a": 1, "e": "Les utilisateurs acceptent plusieurs clics s’ils ont la certitude d’être sur le bon chemin."}, {"q": "Le menu d’un site de mairie contient « Direction des affaires scolaires ». Quel est le problème ?", "o": ["Le libellé est trop court.", "Il reprend l’organigramme interne au lieu du vocabulaire et des besoins des habitants.", "Il manque une icône.", "Aucun problème."], "a": 1, "e": "Les utilisateurs cherchent « cantine » ou « inscription à l’école », pas le nom d’un service administratif."}, {"q": "À quoi sert le fil d’Ariane ?", "o": ["À afficher les pages les plus visitées.", "À indiquer où l’on se trouve dans l’arborescence et à remonter d’un niveau.", "À remplacer le menu principal.", "À garder l’historique de navigation."], "a": 1, "e": "Il répond à « Où suis-je ? » et « Comment remonter ? »."}]];
+const ACTS=["ch0", "ch1", "ch2", "ch3", "ch4"];
+const params = new URLSearchParams(location.search);
+if (params.has('formateur') || location.hash === '#formateur') document.body.classList.add('formateur');
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(()=>toast('Copié dans le presse-papiers ✅')).catch(()=>fallbackCopy(txt)); }
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){ const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('Copié dans le presse-papiers ✅');}catch(e){toast('Copie impossible : sélectionnez le texte manuellement');} ta.remove(); }
+function download(name, txt){ const blob=new Blob([txt],{type:'text/markdown;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function setProgress(fillId, txtId, done, total, suffix){ const p = total ? Math.round(done/total*100) : 0; $('#'+fillId).style.width = p+'%'; $('#'+txtId).textContent = done+' / '+total+(suffix||''); }
+function scoreMsg(pct){ if(pct>=90) return 'Excellent : les notions sont acquises.'; if(pct>=70) return 'Bon résultat. Relisez les explications des erreurs pour consolider.'; if(pct>=50) return 'Des bases, mais plusieurs confusions. Relisez le chapitre puis recommencez.'; return 'Reprenez le chapitre, puis recommencez l\'activité.'; }
+const done = new Set();
+function markDone(act){
+  if(done.has(act)) return false;
+  done.add(act);
+  $$('.tab[data-act="'+act+'"]').forEach(t=>t.classList.add('done'));
+  const n = done.size;
+  $('#globalFill').style.width = Math.round(n/ACTS.length*100)+'%';
+  $('#globalPct').textContent = n+' / '+ACTS.length;
+  toast(n===ACTS.length ? '🎉 Toutes les activités sont validées !' : 'Activité validée ✅');
+  if(typeof onDone==='function') onDone(act);
+  return true;
+}
+function openTab(i){
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==i));
+  $$('.panel').forEach(p=>p.classList.toggle('active', p.dataset.panel==i));
+  const tw = $('.tabs-wrap'); window.scrollTo({top: tw.offsetTop, behavior: 'smooth'});
+  const at = $('.tab[data-tab="'+i+'"]'); if(at) at.scrollIntoView({inline:'center', block:'nearest'});
+}
+$$('.tab').forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.tab)));
+$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.goto)));
+
+/* Explorateurs */
+$$('[data-explorer]').forEach(box=>{
+  const E = EXPLORERS[box.dataset.explorer]; const seen=new Set();
+  const chain=$('.chain',box), detail=$('.concept-detail',box);
+  E.items.forEach((k,i)=>{
+    const b=document.createElement('button'); b.className='chain-node'; b.textContent=k.id; b.dataset.i=i;
+    b.addEventListener('click',()=>show(i)); chain.appendChild(b);
+  });
+  function show(i){
+    const k=E.items[i]; seen.add(i);
+    $$('.chain-node',box).forEach(n=>{ n.classList.toggle('active', n.dataset.i==i); if(seen.has(+n.dataset.i)) n.classList.add('seen'); });
+    detail.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><span class="term-item">'+esc(k.id)+'</span><span class="famille-tag '+k.fam+'">'+esc(FAMILIES[k.fam]||'')+'</span></div>'+
+      k.rows.map(r=>'<div class="row"><span class="k">'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('');
+    const f=$('.progress-fill',box), t=$('.progress-label span:last-child',box);
+    f.style.width=Math.round(seen.size/E.items.length*100)+'%'; t.textContent=seen.size+' / '+E.items.length;
+  }
+  show(0);
+});
+const qState = {};
+const L = ['A','B','C','D','E'];
+function renderQCM(ci){
+  const box=$('#qcm'+ci); box.innerHTML='';
+  const qs = shuffle(QCMS[ci]).map(q=>{ const opts=shuffle(q.o.map((t,i)=>({t,good:i===q.a}))); return {q:q.q,e:q.e,opts}; });
+  qState[ci]={qs};
+  qs.forEach((q,qi)=>{
+    const d=document.createElement('div'); d.className='qcm-q';
+    d.innerHTML='<div class="qt"><span class="q-num">Q'+(qi+1)+'</span>'+esc(q.q)+'</div><div class="qcm-opts" role="radiogroup">'+
+      q.opts.map((o,oi)=>'<button type="button" class="qcm-opt" role="radio" aria-checked="false" data-oi="'+oi+'"><span class="l">'+L[oi]+'</span><span>'+esc(o.t)+'</span></button>').join('')+
+      '</div><div class="expl"></div>';
+    $$('.qcm-opt',d).forEach(b=>b.addEventListener('click',()=>{
+      if(d.classList.contains('checked')) return;
+      $$('.qcm-opt',d).forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-checked','false');});
+      b.classList.add('sel'); b.setAttribute('aria-checked','true'); d.dataset.ans=b.dataset.oi; updQ(ci);
+    }));
+    box.appendChild(d);
+  });
+  $('#qres'+ci).classList.remove('show'); updQ(ci);
+}
+function updQ(ci){ const rows=$$('#qcm'+ci+' .qcm-q'); setProgress('qfill'+ci,'qtxt'+ci,rows.filter(r=>r.dataset.ans!==undefined).length,rows.length); }
+const scores = {};
+function checkQCM(ci, silent){
+  const rows=$$('#qcm'+ci+' .qcm-q');
+  if(!silent && rows.some(r=>r.dataset.ans===undefined)){ toast('Répondez à toutes les questions avant de vérifier.'); return; }
+  let ok=0;
+  rows.forEach((r,qi)=>{
+    const q=qState[ci].qs[qi]; const ans=r.dataset.ans===undefined?-1:+r.dataset.ans;
+    const gi=q.opts.findIndex(o=>o.good); const good=ans===gi; if(good) ok++;
+    r.classList.remove('correct','wrong'); r.classList.add('checked', good?'correct':'wrong');
+    $$('.qcm-opt',r).forEach((b,oi)=>{ b.classList.toggle('good',oi===gi); b.classList.toggle('bad',oi===ans&&!good); });
+    $('.expl',r).innerHTML=(good?'✅ ':'❌ Bonne réponse : <strong>'+L[gi]+'</strong>. ')+esc(q.e);
+  });
+  const pct=Math.round(ok/rows.length*100);
+  $('#qres'+ci).innerHTML='<div class="score">'+ok+' / '+rows.length+'</div><div class="msg">'+scoreMsg(pct)+'</div>';
+  $('#qres'+ci).classList.add('show');
+  if(!silent){ scores[ci]=Math.max(scores[ci]||0,ok); updScores(); markDone('ch'+ci); }
+}
+function revealQCM(ci){
+  $$('#qcm'+ci+' .qcm-q').forEach((r,qi)=>{ const gi=qState[ci].qs[qi].opts.findIndex(o=>o.good); r.dataset.ans=gi; $$('.qcm-opt',r).forEach((b,oi)=>b.classList.toggle('sel',oi===gi)); });
+  updQ(ci); checkQCM(ci,true);
+}
+function updScores(){
+  let tot=0,max=0;
+  QCMS.forEach((q,ci)=>{ const c=$('#score'+ci); if(scores[ci]!==undefined){ c.textContent=scores[ci]+' / '+q.length; tot+=scores[ci]; } max+=q.length; });
+  $('#scoreTotal').textContent=tot+' / '+max;
+}
+QCMS.forEach((_,ci)=>renderQCM(ci));
+$$('[data-qcheck]').forEach(b=>b.addEventListener('click',()=>checkQCM(+b.dataset.qcheck)));
+$$('[data-qreveal]').forEach(b=>b.addEventListener('click',()=>revealQCM(+b.dataset.qreveal)));
+$$('[data-qreset]').forEach(b=>b.addEventListener('click',()=>renderQCM(+b.dataset.qreset)));
+$$('#finCheck input').forEach(c=>c.addEventListener('change',()=>{}));
+
+
+$$('[data-copy]').forEach(b=>b.addEventListener('click',()=>copyText($(b.dataset.copy).textContent)));
+/* ---------- Classer des questions d'entretien ---------- */
+(function(){
+  const QS=[["« Raconte-moi la dernière fois que tu as commandé un repas en ligne. »", 0, "Elle invite à raconter un fait vécu, sans orienter : c’est le modèle de la bonne question.", ""], ["« Tu commandes souvent le soir ? »", 1, "On peut répondre par oui ou non : utile pour vérifier un fait, pauvre pour comprendre.", "« À quels moments de la semaine t’arrive-t-il de commander ? »"], ["« Tu ne trouves pas que l’appli est trop compliquée ? »", 2, "La question suggère la réponse attendue : la personne aura tendance à acquiescer.", "« Comment s’est passée ta dernière commande dans l’appli ? »"], ["« Est-ce que tu utiliserais une fonction de commande groupée ? »", 3, "On demande de prédire un comportement futur : les réponses sont souvent optimistes et peu fiables.", "« La dernière fois que vous avez commandé à plusieurs, comment avez-vous fait ? »"], ["« Comment as-tu choisi le restaurant ce soir-là ? »", 0, "Ouverte et ancrée dans un moment précis : elle fait parler du raisonnement réel.", ""], ["« Combien de fois as-tu commandé le mois dernier ? »", 1, "Fermée mais factuelle : utile pour situer la personne, à condition de la relancer ensuite.", "« Et la dernière fois, comment ça s’est passé ? »"], ["« Le paiement, c’était rapide, non ? »", 2, "Le « non ? » final pousse à confirmer : c’est une question orientée.", "« Comment s’est passé le moment du paiement ? »"], ["« Combien serais-tu prêt à payer pour la livraison illimitée ? »", 3, "Question sur un comportement imaginaire : on dit rarement ce qu’on paierait vraiment.", "« Aujourd’hui, comment gères-tu les frais de livraison ? »"]], CATS=["Ouverte", "Fermée", "Orientée", "Hypothétique"]; const box=$('#qsBox'); if(!box) return; let order=[];
+  function render(){
+    order=shuffle(QS); box.innerHTML='';
+    order.forEach((it,i)=>{ const d=document.createElement('div'); d.className='qs-row';
+      d.innerHTML='<div><span class="q-num">'+(i+1)+'</span>'+esc(it[0])+'</div><div class="choice-row" style="margin-top:8px">'+CATS.map((c,ci)=>'<button type="button" class="choice" data-ci="'+ci+'">'+c+'</button>').join('')+'</div><div class="expl"></div>';
+      $$('.choice',d).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.choice',d).forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); d.dataset.ans=b.dataset.ci; }));
+      box.appendChild(d); });
+    $('#qsRes').classList.remove('show');
+  }
+  $('#qsCheck').addEventListener('click',()=>{
+    const rows=$$('.qs-row',box); if(rows.some(r=>r.dataset.ans===undefined)){ toast('Classez toutes les questions avant de vérifier.'); return; }
+    let ok=0; rows.forEach((r,i)=>{ const it=order[i], good=+r.dataset.ans===it[1]; if(good) ok++;
+      $$('.choice',r).forEach((x,ci)=>{ x.classList.remove('sel'); x.classList.toggle('good',ci===it[1]); x.classList.toggle('bad',ci===+r.dataset.ans&&!good); });
+      r.classList.add('checked',good?'correct':'wrong');
+      $('.expl',r).innerHTML=(good?'✅ ':'❌ ')+'<strong>'+CATS[it[1]]+'.</strong> '+esc(it[2])+(it[3]?'<br>💡 Mieux : '+esc(it[3]):''); });
+    $('#qsRes').innerHTML='<div class="score">'+ok+' / '+rows.length+'</div><div class="msg">Une bonne question d’entretien est ouverte, neutre et porte sur un fait passé.</div>'; $('#qsRes').classList.add('show');
+  });
+  $('#qsReset').addEventListener('click',render); render();
+})();
+/* ---------- Courbe d'émotion ---------- */
+(function(){
+  const J=[{"n": "Envie", "c": "Notification de l’appli", "a": "Ouvre l’appli à 20 h, fatiguée, sans idée précise.", "v": "« Je veux juste manger vite, sans réfléchir. »", "e": 0, "x": ""}, {"n": "Choix", "c": "Liste des restaurants", "a": "Fait défiler plus de 80 restaurants, filtre mal compris.", "v": "« Il y a trop de choix, je tourne en rond. »", "e": -1, "x": "Opportunité : proposer ses restaurants habituels et un filtre « livré en moins de 30 min »."}, {"n": "Panier", "c": "Page du restaurant", "a": "Compose son repas, ajoute une boisson.", "v": "« OK, ça c’est simple. »", "e": 1, "x": ""}, {"n": "Paiement", "c": "Écran de paiement", "a": "Découvre 4,90 € de frais de service non annoncés.", "v": "« Sérieusement ? Ça n’était écrit nulle part. »", "e": -2, "x": "Point de frustration et moment de vérité : afficher tous les frais dès la page du restaurant."}, {"n": "Attente", "c": "Suivi de commande, SMS", "a": "Suit le livreur sur la carte, reçoit une estimation fiable.", "v": "« Au moins je sais où il en est. »", "e": 1, "x": ""}, {"n": "Réception", "c": "Livreur, demande d’avis", "a": "Repas chaud, à l’heure ; demande de note immédiate.", "v": "« C’était bon, je recommanderai… si les frais ne changent pas. »", "e": 2, "x": "La fin positive (règle du pic et de la fin) ne fait pas oublier le pic négatif du paiement."}], st=$('#jrStage'); if(!st) return;
+  const W=640,H=220,px=60,dx=(W-2*px)/(J.length-1), y=e=>110-e*40;
+  const pts=J.map((s,i)=>[px+i*dx,y(s.e)]);
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Courbe d’émotion du parcours de Sofia">'+
+    '<line x1="30" y1="110" x2="'+(W-20)+'" y2="110" stroke="#cbd5e1" stroke-dasharray="4 4"/>'+
+    '<text x="6" y="34" font-size="20">😀</text><text x="6" y="198" font-size="20">😠</text>'+
+    '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>';
+  pts.forEach((p,i)=>{ const e=J[i].e; svg+='<circle data-i="'+i+'" cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="'+(e<0?'#dc2626':(e>0?'#059669':'#64748b'))+'" stroke="#fff" stroke-width="3"/>'+
+    '<text x="'+p[0]+'" y="'+(H-6)+'" text-anchor="middle" font-size="12" font-family="Sora,sans-serif" fill="#334155">'+esc(J[i].n)+'</text>'; });
+  st.innerHTML=svg+'</svg>';
+  const steps=$('#jrSteps');
+  J.forEach((s,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='chain-node'; b.dataset.i=i; b.textContent=(i+1)+' · '+s.n; b.addEventListener('click',()=>show(i)); steps.appendChild(b); });
+  $$('circle',st).forEach(c=>c.addEventListener('click',()=>show(+c.dataset.i)));
+  const lab=['Très négative','Négative','Neutre','Positive','Très positive'];
+  function show(i){ const s=J[i]; $$('.chain-node',steps).forEach(n=>n.classList.toggle('active',+n.dataset.i===i));
+    $('#jrDetail').innerHTML='<div class="row"><span class="k">Étape</span><span>'+esc(s.n)+'</span></div><div class="row"><span class="k">Point de contact</span><span>'+esc(s.c)+'</span></div>'+
+      '<div class="row"><span class="k">Action</span><span>'+esc(s.a)+'</span></div><div class="row"><span class="k">Verbatim</span><span>'+esc(s.v)+'</span></div>'+
+      '<div class="row"><span class="k">Émotion</span><span>'+lab[s.e+2]+'</span></div>'+(s.x?'<div class="row"><span class="k">À retenir</span><span>'+esc(s.x)+'</span></div>':''); }
+  show(3);
+})();
+/* ---------- Test d'arborescence ---------- */
+(function(){
+  const TREE={"n": "Accueil", "c": [{"n": "Ma mairie", "c": [{"n": "Les élus"}, {"n": "Conseil municipal"}, {"n": "Budget et finances"}]}, {"n": "Démarches", "c": [{"n": "État civil", "c": [{"n": "Actes de naissance"}, {"n": "Mariage et PACS"}]}, {"n": "Papiers d’identité", "c": [{"n": "Carte d’identité"}, {"n": "Passeport"}]}, {"n": "Urbanisme", "c": [{"n": "Permis de construire"}, {"n": "Déclaration de travaux"}]}]}, {"n": "Enfance et éducation", "c": [{"n": "Écoles"}, {"n": "Restauration scolaire"}, {"n": "Accueil périscolaire"}]}, {"n": "Sports et loisirs", "c": [{"n": "Piscine municipale"}, {"n": "Gymnases"}, {"n": "Associations"}]}, {"n": "Cadre de vie", "c": [{"n": "Voirie et travaux", "c": [{"n": "Signaler un problème"}, {"n": "Travaux en cours"}]}, {"n": "Déchets"}, {"n": "Espaces verts"}]}]}, TASKS=[{"t": "Votre fille entre en CP à la rentrée : vous voulez l’inscrire à la cantine.", "a": "Restauration scolaire"}, {"t": "Un nid-de-poule s’est formé devant chez vous : vous voulez le signaler.", "a": "Signaler un problème"}, {"t": "Vous voulez agrandir votre garage : quelles formalités faut-il accomplir ?", "a": "Déclaration de travaux"}, {"t": "Votre carte d’identité expire le mois prochain.", "a": "Carte d’identité"}], root=$('#ttTree'); if(!root) return;
+  let t=0, clicks=0, res=[];
+  function build(node,path){ const ul=document.createElement('ul');
+    (node.c||[]).forEach(ch=>{ const li=document.createElement('li'); const b=document.createElement('button'); b.type='button'; b.textContent=ch.n; const p=path.concat(ch.n);
+      if(ch.c){ b.className='tt-node branch'; const sub=build(ch,p); sub.style.display='none';
+        b.addEventListener('click',()=>{ clicks++; const o=sub.style.display==='none'; sub.style.display=o?'block':'none'; b.classList.toggle('open',o); });
+        li.appendChild(b); li.appendChild(sub); }
+      else { b.className='tt-node leaf'; b.addEventListener('click',()=>{ clicks++; answer(ch.n,p); }); li.appendChild(b); }
+      ul.appendChild(li); }); return ul; }
+  function start(){ if(t>=TASKS.length) return finish(); clicks=0; root.innerHTML=''; root.appendChild(build(TREE,[]));
+    $('#ttTaskN').textContent='Tâche '+(t+1)+' / '+TASKS.length; $('#ttTask').textContent=TASKS[t].t; }
+  function answer(n,p){ res.push({ok:n===TASKS[t].a, n, p:p.join(' › '), clicks, a:TASKS[t].a}); t++; toast(t<TASKS.length?'Réponse enregistrée, tâche suivante.':'Test terminé.'); start(); }
+  function finish(){ root.innerHTML=''; $('#ttTaskN').textContent='Test terminé'; $('#ttTask').textContent='Voici vos résultats.';
+    const ok=res.filter(r=>r.ok).length;
+    $('#ttRes').innerHTML='<div class="score">'+ok+' / '+res.length+'</div><div class="msg">'+res.map((r,i)=>(r.ok?'✅':'❌')+' Tâche '+(i+1)+' : '+esc(r.p)+' ('+r.clicks+' clics)'+(r.ok?'':' — attendu : '+esc(r.a))).join('<br>')+
+      '<br><br>Dans un vrai test, on compile les résultats de nombreux participants : taux de réussite, chemins suivis, premier clic. Une tâche que beaucoup ratent révèle un libellé ou un rangement à revoir '+
+      '(ici, « Déclaration de travaux » rangée sous « Démarches › Urbanisme » alors que beaucoup la cherchent dans « Cadre de vie › Voirie et travaux »).</div>';
+    $('#ttRes').classList.add('show'); }
+  $('#ttReset').addEventListener('click',()=>{ t=0; res=[]; $('#ttRes').classList.remove('show'); start(); });
+  start();
+})();
+
+})();
+</script>
+</body>
+</html>

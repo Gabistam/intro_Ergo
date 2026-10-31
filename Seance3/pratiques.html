@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Séance 3 — Utilisateurs et architecture de l’information · Pratique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --secondary:#059669;--secondary-light:#d1fae5;
+  --accent:#d97706;--accent-light:#fef3c7;
+  --danger:#dc2626;--danger-light:#fee2e2;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --dark:#0f172a;--dark2:#1e293b;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f1f5f9;--card:#ffffff;--radius:14px;
+  --sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+code,.mono{font-family:var(--mono)}
+code{background:#f1f5f9;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.84em}
+pre code,.key-box code,.nest.n4 code{background:transparent;border:none;padding:0;color:inherit}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+
+header{background:linear-gradient(135deg,#0f172a 0%,#4c1d95 60%,#6d28d9 100%);color:#fff;padding:42px 24px 34px;position:relative;overflow:hidden}
+header.practice{background:linear-gradient(135deg,#0f172a 0%,#6d28d9 60%,#7c3aed 100%)}
+header::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.25),transparent 70%)}
+.header-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+header h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:10px}
+header .subtitle{color:#cbd5e1;max-width:720px;font-size:1rem}
+.meta-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.meta-pill{background:rgba(15,23,42,.45);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:999px;font-size:.8rem;display:inline-flex;align-items:center;gap:6px}
+.global-progress{margin-top:24px;max-width:520px}
+.global-progress .label{display:flex;justify-content:space-between;font-size:.8rem;color:#cbd5e1;margin-bottom:6px}
+.global-progress .track{height:8px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.global-progress .fill{height:100%;width:0;background:linear-gradient(90deg,#10b981,#34d399);border-radius:999px;transition:width .5s ease}
+.mode-flag{display:none;margin-top:14px;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;width:max-content}
+body.formateur .mode-flag{display:block}
+
+.tabs-wrap{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.tabs{max-width:1100px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 16px;scrollbar-width:thin}
+.tab{border:none;background:none;padding:15px 14px;font-size:.85rem;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--primary)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab .done-mark{display:none;color:var(--secondary)}
+.tab.done .done-mark{display:inline}
+.tab .lock-mark{font-size:.8rem}
+
+main{max-width:1100px;margin:0 auto;padding:28px 16px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel.active{animation:none}.global-progress .fill,.progress-fill{transition:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+@media(max-width:600px){.card{padding:20px 16px}}
+.section-title{display:flex;align-items:center;gap:14px;font-size:1.3rem;font-weight:700;margin-bottom:18px;color:var(--dark)}
+.icon-bg{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;background:var(--primary-light)}
+.icon-bg.green{background:var(--secondary-light)}.icon-bg.amber{background:var(--accent-light)}.icon-bg.purple{background:var(--purple-light)}.icon-bg.red{background:var(--danger-light)}
+h3{font-size:1.05rem;font-weight:700;margin:22px 0 10px;color:var(--dark)}
+p{margin-bottom:10px}
+.lead{font-size:1.05rem;color:var(--dark2)}
+.muted{color:var(--muted);font-size:.88rem}
+ul.clean{list-style:none}
+ul.clean li{padding:6px 0 6px 26px;position:relative}
+ul.clean li::before{content:"▸";position:absolute;left:6px;color:var(--primary);font-weight:700}
+ol{padding-left:22px}ol li{padding:3px 0}
+
+.objectif-box{background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid var(--primary);border-radius:10px;padding:18px 20px;margin:16px 0}
+.objectif-box strong.title{display:block;color:var(--primary-dark);margin-bottom:8px}
+.instruction-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid var(--accent);border-radius:10px;padding:18px 20px;margin:16px 0}
+.instruction-box strong.title{display:block;color:#92400e;margin-bottom:8px}
+.key-box{background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin:18px 0;border-left:5px solid #10b981}
+.key-box .big{font-size:1.15rem;font-weight:700;color:#fff}
+.warn-box{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid var(--danger);border-radius:10px;padding:16px 20px;margin:16px 0}
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.mini-card{border:1px solid var(--border);border-radius:12px;padding:18px;background:#fff}
+.mini-card h4{font-size:1rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mini-card.bad{border-color:#fecaca;background:#fef2f2}
+.mini-card.good{border-color:#a7f3d0;background:#f0fdf4}
+.mini-card pre.prompt{margin-top:8px}
+
+.famille-tag{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.2px}
+.f1{background:var(--primary-light);color:#1e40af}
+.f2{background:var(--secondary-light);color:#065f46}
+.f3{background:var(--accent-light);color:#92400e}
+.f4{background:var(--purple-light);color:#5b21b6}
+.f5{background:var(--danger-light);color:#991b1b}
+
+.term-item{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.85rem;padding:10px 14px;border-radius:8px;display:inline-block}
+.chain .term-item,.objectif-box .term-item{padding:6px 12px}
+pre.prompt{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:18px 20px;border-radius:10px;white-space:pre-wrap;word-break:break-word;line-height:1.65;overflow-x:auto;position:relative;margin:12px 0}
+pre.prompt .hl{color:#34d399}
+pre.prompt .hl2{color:#fbbf24}
+pre.prompt .hl3{color:#93c5fd}
+
+.btn{border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:8px;transition:transform .1s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--secondary);color:#fff}.btn-success:hover{background:#047857}
+.btn-ghost{background:#fff;color:var(--dark2);border:1px solid var(--border)}.btn-ghost:hover{background:#f8fafc}
+.btn-warning{background:var(--accent);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.btn-reveal{display:none}
+body.formateur .btn-reveal{display:inline-flex}
+.reveal-content{display:none}
+.reveal-content.shown{display:block}
+
+.progress-wrap{margin:14px 0 4px}
+.progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+.progress-track{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#059669,#10b981);border-radius:999px;transition:width .4s ease}
+
+.result-panel{display:none;background:var(--dark);color:#e2e8f0;border-radius:12px;padding:22px 24px;margin-top:20px}
+.result-panel.show{display:block}
+.result-panel .score{font-family:var(--mono);font-size:2rem;font-weight:700;color:#34d399}
+.result-panel .msg{margin-top:6px;color:#cbd5e1}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0}
+.chain-node{border:2px solid var(--border);background:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--dark2)}
+.chain-node:hover{border-color:var(--primary)}
+.chain-node.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chain-node.seen:not(.active){border-color:#93c5fd}
+.chain-arrow{color:var(--muted);font-weight:700}
+.concept-detail{border:1px solid var(--border);border-radius:12px;padding:22px;background:#f8fafc;min-height:180px}
+.concept-detail .row{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.concept-detail .row:last-child{border-bottom:none}
+.concept-detail .k{font-weight:700;font-size:.82rem;color:var(--muted)}
+@media(max-width:600px){.concept-detail .row{grid-template-columns:1fr;gap:2px}}
+
+/* QCM */
+.qcm-q{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.qcm-q .qt{font-weight:600;margin-bottom:10px}
+.qcm-opts{display:grid;gap:8px}
+.qcm-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;font-size:.9rem;background:#fff;text-align:left;width:100%;color:var(--text)}
+.qcm-opt:hover{background:#f8fafc;border-color:#93c5fd}
+.qcm-opt .l{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:18px}
+.qcm-opt.sel{border-color:var(--primary);background:#eff6ff}
+.qcm-q.checked .qcm-opt{cursor:default}
+.qcm-opt.good{border-color:#6ee7b7;background:#ecfdf5}
+.qcm-opt.bad{border-color:#fca5a5;background:#fef2f2}
+.qcm-q.correct{border-color:#6ee7b7}
+.qcm-q.wrong{border-color:#fca5a5}
+.qcm-q .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:8px;border-top:1px dashed var(--border)}
+.qcm-q.checked .expl{display:block}
+.q-num{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-right:6px}
+
+/* V/F */
+.vf-row{padding:16px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#fff}
+.vf-row .vf-q{font-weight:500;margin-bottom:10px}
+.vf-btns{display:flex;gap:8px}
+.vf-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 18px;font-weight:600;font-size:.85rem;color:var(--text)}
+.vf-btn.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.vf-row.correct{border-color:#6ee7b7;background:#ecfdf5}
+.vf-row.wrong{border-color:#fca5a5;background:#fef2f2}
+.vf-row .expl{display:none;margin-top:10px;font-size:.85rem}
+.vf-row.checked .expl{display:block}
+
+/* Cas 1 matching */
+.match-grid{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:16px;margin-top:10px}
+@media(max-width:760px){.match-grid{grid-template-columns:1fr}}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-col h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.m-term{background:var(--dark);color:#e2e8f0;font-family:var(--mono);font-size:.84rem;padding:10px 12px;border-radius:8px;border:2px solid var(--dark);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.m-term:hover{border-color:#60a5fa}
+.m-term.active{border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.35)}
+.m-def{background:#fff;border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.86rem;text-align:left;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.m-def:hover{border-color:#93c5fd}
+.pair-badge{font-family:var(--mono);font-size:.72rem;font-weight:700;min-width:24px;height:24px;border-radius:6px;display:inline-grid;place-items:center;background:#e2e8f0;color:var(--muted);flex-shrink:0}
+.paired .pair-badge{background:var(--primary);color:#fff}
+.m-def.paired{border-color:#93c5fd;background:#eff6ff}
+.m-term.good,.m-def.good{border-color:#10b981}
+.m-def.good{background:#ecfdf5}
+.m-term.bad,.m-def.bad{border-color:#ef4444}
+.m-def.bad{background:#fef2f2}
+.round-pills{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.round-pill{font-family:var(--mono);font-size:.75rem;padding:4px 10px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border);color:var(--muted)}
+.round-pill.cur{background:var(--primary);color:#fff;border-color:var(--primary)}
+.round-pill.ok{background:var(--secondary-light);color:#065f46;border-color:#6ee7b7}
+
+/* Cas 2 */
+.group{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff}
+.group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.group-head strong{font-size:1rem}
+.g-label{font-size:.8rem;font-weight:700;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.choice-row{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:600;color:var(--dark2)}
+.choice.sel{background:var(--dark);color:#fff;border-color:var(--dark)}
+.choice.good{background:#10b981;color:#fff;border-color:#10b981}
+.choice.bad{background:#ef4444;color:#fff;border-color:#ef4444}
+.sit{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--border);border-radius:9px;padding:10px 12px;background:#f8fafc;font-size:.88rem;margin-bottom:8px;color:var(--text)}
+.sit:hover{border-color:#fbbf24}
+.sit .tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:#e2e8f0;color:var(--muted);white-space:nowrap}
+.sit.sel{border-color:var(--accent);background:#fffbeb}
+.sit.sel .tag{background:var(--accent);color:#fff}
+.sit.good{border-color:#10b981;background:#ecfdf5}
+.sit.good .tag{background:#10b981;color:#fff}
+.sit.bad{border-color:#ef4444;background:#fef2f2}
+.sit.bad .tag{background:#ef4444;color:#fff}
+.group .expl{display:none;margin-top:10px;font-size:.86rem;padding-top:10px;border-top:1px dashed var(--border)}
+.group.checked .expl{display:block}
+.group.correct{border-color:#6ee7b7}
+.group.wrong{border-color:#fca5a5}
+.group.half{border-color:#fcd34d}
+
+/* forms */
+label.f-label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:var(--dark2)}
+input.f-input,textarea.f-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;font-family:var(--sans);font-size:.9rem;background:#fff;color:var(--text)}
+textarea.f-input{min-height:78px;resize:vertical}
+
+.steps{margin:14px 0}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step input[type=checkbox]{width:20px;height:20px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+.step .s-num{font-family:var(--mono);font-weight:700;color:var(--primary);min-width:24px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:8px;cursor:pointer}
+.checklist label:hover{background:#f8fafc}
+.checklist input{width:18px;height:18px;accent-color:var(--secondary);margin-top:3px;flex-shrink:0}
+
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}
+th{background:var(--dark);color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+th:first-child{border-top-left-radius:10px}th:last-child{border-top-right-radius:10px}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;background:#fff}
+tr:nth-child(even) td{background:#f8fafc}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.75rem;background:#f1f5f9;border:1px solid var(--border);padding:3px 10px;border-radius:999px;color:var(--dark2)}
+
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:14px 0}
+.route-step{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.route-step .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.route-step .t{font-weight:700;font-size:.9rem;color:var(--dark)}
+.route-step .c{font-size:.75rem;color:var(--muted)}
+.route-step.past{background:#ecfdf5;border-color:#a7f3d0}
+.route-step.here{background:var(--primary);border-color:var(--primary)}
+.route-step.here .t,.route-step.here .n,.route-step.here .c{color:#fff}
+
+.levels{display:grid;gap:8px;margin:14px 0}
+.level{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#fff}
+.level .lv{font-family:var(--mono);font-weight:700;font-size:1.1rem;color:var(--primary)}
+.level .risk{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px}
+@media(max-width:600px){.level{grid-template-columns:40px 1fr}.level .risk{grid-column:2;justify-self:start}}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.pillar{border-radius:12px;padding:16px;background:#fff;border:1px solid var(--border);border-top:4px solid var(--primary)}
+.pillar:nth-child(5n+2){border-top-color:var(--purple)}
+.pillar:nth-child(5n+3){border-top-color:var(--secondary)}
+.pillar:nth-child(5n+4){border-top-color:var(--accent)}
+.pillar:nth-child(5n+5){border-top-color:var(--danger)}
+.pillar .n{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.pillar h4{font-size:1rem;margin:4px 0 6px}
+.pillar p{font-size:.84rem;color:var(--dark2);margin:0}
+.pillar .q{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px}
+
+details.acc{border:1px solid var(--border);border-radius:10px;margin:10px 0;background:#fff}
+details.acc summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-family:var(--mono);color:var(--primary);font-weight:700}
+details.acc[open] summary::after{content:"−"}
+details.acc[open] summary{border-bottom:1px dashed var(--border)}
+details.acc > div{padding:12px 16px;font-size:.9rem}
+
+.gloss{display:grid;gap:10px;margin-top:10px}
+.gloss-item{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.gloss-item .gt{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+@media(max-width:620px){.gloss-item{grid-template-columns:1fr}}
+.lock-wrap{text-align:center;padding:30px 10px}
+.lock-wrap .big-lock{font-size:3rem}
+.lock-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.lock-pill{font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border)}
+.lock-pill.ok{background:var(--secondary-light);border-color:#6ee7b7;color:#065f46}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.filter-row button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600;color:var(--dark2)}
+.filter-row button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+.score-table td:last-child{font-family:var(--mono);font-weight:700}
+.link-card{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f8fafc;border:1px dashed #93c5fd;border-radius:12px;padding:16px 18px;margin-top:16px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.nav-bottom{display:flex;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:30px 16px 50px}
+@media print{.tabs-wrap,.actions-row,.nav-bottom{display:none}.panel{display:block!important}}
+
+
+/* ---- ajouts Ergonomie web ---- */
+.f-only{display:none}
+body.formateur .f-only{display:block}
+.mock{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;max-width:540px;margin:14px auto;font-size:.88rem;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.mock-bar{background:#e2e8f0;color:#475569;font-family:var(--mono);font-size:.72rem;padding:6px 12px}
+.mock-body{padding:18px 20px}
+.mock-body h4{margin:0 0 12px;font-size:1.05rem}
+.mock-field{margin-bottom:12px}
+.mock-field .ml{display:block;font-size:.78rem;color:#475569;margin-bottom:3px}
+.mock-input{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;color:#94a3b8;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:8px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock-actions{display:flex;gap:10px;align-items:center}
+.mock-ok{background:#16a34a;color:#fff;padding:8px 24px;font-weight:700;display:inline-block}
+.mock-note{font-size:.74rem;color:#64748b;padding:8px 20px 14px;border-top:1px dashed var(--border)}
+.mk-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;font-size:.72rem;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.mk-demo{display:flex;align-items:center;justify-content:center;min-height:84px;border-radius:10px;background:#f8fafc;border:1px dashed var(--border);margin-bottom:8px;padding:10px}
+.mk-link{color:#2563eb;text-decoration:underline}
+.mk-btn{background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;box-shadow:0 2px 0 #1d4ed8;display:inline-block}
+.chunk{font-family:var(--mono);font-size:1.25rem;letter-spacing:.08em;text-align:center;padding:14px 8px;background:#f8fafc;border-radius:10px;border:1px solid var(--border);word-break:break-all}
+.vr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:10px 0}
+.vr-grid span{background:#e2e8f0;color:#475569;border-radius:8px;padding:10px 6px;text-align:center;font-size:.78rem;font-weight:600}
+.vr-grid span.vr{background:#f59e0b;color:#fff}
+.fitts-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.fitts-zone{position:relative;height:190px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;overflow:hidden;touch-action:manipulation}
+.fitts-target{position:absolute;border-radius:50%;background:#dc2626;border:none;padding:0;box-shadow:0 0 0 3px rgba(220,38,38,.2)}
+.hick-bar{height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:6px}
+.hick-bar>div{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);width:0;transition:width .25s}
+input[type=range]{width:100%;accent-color:var(--primary)}
+.g-stage{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;margin-top:10px}
+.g-stage svg{max-width:100%;height:auto}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.pair{grid-template-columns:1fr}}
+.legend-line{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){.hick-bar>div{transition:none}}
+
+select.f-input{width:auto;min-width:260px}
+.emp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.emp-grid textarea.f-input{min-height:110px;margin:0}
+@media(max-width:820px){.emp-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.emp-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="practice">
+  <div class="header-inner">
+    <span class="badge">🧭 Ergonomie web — Séance 3 · Support pratique</span>
+    <h1>Utilisateurs et architecture de l’information</h1>
+    <p class="subtitle">Manipuler le vocabulaire de la recherche utilisateur et de l’architecture de l’information, puis interviewer un camarade pour en tirer une carte d’empathie et un persona express.</p>
+    <div class="meta-pills"><span class="meta-pill">🧭 Séance 3 sur 4</span><span class="meta-pill">🛠️ Support pratique</span><span class="meta-pill">🧩 30 termes</span><span class="meta-pill">🔀 Aléatoire</span><span class="meta-pill">🎙️ Interview express</span><span class="meta-pill">🔒 Glossaire verrouillé</span></div>
+    <div class="global-progress">
+      <div class="label"><span>Progression des activités</span><span id="globalPct">0 / 3</span></div>
+      <div class="track"><div class="fill" id="globalFill"></div></div>
+    </div>
+    <div class="mode-flag">Mode formateur actif — boutons « Révéler » visibles</div>
+  </div>
+</header>
+<div class="tabs-wrap"><nav class="tabs" role="tablist" aria-label="Activités pratiques"><button class="tab active" data-tab="0" role="tab">🚀 Démarrage</button><button class="tab" data-tab="c1" data-act="cas1" role="tab">🧩 Cas 1 — Correspondance <span class="done-mark">✅</span></button><button class="tab" data-tab="c2" data-act="cas2" role="tab">🔍 Cas 2 — Situations <span class="done-mark">✅</span></button><button class="tab" data-tab="c3" data-act="cas3" role="tab">🎙️ Cas 3 — Interview express <span class="done-mark">✅</span></button><button class="tab" data-tab="gl" role="tab">📖 Glossaire <span class="lock-mark">🔒</span></button></nav></div>
+<main>
+<section class="panel active" data-panel="0">
+<div class="card"><div class="section-title"><span class="icon-bg green">🎯</span>Mettre en pratique la séance 3</div><p class="lead">Ce support vous fait manipuler le vocabulaire de la séance, puis vous met en situation réelle : interviewer un camarade, synthétiser ce qu’il a dit et en tirer un persona.</p><div class="objectif-box"><strong class="title">À la fin de cette séance, vous serez capable de :</strong><ul class="clean"><li>Définir avec précision le vocabulaire des données, des entretiens, du persona, du parcours et de l’architecture de l’information ;</li><li>Reconnaître ces notions dans des situations concrètes et les distinguer de notions voisines ;</li><li>Conduire un entretien court avec des questions ouvertes sur des faits passés, et noter des verbatims ;</li><li>Synthétiser un entretien dans une carte d’empathie, puis en tirer un persona express et un parcours raconté ;</li><li>Distinguer ce que l’on sait de ce qui reste à vérifier.</li></ul></div><div class="grid grid-2"><div class="mini-card"><h4>🧩 Cas 1 — Correspondance</h4><p class="muted">Associez 30 termes à leur définition, en 3 rounds de 10 tirés au hasard.</p></div><div class="mini-card"><h4>🔍 Cas 2 — Situations</h4><p class="muted">6 groupes de 4 situations : identifiez la notion commune et repérez l’intruse.</p></div><div class="mini-card"><h4>🎙️ Cas 3 — Interview express</h4><p class="muted">En binôme : entretien de 7 minutes chacun, carte d’empathie, persona express et parcours, puis fichier persona.md.</p></div><div class="mini-card"><h4>📖 Glossaire</h4><p class="muted">Débloqué uniquement lorsque les 3 cas sont terminés.</p></div></div><h3>Les familles de notions</h3><div class="chips"><span class="famille-tag f1">Données &amp; persona · 7</span><span class="famille-tag f2">Entretiens · 5</span><span class="famille-tag f3">Carte d’empathie · 5</span><span class="famille-tag f4">Parcours · 6</span><span class="famille-tag f5">Architecture de l’information · 7</span></div><div class="instruction-box"><strong class="title">Mode d’emploi</strong>Faites les cas dans l’ordre. Chaque activité validée fait avancer la barre de progression ; les termes et les situations sont mélangés à chaque nouvel essai. Pour le cas 3, installez-vous en binôme dans un endroit calme.</div><div class="link-card"><span><strong>📚 Support théorique associé</strong><br><span class="muted">Relisez un chapitre en cas de doute.</span></span><a class="btn btn-ghost" href="seance-3-utilisateurs-et-architecture-de-linformation-theorie.html">◂ Ouvrir le support théorique</a></div><div class="nav-bottom"><span></span><button class="btn btn-primary" data-goto="c1">Commencer : Cas 1 ▸</button></div></div></section>
+<section class="panel" data-panel="c1">
+<div class="card"><div class="section-title"><span class="icon-bg">🧩</span>Cas 1 — Correspondance termes / définitions</div><div class="objectif-box"><strong class="title">Objectif</strong>Maîtriser le vocabulaire de la séance : chaque terme doit pouvoir être défini avec précision.</div><div class="instruction-box"><strong class="title">Consigne</strong>Cliquez sur un terme (colonne de gauche), puis sur la définition qui lui correspond. Le numéro du terme s’affiche sur la définition choisie. Cliquez sur une définition associée pour annuler. Quand les 10 associations sont faites, vérifiez, puis passez au round suivant (3 rounds).</div><div class="round-pills" id="c1Rounds"></div><div class="match-grid"><div class="match-col" id="c1Terms"></div><div class="match-col" id="c1Defs"></div></div><div class="progress-wrap"><div class="progress-label"><span>Associations du round</span><span id="c1Txt">0 / 10</span></div><div class="progress-track"><div class="progress-fill" id="c1Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c1Check">✔ Vérifier le round</button><button class="btn btn-success" id="c1Next" style="display:none">Round suivant ▸</button><button class="btn btn-warning btn-reveal" id="c1Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c1Reset">↺ Recommencer</button></div><div class="result-panel" id="c1Result"></div><div class="nav-bottom" style="margin-top:20px"><span></span><button class="btn btn-primary" data-goto="c2">Suite : Cas 2 ▸</button></div></div>
+</section>
+<section class="panel" data-panel="c2">
+<div class="card"><div class="section-title"><span class="icon-bg amber">🔍</span>Cas 2 — Identification de situations</div><div class="objectif-box"><strong class="title">Objectif</strong>Reconnaître une notion dans des situations concrètes de recherche utilisateur ou de conception, et la distinguer d’une notion voisine.</div><div class="instruction-box"><strong class="title">Consigne</strong>Chaque groupe contient 4 situations. Trois illustrent la même notion, <strong>une est une intruse</strong>. Pour chaque groupe : (1) choisissez la notion commune, (2) cliquez sur la situation intruse. Vérifiez, puis lisez les explications.</div><div id="c2Box"></div><div class="progress-wrap"><div class="progress-label"><span>Réponses données</span><span id="c2Txt">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="c2Fill"></div></div></div><div class="actions-row"><button class="btn btn-primary" id="c2Check">✔ Vérifier</button><button class="btn btn-warning btn-reveal" id="c2Reveal">👁 Révéler</button><button class="btn btn-ghost" id="c2Reset">↺ Recommencer</button></div><div class="result-panel" id="c2Result"></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c1">◂ Cas 1</button><button class="btn btn-primary" data-goto="c3">Suite : Cas 3 ▸</button></div></div>
+</section>
+<section class="panel" data-panel="c3">
+<div class="card"><div class="section-title"><span class="icon-bg purple">🎙️</span>Cas 3 — Interview express et carte d’empathie</div><div class="objectif-box"><strong class="title">Objectif</strong>Vivre la chaîne complète « entretien → synthèse → persona » en format court : interroger sur un fait passé, noter des verbatims, les ranger dans une carte d’empathie, puis en tirer un persona express et le parcours raconté, en distinguant ce qui est établi de ce qui reste à vérifier.</div><div class="instruction-box"><strong class="title">Déroulé en binôme (≈ 50 min, indicatif)</strong><div class="steps" id="ivSteps"><div class="step"><input type="checkbox" id="is0"><span class="s-num">1</span><label for="is0">Formez un binôme, tirez un thème (ou prenez celui donné par le formateur) et ajoutez au guide une ou deux relances à vous.</label></div><div class="step"><input type="checkbox" id="is1"><span class="s-num">2</span><label for="is1">Personne A interviewe personne B pendant 7 minutes : B raconte, A note des verbatims exacts.</label></div><div class="step"><input type="checkbox" id="is2"><span class="s-num">3</span><label for="is2">On inverse : B interviewe A pendant 7 minutes.</label></div><div class="step"><input type="checkbox" id="is3"><span class="s-num">4</span><label for="is3">Chacun range ses notes dans la carte d’empathie de la personne qu’il a interviewée.</label></div><div class="step"><input type="checkbox" id="is4"><span class="s-num">5</span><label for="is4">Chacun rédige le persona express et le parcours raconté, puis génère persona.md.</label></div><div class="step"><input type="checkbox" id="is5"><span class="s-num">6</span><label for="is5">Relecture croisée : l’interviewé vérifie que le persona ne déforme pas ses propos (sans le réécrire à son avantage).</label></div></div><p class="muted" style="margin:8px 0 0">Repères : préparation 5 min · entretiens 2 × 7 min · carte d’empathie 10 min · persona et parcours 15 min · relecture croisée 5 min.</p></div><div class="warn-box"><strong>Ce que vous produisez est un proto-persona.</strong> Un seul entretien de 7 minutes ne représente pas un groupe d’utilisateurs : c’est un exercice de méthode. La section « À vérifier » est donc obligatoire.</div></div><div class="card"><div class="section-title"><span class="icon-bg amber">🎲</span>1 · Le thème et le guide d’entretien</div><div class="actions-row"><button class="btn btn-primary" id="ivDraw">🎲 Tirer un thème</button><select class="f-input" id="ivPick" style="max-width:420px;margin:0"><option value="">… ou choisir le thème donné par le formateur</option><option value="0">La dernière fois que tu as cherché une information sur le site de ton école ou de ton entreprise</option><option value="1">La dernière fois que tu as commandé un repas en ligne</option><option value="2">La dernière fois que tu as acheté un billet de train ou de bus</option><option value="3">La dernière fois que tu as pris un rendez-vous en ligne (médecin, coiffeur, administration)</option><option value="4">La dernière fois que tu as cherché un logement ou une colocation</option><option value="5">La dernière fois que tu as fait une démarche administrative en ligne</option><option value="6">La dernière fois que tu as acheté un vêtement en ligne</option></select></div><p id="ivTheme" class="lead" style="margin:12px 0">Aucun thème choisi pour l’instant.</p><label class="f-label" for="ivGuide">Guide d’entretien (modifiable : ajoutez vos relances)</label><textarea class="f-input" id="ivGuide" style="min-height:330px;font-family:var(--mono);font-size:.82rem">GUIDE D’ENTRETIEN — Thème : la dernière fois que tu as [THÈME]
+
+1. Accueil (30 s)
+« Merci de m’accorder 7 minutes. Il n’y a pas de bonne ou de mauvaise réponse : c’est le service qu’on étudie, pas toi. Je prends des notes, ça te va ? »
+
+2. Contexte (1 min)
+« Peux-tu te présenter en deux phrases : ce que tu fais, à quoi ressemble ta semaine ? »
+
+3. Récit (3 min)
+« Raconte-moi la dernière fois que tu as [THÈME]. Comment ça a commencé ? »
+
+4. Relances (2 min) — à piocher selon le récit
+« Et ensuite ? »
+« Comment as-tu fait à ce moment-là ? »
+« Qu’est-ce qui a été le plus pénible ? Pourquoi ? »
+« Qu’est-ce que tu as ressenti à ce moment-là ? »
+« Qu’est-ce qui a bien marché ? »
+« Qui t’en avait parlé ? Qu’avais-tu entendu avant ? »
+
+5. Clôture (30 s)
+« Y a-t-il quelque chose que je ne t’ai pas demandé et qui compte pour toi ? Merci ! »
+
+À ÉVITER : « Tu ne trouves pas que… ? » (orientée) · « Est-ce que tu utiliserais… ? » (hypothétique) · présenter ta propre idée.</textarea><div class="actions-row"><button class="btn btn-ghost btn-sm" id="ivCopyGuide">📋 Copier le guide</button></div></div><div class="card"><div class="section-title"><span class="icon-bg green">📝</span>2 · Notes d’entretien</div><p class="muted">Pendant l’entretien, notez surtout des <strong>citations exactes</strong>, une par ligne, entre guillemets. Ajoutez entre crochets ce que vous observez : [hésite], [sourit], [montre son téléphone].</p><textarea class="f-input" id="ivNotes" style="min-height:160px" placeholder="« Je regarde trois fois avant d’acheter. »&#10;« À chaque fois le prix a bougé. » [soupire]"></textarea><p class="muted" id="ivNotesCount" style="margin:4px 0 0">0 verbatim entre guillemets</p></div><div class="card"><div class="section-title"><span class="icon-bg purple">🗺️</span>3 · Carte d’empathie de la personne interviewée</div><p class="muted">Rangez vos notes dans les six zones. Une note peut être reformulée en zone « Pense et ressent », mais elle doit toujours venir de l’entretien.</p><div class="emp-grid"><div class="mini-card "><h4>💭 Pense et ressent</h4><p class="muted" style="margin:0 0 6px">Préoccupations, craintes, aspirations (déduites de ce qu’il ou elle a dit).</p><textarea class="f-input" id="ez_think" data-zone placeholder="Une note par ligne"></textarea></div><div class="mini-card "><h4>👀 Voit</h4><p class="muted" style="margin:0 0 6px">Son environnement : écrans, lieux, ce que proposent les autres.</p><textarea class="f-input" id="ez_see" data-zone placeholder="Une note par ligne"></textarea></div><div class="mini-card "><h4>👂 Entend</h4><p class="muted" style="margin:0 0 6px">Ce que disent ses proches, collègues, réseaux, institutions.</p><textarea class="f-input" id="ez_hear" data-zone placeholder="Une note par ligne"></textarea></div><div class="mini-card "><h4>🗣️ Dit et fait</h4><p class="muted" style="margin:0 0 6px">Ses paroles (verbatims) et ses actes observables.</p><textarea class="f-input" id="ez_say" data-zone placeholder="Une note par ligne"></textarea></div><div class="mini-card bad"><h4>😣 Peines</h4><p class="muted" style="margin:0 0 6px">Frustrations, obstacles, risques redoutés.</p><textarea class="f-input" id="ez_pain" data-zone placeholder="Une note par ligne"></textarea></div><div class="mini-card good"><h4>🎁 Gains</h4><p class="muted" style="margin:0 0 6px">Ce qu’il ou elle espère obtenir, ses critères de réussite.</p><textarea class="f-input" id="ez_gain" data-zone placeholder="Une note par ligne"></textarea></div></div><p class="muted" id="ivZones" style="margin:8px 0 0">0 / 6 zones remplies</p></div><div class="card"><div class="section-title"><span class="icon-bg amber">👤</span>4 · Persona express et parcours raconté — <code>persona.md</code></div><label class="f-label" for="ivAuthor">Interviewer (votre nom)</label><input class="f-input" id="ivAuthor" placeholder="Ex. Inès Martin"><label class="f-label" for="iv_name">Prénom fictif, âge et situation</label><input class="f-input" id="iv_name" data-iv placeholder="Ex. Yanis, 22 ans, étudiant en alternance"><label class="f-label" for="iv_context">Contexte d’usage</label><textarea class="f-input" id="iv_context" data-iv placeholder="Où, quand, avec quel appareil, quelles contraintes de temps ?"></textarea><label class="f-label" for="iv_goal">Objectif (un but, pas une fonctionnalité)</label><textarea class="f-input" id="iv_goal" data-iv placeholder="Ex. Rentrer chez ses parents le week-end au prix le plus bas."></textarea><label class="f-label" for="iv_brakes">Freins (un par ligne, chacun appuyé sur un fait)</label><textarea class="f-input" id="iv_brakes" data-iv placeholder="Les prix changent entre deux visites&#10;Ne sait pas si la carte jeune s’applique"></textarea><label class="f-label" for="iv_scenario">Scénario d’usage</label><textarea class="f-input" id="iv_scenario" data-iv placeholder="Ex. Le jeudi soir, depuis son téléphone, il compare deux trajets avant que les prix n’augmentent."></textarea><label class="f-label" for="iv_quote">Citation clé (verbatim exact)</label><input class="f-input" id="iv_quote" data-iv placeholder="« … »"><label class="f-label" for="iv_journey">Parcours raconté (une étape par ligne : étape — émotion de −2 à +2 — ce qui s’est passé)</label><textarea class="f-input" id="iv_journey" data-iv placeholder="Recherche — 0 — compare deux applis&#10;Paiement — −2 — la carte jeune n’est pas reconnue"></textarea><label class="f-label" for="iv_verify">À vérifier (ce qu’un seul entretien ne permet pas de généraliser)</label><textarea class="f-input" id="iv_verify" data-iv placeholder="Les autres alternants ont-ils le même problème de carte ?"></textarea><div class="actions-row"><button class="btn btn-success" id="ivGen">⚙️ Générer persona.md</button><button class="btn btn-ghost" id="ivClear">↺ Vider le persona</button></div><div id="ivWrap" style="display:none"><h3>Fichier généré (Markdown)</h3><pre class="prompt" id="ivOut"></pre><div class="actions-row"><button class="btn btn-primary" id="ivCopy">📋 Copier</button><button class="btn btn-ghost" id="ivDl">⬇️ Télécharger persona.md</button></div><p class="muted" style="margin-top:10px">Gardez ce fichier : en séance 4, le persona de votre audit devra s’appuyer sur deux mini-entretiens menés de la même façon.</p></div></div><div class="card"><div class="section-title"><span class="icon-bg green">☑️</span>5 · Auto-contrôle</div><div class="checklist" id="ivCheck"><label><input type="checkbox"> J’ai noté au moins 5 verbatims mot pour mot, entre guillemets.</label><label><input type="checkbox"> Je n’ai posé aucune question orientée ni hypothétique (ou je l’ai reformulée aussitôt).</label><label><input type="checkbox"> Chaque zone de la carte d’empathie contient au moins une note issue de l’entretien, pas inventée.</label><label><input type="checkbox"> L’objectif décrit un but de la personne, pas une fonctionnalité.</label><label><input type="checkbox"> Chaque frein s’appuie sur un fait raconté ou un verbatim.</label><label><input type="checkbox"> Le parcours raconté contient au moins 4 étapes avec leur émotion.</label><label><input type="checkbox"> La section « À vérifier » liste ce qu’un seul entretien ne permet pas de généraliser.</label><label><input type="checkbox"> Le persona utilise un prénom fictif : aucune donnée permettant d’identifier mon binôme.</label></div><div class="progress-wrap"><div class="progress-label"><span>Avancement du cas 3</span><span id="ivTxt">0 / 0</span></div><div class="progress-track"><div class="progress-fill" id="ivFill"></div></div></div><p class="muted">Le cas est validé quand un thème est choisi, les six zones de la carte remplies, persona.md généré, et toutes les étapes et tous les points de contrôle cochés.</p><div class="actions-row"><button class="btn btn-warning btn-reveal" id="ivReveal">👁 Révéler un exemple corrigé</button></div><div class="reveal-content" id="ivSolution"><h3>Exemple corrigé — persona.md (billet de train)</h3><pre class="prompt"># Persona express — Yanis, 22 ans, étudiant en alternance
+
+&gt; Proto-persona construit à partir d’un entretien de 7 minutes (thème : la dernière fois que tu as acheté un billet de train ou de bus). À confirmer par d’autres entretiens.
+
+- **Interviewer** : Inès Martin
+- **Date** : 06/10/2026
+
+## Contexte d’usage
+Alterne deux semaines en entreprise à Lyon et deux semaines à l’école à Paris. Achète ses billets sur son téléphone, souvent le soir dans les transports, avec un budget serré.
+
+## Objectif
+Rentrer chez ses parents le week-end au prix le plus bas, sans y passer la soirée.
+
+## Freins
+- Les prix changent entre deux visites : il a « peur d’avoir raté le bon prix »
+- Ne sait pas si sa carte jeune s’applique au trajet affiché
+- Doit ressaisir ses informations à chaque achat sur l’application concurrente
+
+## Scénario d’usage
+Le jeudi soir, dans le métro, il compare deux trajets pour le samedi matin et veut payer avant que le prix n’augmente, en moins de 5 minutes.
+
+## Citation clé
+« Je regarde trois fois avant d’acheter, et à chaque fois le prix a bougé. »
+
+## Carte d’empathie
+### 💭 Pense et ressent
+- Craint de payer trop cher
+- Se sent piégé par les prix qui varient
+### 👀 Voit
+- Deux applications ouvertes en même temps
+- Des promotions « jusqu’à −60 % » jamais disponibles pour ses dates
+### 👂 Entend
+- Ses collègues : « Réserve le mardi, c’est moins cher »
+### 🗣️ Dit et fait
+- « Je regarde trois fois avant d’acheter »
+- Fait des captures d’écran des prix pour comparer
+### 😣 Peines
+- La carte jeune n’est pas reconnue au paiement
+- Ressaisir ses informations à chaque fois
+### 🎁 Gains
+- Payer en moins de 5 minutes
+- Être sûr d’avoir le meilleur prix du moment
+
+## Parcours raconté
+- Déclencheur — 0 — sa mère lui demande s’il rentre samedi
+- Recherche — −1 — compare deux applications, les prix diffèrent
+- Choix — 0 — choisit le train de 8 h, le moins cher
+- Paiement — −2 — la carte jeune n’est pas appliquée, il recommence
+- Confirmation — +1 — reçoit le billet par e-mail et dans l’application
+
+## À vérifier
+- Les autres alternants rencontrent-ils le même problème de carte jeune ?
+- La crainte des prix variables est-elle partagée, ou propre à Yanis ?
+- Quelle part des achats se fait sur mobile ? (analytics)
+</pre><p class="muted">Note formateur : activité formative, non notée. Circulez pendant les entretiens pour repérer les questions orientées ou hypothétiques et les faire reformuler sur le moment.</p></div><div class="nav-bottom" style="margin-top:20px"><button class="btn btn-ghost" data-goto="c2">◂ Cas 2</button><button class="btn btn-primary" data-goto="gl">Glossaire ▸</button></div></div></section>
+<section class="panel" data-panel="gl">
+<div class="card"><div class="section-title"><span class="icon-bg">📖</span>Glossaire de la séance</div><div id="glossLocked" class="lock-wrap"><div class="big-lock">🔒</div><h3>Glossaire verrouillé</h3><p class="muted">Terminez les trois cas pratiques pour débloquer les 30 définitions.</p><div class="lock-pills"><span class="lock-pill" data-lock="cas1">⏳ Cas 1</span><span class="lock-pill" data-lock="cas2">⏳ Cas 2</span><span class="lock-pill" data-lock="cas3">⏳ Cas 3</span></div><div class="actions-row" style="justify-content:center"><button class="btn btn-warning btn-reveal" id="glossForce">🔓 Déverrouiller (formateur)</button></div></div><div id="glossOpen" style="display:none"><div class="filter-row" id="glossFilters"><button class="on" data-f="all">Tous</button><button data-f="f1">Données &amp; persona</button><button data-f="f2">Entretiens</button><button data-f="f3">Carte d’empathie</button><button data-f="f4">Parcours</button><button data-f="f5">Architecture de l’information</button></div><div class="gloss" id="gloss"></div><div class="key-box"><div class="big">Un persona vaut ce que valent les entretiens qui le fondent.</div><p style="margin:8px 0 0">Des faits, des verbatims, et l’honnêteté de dire ce qui reste à vérifier.</p></div><div class="objectif-box"><strong class="title">Prochaine séance — Je sais auditer un site et défendre mes recommandations</strong>En groupe, vous auditerez un site réel et présenterez vos recommandations. Avant de partir, faites valider le site choisi par votre groupe, et gardez vos fiches : audit flash (séance 1), poster (séance 2) et persona.md (séance 3).</div></div></div>
+</section>
+</main>
+<footer>Ergonomie web — Séance 3 — Utilisateurs et architecture de l’information — Pratique<br>Mode formateur : ajoutez <code>?formateur</code> à l'adresse de la page.</footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+"use strict";
+const FAMILIES={"f1": "Données & persona", "f2": "Entretiens", "f3": "Carte d’empathie", "f4": "Parcours", "f5": "Architecture de l’information"};
+const EXPLORERS={};
+const TERMS=[{"t": "Persona", "f": "f1", "d": "Personnage fictif, fondé sur des données réelles, qui représente un groupe d’utilisateurs aux objectifs et comportements proches."}, {"t": "Anti-persona", "f": "f1", "d": "Profil pour lequel on choisit volontairement de ne pas concevoir, voire dont on veut empêcher certains usages."}, {"t": "Objectif", "f": "f1", "d": "Ce que la personne cherche à accomplir, indépendamment de l’interface."}, {"t": "Frein", "f": "f1", "d": "Obstacle, crainte ou contrainte qui empêche ou ralentit la personne dans l’atteinte de son but."}, {"t": "Scénario d’usage", "f": "f1", "d": "Court récit d’une situation réaliste (où, quand, avec quel appareil) dans laquelle la personne utilise le service."}, {"t": "Donnée qualitative", "f": "f1", "d": "Information descriptive recueillie auprès de peu de personnes, qui explique le « pourquoi » : paroles, comportements observés."}, {"t": "Donnée quantitative", "f": "f1", "d": "Information chiffrée recueillie sur un grand nombre de personnes, qui mesure l’ampleur d’un phénomène."}, {"t": "Entretien semi-directif", "f": "f2", "d": "Échange guidé par des thèmes préparés, qui laisse la personne s’exprimer librement et autorise des relances imprévues."}, {"t": "Question ouverte", "f": "f2", "d": "Question qui ne peut pas se contenter d’un oui, d’un non ou d’un chiffre, et invite à raconter."}, {"t": "Question fermée", "f": "f2", "d": "Question à laquelle on répond par oui, non ou un choix limité ; utile pour vérifier un fait."}, {"t": "Biais de confirmation", "f": "f2", "d": "Tendance à retenir et interpréter surtout les informations qui confirment ce que l’on pense déjà."}, {"t": "Verbatim", "f": "f2", "d": "Citation exacte d’une personne interrogée, notée mot pour mot."}, {"t": "Carte d’empathie", "f": "f3", "d": "Outil de synthèse qui range ce que l’on a appris d’un utilisateur en six zones, de ses pensées à ses gains."}, {"t": "Pense et ressent", "f": "f3", "d": "Zone de synthèse qui rassemble les préoccupations, craintes et aspirations, même non exprimées."}, {"t": "Dit et fait", "f": "f3", "d": "Zone de synthèse qui rassemble les paroles et les comportements observables."}, {"t": "Peines", "f": "f3", "d": "Zone de synthèse qui rassemble les frustrations, les obstacles et les risques redoutés."}, {"t": "Gains", "f": "f3", "d": "Zone de synthèse qui rassemble ce que la personne espère obtenir et ses critères de réussite."}, {"t": "Parcours utilisateur", "f": "f4", "d": "Représentation, étape par étape, de la façon dont une personne atteint un objectif, avec ses actions, points de contact et émotions."}, {"t": "Point de contact", "f": "f4", "d": "Moment et canal d’interaction avec le service : écran, e-mail, SMS, appel, personne."}, {"t": "Courbe d’émotion", "f": "f4", "d": "Ligne qui montre l’état émotionnel de l’utilisateur à chaque étape, du négatif au positif."}, {"t": "Point de frustration", "f": "f4", "d": "Moment précis du parcours où survient une difficulté, une attente ou une mauvaise surprise."}, {"t": "Moment de vérité", "f": "f4", "d": "Instant décisif où l’utilisateur se forge une opinion durable du service."}, {"t": "Opportunité", "f": "f4", "d": "Piste d’amélioration déduite d’un problème observé ou d’un besoin non satisfait."}, {"t": "Architecture de l’information", "f": "f5", "d": "Organisation, étiquetage, navigation et recherche des contenus, pour qu’on trouve et comprenne l’information."}, {"t": "Arborescence", "f": "f5", "d": "Représentation hiérarchique des pages d’un site, de l’accueil aux pages les plus profondes."}, {"t": "Libellé", "f": "f5", "d": "Mot ou groupe de mots qui nomme une rubrique, un lien ou un bouton."}, {"t": "Fil d’Ariane", "f": "f5", "d": "Suite de liens qui indique où se trouve la page dans le site et permet de remonter."}, {"t": "Tri par cartes ouvert", "f": "f5", "d": "Méthode où des participants regroupent des contenus et nomment eux-mêmes les groupes."}, {"t": "Tri par cartes fermé", "f": "f5", "d": "Méthode où des participants rangent des contenus dans des catégories imposées."}, {"t": "Test d’arborescence", "f": "f5", "d": "Test où l’on demande où l’on chercherait une information dans une structure présentée sans design."}];
+const CAS2=[{"notion": "Biais de confirmation", "choices": ["Biais de confirmation", "Verbatim", "Question fermée", "Donnée quantitative"], "situations": [{"s": "Convaincue que le menu est en cause, Lina ne note que les remarques sur le menu pendant ses entretiens.", "intruse": false}, {"s": "Dans son rapport, Hugo cite mot pour mot : « J’ai cru que le bouton payait directement, alors j’ai fermé l’onglet. »", "intruse": true}, {"s": "Après 5 entretiens, l’équipe ne retient que les deux qui valident son idée d’application et juge les trois autres « pas représentatifs ».", "intruse": false}, {"s": "Un étudiant interprète chaque hésitation de l’interviewé comme une preuve que « le formulaire est trop long », son hypothèse de départ.", "intruse": false}], "e": "Les trois situations montrent une équipe qui retient ou interprète les faits pour confirmer ce qu’elle croit déjà : c’est le biais de confirmation. L’intruse est une citation exacte : un verbatim, justement le meilleur antidote."}, {"notion": "Persona", "choices": ["Persona", "Anti-persona", "Scénario d’usage", "Segment utilisateur"], "situations": [{"s": "« Nadia, 41 ans, infirmière en horaires décalés, fait ses démarches sur son téléphone pendant ses pauses » : portrait construit à partir de 6 entretiens.", "intruse": false}, {"s": "L’équipe se demande : « Est-ce que Karim, notre étudiant boursier pressé, comprendrait ce libellé ? »", "intruse": false}, {"s": "Le site de billetterie précise qu’il ne conçoit pas pour les revendeurs qui achètent des places en masse.", "intruse": true}, {"s": "Une fiche décrit Théo, 23 ans, alternant : objectif, freins, contexte d’usage et une citation tirée des entretiens.", "intruse": false}], "e": "Les trois situations utilisent un personnage fictif, fondé sur des données, pour représenter un groupe d’utilisateurs : c’est le persona. L’intruse décrit ceux pour qui on ne conçoit pas : c’est un anti-persona."}, {"notion": "Point de frustration", "choices": ["Point de frustration", "Moment de vérité", "Opportunité", "Point de contact"], "situations": [{"s": "À l’étape paiement, Sofia découvre 4,90 € de frais qui n’étaient affichés nulle part.", "intruse": false}, {"s": "Pendant l’inscription, la session expire et toute la saisie est perdue.", "intruse": false}, {"s": "Pour joindre le service client, il faut attendre 12 minutes en musique.", "intruse": false}, {"s": "Afficher les frais dès la page du restaurant pour supprimer la mauvaise surprise.", "intruse": true}], "e": "Les trois situations décrivent un moment précis où l’expérience se dégrade : ce sont des points de frustration. L’intruse propose une amélioration déduite d’un problème : c’est une opportunité."}, {"notion": "Peines", "choices": ["Peines", "Gains", "Pense et ressent", "Dit et fait"], "situations": [{"s": "« Mon rêve : tout inscrire en 5 minutes et recevoir une confirmation écrite. »", "intruse": true}, {"s": "« Je n’ai jamais le numéro d’allocataire sous la main quand le formulaire le demande. »", "intruse": false}, {"s": "« Si la page plante après le paiement, je ne sais pas si j’ai été débitée. »", "intruse": false}, {"s": "« Trois relances par mail pour un simple justificatif, c’est épuisant. »", "intruse": false}], "e": "Les trois verbatims expriment un obstacle, une crainte ou une frustration : ils vont dans la zone « Peines ». L’intruse décrit ce que la personne espère obtenir : elle va dans « Gains »."}, {"notion": "Donnée qualitative", "choices": ["Donnée qualitative", "Donnée quantitative", "Hypothèse", "Analytics"], "situations": [{"s": "Lors d’un entretien, une utilisatrice explique qu’elle imprime la page pour comparer les tarifs avec son mari.", "intruse": false}, {"s": "En observant un testeur, on voit qu’il cherche le bouton « Suivant » sous le pli de la page.", "intruse": false}, {"s": "Le tableau de bord indique que 38 % des visiteurs mobiles quittent la page Tarifs en moins de 10 secondes.", "intruse": true}, {"s": "Un commentaire libre de questionnaire : « Je ne savais pas si ma candidature avait été envoyée. »", "intruse": false}], "e": "Les trois situations décrivent des paroles ou des comportements qui expliquent le « pourquoi » : ce sont des données qualitatives. L’intruse est une mesure chiffrée sur beaucoup de visiteurs : une donnée quantitative."}, {"notion": "Libellé", "choices": ["Libellé", "Fil d’Ariane", "Arborescence", "Tri par cartes fermé"], "situations": [{"s": "Sur le site d’une mairie, une rubrique s’appelle « DAS – Pôle éducatif » : les parents ne pensent pas à y chercher la cantine.", "intruse": false}, {"s": "En haut de la page, une ligne affiche « Accueil › Démarches › Papiers d’identité » et permet de remonter.", "intruse": true}, {"s": "Un menu propose « Services », « Solutions » et « Divers » : impossible de deviner ce qu’ils contiennent.", "intruse": false}, {"s": "Un bouton est renommé de « OK » en « Envoyer ma candidature » : les erreurs de clic diminuent.", "intruse": false}], "e": "Les trois situations portent sur le choix des mots qui nomment une rubrique ou un bouton : c’est le libellé. L’intruse indique la position dans le site et permet de remonter : c’est le fil d’Ariane."}];
+const THEMES=["cherché une information sur le site de ton école ou de ton entreprise", "commandé un repas en ligne", "acheté un billet de train ou de bus", "pris un rendez-vous en ligne (médecin, coiffeur, administration)", "cherché un logement ou une colocation", "fait une démarche administrative en ligne", "acheté un vêtement en ligne"];
+const ZONES=[{"id": "think", "t": "💭 Pense et ressent"}, {"id": "see", "t": "👀 Voit"}, {"id": "hear", "t": "👂 Entend"}, {"id": "say", "t": "🗣️ Dit et fait"}, {"id": "pain", "t": "😣 Peines"}, {"id": "gain", "t": "🎁 Gains"}];
+const ACTS=["cas1","cas2","cas3"];
+const params = new URLSearchParams(location.search);
+if (params.has('formateur') || location.hash === '#formateur') document.body.classList.add('formateur');
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(()=>toast('Copié dans le presse-papiers ✅')).catch(()=>fallbackCopy(txt)); }
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){ const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('Copié dans le presse-papiers ✅');}catch(e){toast('Copie impossible : sélectionnez le texte manuellement');} ta.remove(); }
+function download(name, txt){ const blob=new Blob([txt],{type:'text/markdown;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function setProgress(fillId, txtId, done, total, suffix){ const p = total ? Math.round(done/total*100) : 0; $('#'+fillId).style.width = p+'%'; $('#'+txtId).textContent = done+' / '+total+(suffix||''); }
+function scoreMsg(pct){ if(pct>=90) return 'Excellent : les notions sont acquises.'; if(pct>=70) return 'Bon résultat. Relisez les explications des erreurs pour consolider.'; if(pct>=50) return 'Des bases, mais plusieurs confusions. Relisez le chapitre puis recommencez.'; return 'Reprenez le chapitre, puis recommencez l\'activité.'; }
+const done = new Set();
+function markDone(act){
+  if(done.has(act)) return false;
+  done.add(act);
+  $$('.tab[data-act="'+act+'"]').forEach(t=>t.classList.add('done'));
+  const n = done.size;
+  $('#globalFill').style.width = Math.round(n/ACTS.length*100)+'%';
+  $('#globalPct').textContent = n+' / '+ACTS.length;
+  toast(n===ACTS.length ? '🎉 Toutes les activités sont validées !' : 'Activité validée ✅');
+  if(typeof onDone==='function') onDone(act);
+  return true;
+}
+function openTab(i){
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==i));
+  $$('.panel').forEach(p=>p.classList.toggle('active', p.dataset.panel==i));
+  const tw = $('.tabs-wrap'); window.scrollTo({top: tw.offsetTop, behavior: 'smooth'});
+  const at = $('.tab[data-tab="'+i+'"]'); if(at) at.scrollIntoView({inline:'center', block:'nearest'});
+}
+$$('.tab').forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.tab)));
+$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.goto)));
+
+/* Explorateurs */
+$$('[data-explorer]').forEach(box=>{
+  const E = EXPLORERS[box.dataset.explorer]; const seen=new Set();
+  const chain=$('.chain',box), detail=$('.concept-detail',box);
+  E.items.forEach((k,i)=>{
+    const b=document.createElement('button'); b.className='chain-node'; b.textContent=k.id; b.dataset.i=i;
+    b.addEventListener('click',()=>show(i)); chain.appendChild(b);
+  });
+  function show(i){
+    const k=E.items[i]; seen.add(i);
+    $$('.chain-node',box).forEach(n=>{ n.classList.toggle('active', n.dataset.i==i); if(seen.has(+n.dataset.i)) n.classList.add('seen'); });
+    detail.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><span class="term-item">'+esc(k.id)+'</span><span class="famille-tag '+k.fam+'">'+esc(FAMILIES[k.fam]||'')+'</span></div>'+
+      k.rows.map(r=>'<div class="row"><span class="k">'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('');
+    const f=$('.progress-fill',box), t=$('.progress-label span:last-child',box);
+    f.style.width=Math.round(seen.size/E.items.length*100)+'%'; t.textContent=seen.size+' / '+E.items.length;
+  }
+  show(0);
+});
+/* ================= CAS 1 — CORRESPONDANCE ================= */
+const RSIZE = 10;
+let c1 = null;
+function initCas1(){
+  const order = shuffle(TERMS);
+  const rounds=[]; for(let i=0;i<order.length;i+=RSIZE) rounds.push(order.slice(i,i+RSIZE));
+  c1 = {rounds, r:0, scores:[], pairs:{}, active:null, checked:false, defOrder:[]};
+  $('#c1Result').classList.remove('show');
+  renderRound();
+}
+function renderRound(){
+  const R=c1.rounds[c1.r]; c1.pairs={}; c1.active=null; c1.checked=false; c1.defOrder=shuffle(R.map((_,i)=>i));
+  $('#c1Rounds').innerHTML=c1.rounds.map((_,i)=>'<span class="round-pill '+(i===c1.r?'cur':(i<c1.r?'ok':''))+'">Round '+(i+1)+(c1.scores[i]!==undefined?' · '+c1.scores[i]+'/'+c1.rounds[i].length:'')+'</span>').join('');
+  const tc=$('#c1Terms'), dc=$('#c1Defs'); tc.innerHTML='<h4>Termes</h4>'; dc.innerHTML='<h4>Définitions</h4>';
+  R.forEach((t,i)=>{ const b=document.createElement('button'); b.className='m-term'; b.dataset.i=i; b.innerHTML='<span>'+esc(t.t)+'</span><span class="pair-badge">'+(i+1)+'</span>'; b.addEventListener('click',()=>pickTerm(i)); tc.appendChild(b); });
+  c1.defOrder.forEach(di=>{ const b=document.createElement('button'); b.className='m-def'; b.dataset.d=di; b.innerHTML='<span class="pair-badge">·</span><span>'+esc(R[di].d)+'</span>'; b.addEventListener('click',()=>pickDef(di)); dc.appendChild(b); });
+  $('#c1Next').style.display='none'; $('#c1Check').disabled=false;
+  paintPairs();
+}
+function pickTerm(i){ if(c1.checked) return; c1.active = c1.active===i ? null : i; paintPairs(); }
+function pickDef(di){
+  if(c1.checked) return;
+  if(c1.active===null){ const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); if(owner!==undefined){ delete c1.pairs[owner]; paintPairs(); } else toast('Sélectionnez d\'abord un terme à gauche.'); return; }
+  Object.keys(c1.pairs).forEach(k=>{ if(c1.pairs[k]===di) delete c1.pairs[k]; });
+  c1.pairs[c1.active]=di; c1.active=null; paintPairs();
+}
+function paintPairs(){
+  $$('#c1Terms .m-term').forEach(b=>{ const i=+b.dataset.i; b.classList.toggle('active',c1.active===i); b.classList.toggle('paired',c1.pairs[i]!==undefined); });
+  $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); b.classList.toggle('paired',owner!==undefined); $('.pair-badge',b).textContent= owner!==undefined ? (+owner+1) : '·'; });
+  const n=Object.keys(c1.pairs).length, tot=c1.rounds[c1.r].length;
+  setProgress('c1Fill','c1Txt',n,tot,' associations');
+}
+function checkRound(silent){
+  const R=c1.rounds[c1.r];
+  if(!silent && Object.keys(c1.pairs).length<R.length){ toast('Associez les '+R.length+' termes avant de vérifier.'); return; }
+  let ok=0;
+  $$('#c1Terms .m-term').forEach(b=>{ const i=+b.dataset.i; const g=c1.pairs[i]===i; if(g) ok++; b.classList.remove('active'); b.classList.add(g?'good':'bad'); });
+  $$('#c1Defs .m-def').forEach(b=>{ const di=+b.dataset.d; const owner=Object.keys(c1.pairs).find(k=>c1.pairs[k]===di); const g= owner!==undefined && +owner===di; b.classList.add(g?'good':'bad'); if(!g){ $('.pair-badge',b).textContent='→'+(di+1); } });
+  c1.checked=true; c1.scores[c1.r]=ok; $('#c1Check').disabled=true;
+  const last = c1.r===c1.rounds.length-1;
+  const tot=c1.scores.reduce((a,b)=>a+b,0), max=c1.rounds.slice(0,c1.r+1).reduce((a,r)=>a+r.length,0);
+  $('#c1Result').innerHTML='<div class="score">'+ok+' / '+R.length+'</div><div class="msg">Round '+(c1.r+1)+' sur '+c1.rounds.length+'. Les définitions en rouge indiquent le numéro du bon terme. '+(last?'<br><strong style="color:#34d399">Score total : '+tot+' / '+max+'</strong> — '+scoreMsg(Math.round(tot/max*100)):'Score cumulé : '+tot+' / '+max+'.')+'</div>';
+  $('#c1Result').classList.add('show');
+  if(last){ if(!silent) markDone('cas1'); }
+  else $('#c1Next').style.display='inline-flex';
+}
+$('#c1Check').addEventListener('click',()=>checkRound(false));
+$('#c1Next').addEventListener('click',()=>{ c1.r++; $('#c1Result').classList.remove('show'); renderRound(); });
+$('#c1Reveal').addEventListener('click',()=>{ if(c1.checked) return; c1.rounds[c1.r].forEach((_,i)=>c1.pairs[i]=i); paintPairs(); checkRound(true); });
+$('#c1Reset').addEventListener('click',initCas1);
+initCas1();
+
+/* ================= CAS 2 — IDENTIFICATION + INTRUSE ================= */
+let c2=[];
+function initCas2(){
+  c2 = shuffle(CAS2).map(g=>({g, choices:shuffle(g.choices), sits:shuffle(g.situations)}));
+  const box=$('#c2Box'); box.innerHTML='';
+  c2.forEach((G,gi)=>{
+    const d=document.createElement('div'); d.className='group';
+    d.innerHTML='<div class="group-head"><strong><span class="q-num">G'+(gi+1)+'</span>Groupe '+(gi+1)+'</strong><span class="famille-tag f3">4 situations · 1 intruse</span></div>'+
+      G.sits.map((s,si)=>'<button type="button" class="sit" data-si="'+si+'"><span class="tag">S'+(si+1)+'</span><span>'+esc(s.s)+'</span></button>').join('')+
+      '<div class="g-label">1 · Quelle notion illustrent la majorité de ces situations ?</div><div class="choice-row">'+
+      G.choices.map((c,ci)=>'<button type="button" class="choice" data-ci="'+ci+'">'+esc(c)+'</button>').join('')+'</div>'+
+      '<div class="g-label">2 · Cliquez sur la situation intruse ci-dessus.</div><div class="expl"></div>';
+    $$('.choice',d).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.choice',d).forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); d.dataset.ch=b.dataset.ci; upd2(); }));
+    $$('.sit',d).forEach(b=>b.addEventListener('click',()=>{ if(d.classList.contains('checked')) return; $$('.sit',d).forEach(x=>{x.classList.remove('sel');$('.tag',x).textContent='S'+(+x.dataset.si+1);}); b.classList.add('sel'); $('.tag',b).textContent='Intruse ?'; d.dataset.si=b.dataset.si; upd2(); }));
+    box.appendChild(d);
+  });
+  $('#c2Result').classList.remove('show'); upd2();
+}
+function upd2(){ const gs=$$('#c2Box .group'); let n=0; gs.forEach(g=>{ if(g.dataset.ch!==undefined) n++; if(g.dataset.si!==undefined) n++; }); setProgress('c2Fill','c2Txt',n,gs.length*2,' réponses'); }
+function check2(silent){
+  const gs=$$('#c2Box .group');
+  if(!silent && gs.some(g=>g.dataset.ch===undefined||g.dataset.si===undefined)){ toast('Choisissez une notion et une intruse pour chaque groupe.'); return; }
+  let ok=0;
+  gs.forEach((d,gi)=>{
+    const G=c2[gi]; const goodCi=G.choices.indexOf(G.g.notion); const goodSi=G.sits.findIndex(s=>s.intruse);
+    const a=+d.dataset.ch===goodCi, b=+d.dataset.si===goodSi; ok+=(a?1:0)+(b?1:0);
+    $$('.choice',d).forEach((x,ci)=>{ x.classList.toggle('good',ci===goodCi); x.classList.toggle('bad',ci===+d.dataset.ch&&!a); });
+    $$('.sit',d).forEach((x,si)=>{ x.classList.remove('sel'); x.classList.toggle('good',si===goodSi); x.classList.toggle('bad',si===+d.dataset.si&&!b); $('.tag',x).textContent= si===goodSi?'Intruse':(si===+d.dataset.si&&!b?'Pas l\'intruse':'S'+(si+1)); });
+    d.classList.remove('correct','wrong','half'); d.classList.add('checked', a&&b?'correct':(a||b?'half':'wrong'));
+    $('.expl',d).innerHTML=(a?'✅':'❌')+' Notion : <strong>'+esc(G.g.notion)+'</strong> · '+(b?'✅':'❌')+' Intruse : <strong>S'+(goodSi+1)+'</strong><br>'+esc(G.g.e);
+  });
+  const max=gs.length*2;
+  $('#c2Result').innerHTML='<div class="score">'+ok+' / '+max+'</div><div class="msg">1 point par notion identifiée, 1 point par intruse repérée. '+scoreMsg(Math.round(ok/max*100))+'</div>';
+  $('#c2Result').classList.add('show');
+  if(!silent) markDone('cas2');
+}
+$('#c2Check').addEventListener('click',()=>check2(false));
+$('#c2Reveal').addEventListener('click',()=>{ $$('#c2Box .group').forEach((d,gi)=>{ const G=c2[gi]; d.dataset.ch=G.choices.indexOf(G.g.notion); d.dataset.si=G.sits.findIndex(s=>s.intruse); }); upd2(); check2(true); });
+$('#c2Reset').addEventListener('click',initCas2);
+initCas2();
+
+
+/* ================= CAS 3 — INTERVIEW EXPRESS + CARTE D'EMPATHIE ================= */
+let ivTheme=null, ivGenerated=false;
+const GUIDE0=$('#ivGuide').value;
+function setTheme(i){
+  const prev=ivTheme; ivTheme=THEMES[i]; $('#ivPick').value=String(i);
+  $('#ivTheme').innerHTML='Thème : <strong>la dernière fois que tu as '+esc(ivTheme)+'</strong>';
+  const g=$('#ivGuide'); g.value = prev ? g.value.split(prev).join(ivTheme) : g.value.split('[THÈME]').join(ivTheme);
+  updIv();
+}
+$('#ivDraw').addEventListener('click',()=>{ let i; do{ i=Math.floor(Math.random()*THEMES.length); }while(ivTheme && THEMES[i]===ivTheme); setTheme(i); toast('🎲 Thème tiré !'); });
+$('#ivPick').addEventListener('change',e=>{ if(e.target.value!=='') setTheme(+e.target.value); });
+$('#ivCopyGuide').addEventListener('click',()=>copyText($('#ivGuide').value));
+const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
+function countQuotes(){ const n=lines($('#ivNotes').value).filter(l=>/[«"“]/.test(l)).length; $('#ivNotesCount').textContent=n+' verbatim'+(n>1?'s':'')+' entre guillemets'+(n>=5?' ✅':' (objectif : 5)'); }
+$('#ivNotes').addEventListener('input',countQuotes);
+function zonesFilled(){ return $$('[data-zone]').filter(z=>z.value.trim().length>=2).length; }
+$$('[data-zone]').forEach(z=>z.addEventListener('input',()=>{ $('#ivZones').textContent=zonesFilled()+' / 6 zones remplies'; updIv(); }));
+function ivMd(){
+  const v=id=>{ const el=$('#iv_'+id); return el?el.value.trim():''; }; const todo='_À compléter_';
+  const list=s=>{ const l=lines(s).map(x=>'- '+x.replace(/^[-*•]\s*/,'')); return l.length?l.join('\n'):todo; };
+  let md='# Persona express — '+(v('name')||'Prénom fictif')+'\n\n> Proto-persona construit à partir d’un entretien de 7 minutes (thème : '+(ivTheme?'la dernière fois que tu as '+ivTheme:todo)+'). À confirmer par d’autres entretiens.\n\n';
+  md+='- **Interviewer** : '+($('#ivAuthor').value.trim()||todo)+'\n- **Date** : '+new Date().toLocaleDateString('fr-FR')+'\n';
+  const sec=(t,val)=>{ md+='\n## '+t+'\n'+(val||todo)+'\n'; };
+  sec('Contexte d’usage',v('context')); sec('Objectif',v('goal')); sec('Freins',list(v('brakes'))); sec('Scénario d’usage',v('scenario')); sec('Citation clé',v('quote'));
+  md+='\n## Carte d’empathie\n'; ZONES.forEach(z=>{ md+='### '+z.t+'\n'+list($('#ez_'+z.id).value)+'\n'; });
+  sec('Parcours raconté',list(v('journey'))); sec('À vérifier',list(v('verify')));
+  const notes=lines($('#ivNotes').value); md+='\n## Verbatims notés ('+notes.length+')\n'+(notes.length?notes.map(x=>'- '+x).join('\n'):todo)+'\n';
+  return md;
+}
+function updIv(){
+  const s=$$('#ivSteps input').filter(c=>c.checked).length, c=$$('#ivCheck input').filter(c=>c.checked).length;
+  const tot=$$('#ivSteps input').length+$$('#ivCheck input').length+6+2;
+  const n=s+c+zonesFilled()+(ivTheme?1:0)+(ivGenerated?1:0); setProgress('ivFill','ivTxt',n,tot);
+  if(n===tot) markDone('cas3');
+}
+$('#ivGen').addEventListener('click',()=>{
+  if(!ivTheme){ toast('Choisissez d’abord un thème.'); return; }
+  if(zonesFilled()<6){ toast('Remplissez les six zones de la carte d’empathie ('+zonesFilled()+' / 6).'); return; }
+  const f=$$('[data-iv]'); const filled=f.filter(x=>x.value.trim().length>=3).length, need=Math.ceil(f.length*0.75);
+  if(filled<need){ toast('Complétez au moins '+need+' champs du persona ('+filled+' / '+f.length+').'); return; }
+  if(!$('#iv_verify').value.trim()) toast('Pensez à la section « À vérifier » : elle est obligatoire.');
+  $('#ivOut').textContent=ivMd(); $('#ivWrap').style.display='block'; ivGenerated=true; updIv();
+});
+$('#ivCopy').addEventListener('click',()=>copyText(ivMd()));
+$('#ivDl').addEventListener('click',()=>download('persona.md',ivMd()));
+$('#ivClear').addEventListener('click',()=>{ $$('[data-iv]').forEach(x=>x.value=''); $('#ivWrap').style.display='none'; ivGenerated=false; updIv(); });
+$$('#ivSteps input, #ivCheck input').forEach(c=>c.addEventListener('change',updIv));
+$('#ivReveal').addEventListener('click',()=>$('#ivSolution').classList.toggle('shown'));
+countQuotes(); updIv();
+
+/* ================= GLOSSAIRE VERROUILLÉ ================= */
+let glossFilter='all';
+function renderGloss(){
+  const items=TERMS.slice().sort((a,b)=>a.t.localeCompare(b.t,'fr')).filter(t=>glossFilter==='all'||t.f===glossFilter);
+  $('#gloss').innerHTML=items.map(g=>'<div class="gloss-item"><div class="gt"><span class="term-item">'+esc(g.t)+'</span><span class="famille-tag '+g.f+'">'+esc(FAMILIES[g.f])+'</span></div><div>'+esc(g.d)+'</div></div>').join('');
+}
+function unlockGloss(){
+  $('#glossLocked').style.display='none'; $('#glossOpen').style.display='block';
+  const t=$('.tab[data-tab="gl"] .lock-mark'); if(t) t.textContent='🔓';
+  renderGloss();
+}
+function onDone(act){
+  const p=$('.lock-pill[data-lock="'+act+'"]'); if(p){ p.classList.add('ok'); p.textContent=p.textContent.replace('⏳','✅'); }
+  if(['cas1','cas2','cas3'].every(a=>done.has(a))){ unlockGloss(); toast('📖 Glossaire débloqué !'); }
+}
+$$('#glossFilters button').forEach(b=>b.addEventListener('click',()=>{ glossFilter=b.dataset.f; $$('#glossFilters button').forEach(x=>x.classList.toggle('on',x===b)); renderGloss(); }));
+$('#glossForce').addEventListener('click',unlockGloss);
+
+})();
+</script>
+</body>
+</html>
