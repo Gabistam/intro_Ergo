@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Projet d’évaluation — Audit ergonomique d’un site réel · Énoncé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#eef1f6;--tile:#ffffff;--line:#dfe5ee;--ink:#0f172a;--muted:#4b5a70;
+  --blue-bg:#dbeafe;--blue-ink:#1e3a8a;--blue-acc:#2563eb;
+  --green-bg:#d1fae5;--green-ink:#064e3b;--green-acc:#059669;
+  --amber-bg:#fef3c7;--amber-ink:#78350f;--amber-acc:#d97706;
+  --rose-bg:#fee2e2;--rose-ink:#7f1d1d;--rose-acc:#dc2626;
+  --violet-bg:#ede9fe;--violet-ink:#4c1d95;--violet-acc:#7c3aed;
+  --slate-bg:#e2e8f0;--slate-ink:#1e293b;--slate-acc:#475569;
+  --night-bg:#111827;--night-ink:#f1f5f9;--night-acc:#a5b4fc;
+  --hero-from:#0f172a;--hero-to:#5b21b6;
+  --sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+}
+@media screen and (prefers-color-scheme:dark){
+  :root{
+    --bg:#0b1020;--tile:#131a2e;--line:#26304d;--ink:#e8ecf6;--muted:#a6b1c8;
+    --blue-bg:#172a52;--blue-ink:#cfe0ff;--blue-acc:#7aa7ff;
+    --green-bg:#0f3328;--green-ink:#c3f4de;--green-acc:#34d399;
+    --amber-bg:#3a2d0e;--amber-ink:#fde7a8;--amber-acc:#fbbf24;
+    --rose-bg:#3c1820;--rose-ink:#ffd3d8;--rose-acc:#fb7185;
+    --violet-bg:#28205a;--violet-ink:#e3d9ff;--violet-acc:#a78bfa;
+    --slate-bg:#1c243b;--slate-ink:#dfe5f3;--slate-acc:#94a3b8;
+    --night-bg:#1b2347;--night-ink:#f1f5f9;--night-acc:#a5b4fc;
+    --hero-from:#0b1020;--hero-to:#4c1d95;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid var(--blue-acc);outline-offset:3px}
+strong{font-weight:700}
+code{font-family:var(--mono);font-size:.84em;background:var(--tbg,var(--bg));color:inherit;border:1px solid currentColor;border-radius:6px;padding:1px 6px;white-space:nowrap}
+
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(14px,3vw,32px) clamp(14px,3vw,28px) 56px}
+
+/* ---- grille bento ---- */
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.tile{grid-column:span 4;min-width:0;background:var(--tbg,var(--tile));color:var(--tink,var(--ink));border:1px solid var(--tline,var(--line));border-radius:24px;padding:clamp(18px,2.2vw,26px)}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:1/-1}
+.r2{grid-row:span 2}
+
+/* tons : un ton = une couleur de tuile, utilisé aussi pour relier compétence ↔ partie du dossier */
+.t-blue{--tbg:var(--blue-bg);--tink:var(--blue-ink);--tacc:var(--blue-acc);--tline:transparent}
+.t-green{--tbg:var(--green-bg);--tink:var(--green-ink);--tacc:var(--green-acc);--tline:transparent}
+.t-amber{--tbg:var(--amber-bg);--tink:var(--amber-ink);--tacc:var(--amber-acc);--tline:transparent}
+.t-rose{--tbg:var(--rose-bg);--tink:var(--rose-ink);--tacc:var(--rose-acc);--tline:transparent}
+.t-violet{--tbg:var(--violet-bg);--tink:var(--violet-ink);--tacc:var(--violet-acc);--tline:transparent}
+.t-slate{--tbg:var(--slate-bg);--tink:var(--slate-ink);--tacc:var(--slate-acc);--tline:transparent}
+.t-night{--tbg:var(--night-bg);--tink:var(--night-ink);--tacc:var(--night-acc);--tline:transparent}
+
+/* ---- intitulés de sections ---- */
+.band{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-top:22px;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.band:first-of-type{margin-top:6px}
+.band .n{background:var(--ink);color:var(--bg);border-radius:8px;padding:2px 9px}
+.band::after{content:"";flex:1;height:2px;background:var(--line)}
+.band-note{grid-column:1/-1;color:var(--muted);margin:-6px 0 2px;max-width:70ch}
+
+h3{font-size:1.08rem;font-weight:700;line-height:1.25;margin-bottom:10px}
+h4{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+p+p{margin-top:8px}
+.eyebrow{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.85;margin-bottom:8px}
+.muted{color:var(--muted)}
+.t-blue .muted,.t-green .muted,.t-amber .muted,.t-rose .muted,.t-violet .muted,.t-slate .muted,.t-night .muted{color:inherit;opacity:.88}
+.tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--tink);color:var(--tbg);white-space:nowrap}
+.vol{font-family:var(--mono);font-size:.78rem;font-weight:700;margin-bottom:10px}
+ul.dots{list-style:none}
+ul.dots li{position:relative;padding:5px 0 5px 22px}
+ul.dots li::before{content:"";position:absolute;left:2px;top:.95em;width:9px;height:9px;border-radius:3px;background:var(--tacc,var(--ink))}
+
+/* ---- tuile d’en-tête ---- */
+.hero{grid-column:span 8;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--hero-from),var(--hero-to));color:#fff;border:none;padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;justify-content:center}
+.hero::after{content:"";position:absolute;right:-90px;top:-90px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.35),transparent 70%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.badge{align-self:flex-start;font-family:var(--mono);font-size:.78rem;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:5px 14px;margin-bottom:18px}
+.hero h1{font-size:clamp(2rem,4.8vw,3.3rem);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin-bottom:16px}
+.hero .lead{font-size:1.04rem;color:#e6ecf8;max-width:60ch}
+.key{align-self:flex-start;margin-top:22px;background:#fff;color:#0f172a;border-radius:16px;padding:12px 18px;font-weight:700}
+
+/* ---- chiffres clés ---- */
+.stat{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.stat:first-of-type{border-top:none;padding-top:0}
+.stat:last-child{padding-bottom:0}
+.stat b{font-size:2.1rem;font-weight:800;line-height:1;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:.9rem;line-height:1.35}
+
+/* ---- compétences ---- */
+.comp-grid{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:6px}
+.comp-grid li{background:var(--tbg);color:var(--tink);border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:.88rem;line-height:1.4}
+
+/* ---- parties du dossier ---- */
+.part-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.pnum{font-family:var(--mono);font-size:2.1rem;font-weight:700;line-height:1}
+.part p{font-size:.92rem}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.chips li{font-size:.8rem;font-weight:600;border:1.5px solid currentColor;border-radius:999px;padding:3px 11px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:14px}
+.two p{font-size:.88rem}
+.scale{display:flex;flex-wrap:wrap;gap:6px}
+.scale span{display:inline-flex;align-items:center;gap:7px;background:var(--tile);color:var(--ink);border-radius:10px;padding:4px 10px;font-size:.76rem;font-weight:600}
+.scale i{font-style:normal;font-family:var(--mono);font-weight:700;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;color:#0f172a;font-size:.72rem}
+.scale .g0 i{background:#cbd5e1}.scale .g1 i{background:#86efac}.scale .g2 i{background:#fde047}.scale .g3 i{background:#fdba74}.scale .g4 i{background:#fca5a5}
+.warn{background:transparent;border:2px dashed var(--rose-acc);color:var(--ink)}
+.warn h3{color:var(--rose-ink)}
+
+/* ---- oral et rendu ---- */
+.bigtime{display:flex;flex-wrap:wrap;gap:10px 36px;margin-bottom:18px}
+.bigtime div{display:flex;flex-direction:column;gap:4px}
+.bigtime b{font-family:var(--mono);font-size:clamp(2.4rem,5vw,3.4rem);font-weight:700;line-height:1}
+.bigtime span{font-size:.92rem;opacity:.9}
+.flow{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;counter-reset:f}
+.flow li{counter-increment:f;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:6px 12px;font-size:.84rem;font-weight:600}
+.flow li::before{content:counter(f);font-family:var(--mono);font-weight:700;color:var(--tacc)}
+.file{display:block;margin:12px 0;font-family:var(--mono);font-size:.92rem;font-weight:700;background:var(--tile);color:var(--ink);border-radius:12px;padding:12px 14px;overflow-wrap:anywhere}
+
+/* ---- évaluation ---- */
+.weights{display:flex;height:16px;border-radius:99px;overflow:hidden;margin:6px 0 14px;gap:3px}
+.weights i{display:block;height:100%}
+.legend{list-style:none;display:grid;gap:7px;font-size:.88rem}
+.legend li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:baseline}
+.legend li::before{content:"";width:12px;height:12px;border-radius:4px;background:var(--dot);align-self:center}
+.legend b{font-family:var(--mono)}
+.crit{list-style:none;display:grid;gap:12px}
+.crit li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center}
+.crit li .cn{font-weight:600;font-size:.92rem;line-height:1.3}
+.crit li .pts{font-family:var(--mono);font-weight:700;font-size:.88rem;white-space:nowrap}
+.crit.notag li{grid-template-columns:1fr auto}
+.crit .meter{grid-column:1/-1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.crit .meter i{display:block;height:100%;width:calc(var(--pts) / var(--max) * 100%);background:var(--tacc);border-radius:99px}
+.total{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:2px solid var(--line);font-family:var(--mono);font-weight:700}
+.levels{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:6px}
+.levels li{background:var(--tbg);color:var(--tink);border-radius:16px;padding:14px}
+.levels b{display:block;font-family:var(--mono);font-size:1.5rem;line-height:1.1;margin:2px 0 6px}
+.levels span{font-size:.84rem;line-height:1.4;display:block}
+
+/* ---- check-list ---- */
+.check{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--bg);cursor:pointer;font-size:.9rem;line-height:1.4}
+.check input{width:20px;height:20px;margin-top:1px;flex-shrink:0;accent-color:var(--green-acc)}
+.check label:has(input:checked){background:var(--green-bg);color:var(--green-ink)}
+.quote{font-size:1.2rem;font-weight:700;line-height:1.35;margin-bottom:12px}
+
+footer{margin-top:28px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:.76rem}
+
+@media(max-width:1000px){
+  .tile,.c3,.c4,.c5,.c6,.c7{grid-column:span 6}
+  .hero,.c8,.c12{grid-column:1/-1}
+  .r2{grid-row:auto}
+  .bref{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px}
+  .bref .eyebrow{grid-column:1/-1}
+  .bref .stat{border-top:none;padding:0;grid-template-columns:auto 1fr;gap:12px}
+  .comp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .levels{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .tile,.c3,.c4,.c5,.c6,.c7,.hero{grid-column:1/-1}
+  .comp-grid,.levels,.two,.bref{grid-template-columns:1fr}
+  .bref .stat{padding:10px 0;border-top:1px solid var(--line)}
+  .bref .eyebrow+.stat{border-top:none}
+}
+@page{size:A4;margin:12mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff}
+  .wrap{padding:0}
+  .tile{break-inside:avoid}
+  .check label{cursor:default}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="bento">
+
+  <header class="tile hero">
+    <span class="badge"><span aria-hidden="true">🧭</span> Ergonomie web · Projet d’évaluation</span>
+    <h1>Audit ergonomique d’un site réel</h1>
+    <p class="lead">Une organisation vous confie l’audit ergonomique de son site. En groupe, vous comprenez ses utilisateurs, analysez son architecture, relevez et qualifiez ses problèmes, puis défendez vos recommandations à l’oral.</p>
+    <p class="key">Je sais auditer un site et défendre mes recommandations.</p>
+  </header>
+
+  <section class="tile c4 bref" aria-labelledby="bref">
+    <h2 class="eyebrow" id="bref">En bref</h2>
+    <div class="stat"><b>3–4</b><span>personnes par groupe</span></div>
+    <div class="stat"><b>1</b><span>site réel par groupe, différent d’un groupe à l’autre</span></div>
+    <div class="stat"><b>2</b><span>livrables : un dossier d’audit et une présentation orale</span></div>
+  </section>
+
+  <section class="tile c12" aria-labelledby="comp">
+    <h2 class="eyebrow" id="comp">Compétences évaluées</h2>
+    <ul class="comp-grid">
+      <li class="t-blue"><span class="tag">C1</span>Décrire les intérêts et les enjeux de l’ergonomie pour ce site</li>
+      <li class="t-green"><span class="tag">C2</span>Analyser et proposer une architecture de l’information structurée</li>
+      <li class="t-amber"><span class="tag">C3</span>Mobiliser critères, heuristiques, lois UX et Gestalt pour qualifier des problèmes</li>
+      <li class="t-violet"><span class="tag">C4</span>Modéliser un persona à partir d’entretiens</li>
+      <li class="t-rose"><span class="tag">C5</span>Définir les étapes du parcours utilisateur d’une tâche clé</li>
+    </ul>
+  </section>
+
+  <h2 class="band"><span class="n">01</span>Le site à auditer</h2>
+  <p class="band-note">Le site est choisi par le groupe et validé par le formateur. Chaque groupe audite un site différent.</p>
+
+  <section class="tile c6 t-green">
+    <h3><span aria-hidden="true">✅</span> Un bon site à auditer</h3>
+    <ul class="dots">
+      <li>Public, en français, accessible sans compte payant ;</li>
+      <li>Une <strong>tâche clé</strong> claire : s’inscrire, réserver, acheter, trouver une information précise ;</li>
+      <li>De taille moyenne : mairie, musée, association, école, PME, salle de spectacle, club sportif ;</li>
+      <li>Assez imparfait pour que l’audit soit riche.</li>
+    </ul>
+  </section>
+
+  <section class="tile c6 t-rose">
+    <h3><span aria-hidden="true">❌</span> À éviter</h3>
+    <ul class="dots">
+      <li>Les géants (Amazon, Google…) : très testés, peu de prise ;</li>
+      <li>Le site d’un membre du groupe ou de son entreprise : manque de recul ;</li>
+      <li>Un site d’une seule page, ou entièrement derrière une connexion ;</li>
+      <li>Un site déjà choisi par un autre groupe.</li>
+    </ul>
+  </section>
+
+  <h2 class="band"><span class="n">02</span>Livrable 1 — Le dossier d’audit</h2>
+  <p class="band-note">Un document PDF d’environ 10 pages, organisé en six parties. Chaque partie est reliée à une compétence.</p>
+
+  <article class="tile c4 t-blue part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">1</span><span class="tag">C1</span></div>
+    <h3>Contexte et enjeux</h3>
+    <p class="vol">≈ 1 page</p>
+    <p>Le site, sa cible, ses objectifs et ceux des utilisateurs, les enjeux (indicateurs), le périmètre audité et la tâche clé.</p>
+  </article>
+
+  <article class="tile c4 t-green part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">2</span><span class="tag">C2</span></div>
+    <h3>Architecture de l’information</h3>
+    <p class="vol">≈ 1,5 page</p>
+    <p>Arborescence reconstituée sur au moins 3 niveaux, analyse des libellés et de la navigation, proposition d’amélioration.</p>
+  </article>
+
+  <article class="tile c4 t-violet part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">3</span><span class="tag">C4</span></div>
+    <h3>Utilisateurs : persona</h3>
+    <p class="vol">≈ 1,5 page</p>
+    <p>2 mini-entretiens (verbatims en annexe), puis un persona : objectif, freins, scénario d’usage et citation, avec les points restant à vérifier.</p>
+  </article>
+
+  <article class="tile c4 t-rose part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">4</span><span class="tag">C5</span></div>
+    <h3>Parcours de la tâche clé</h3>
+    <p class="vol">≈ 1 page</p>
+    <p>Au moins 5 étapes (action, point de contact, émotion, verbatim, points de frustration), courbe d’émotion, moment de vérité et opportunités.</p>
+  </article>
+
+  <article class="tile c8 t-amber part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">5</span><span class="tag">C3</span></div>
+    <h3>Audit heuristique</h3>
+    <p class="vol">≈ 4 pages</p>
+    <p>Au moins <strong>10 problèmes</strong> relevés, chacun qualifié par :</p>
+    <ul class="chips">
+      <li>Capture</li><li>Constat factuel</li><li>Critère, heuristique ou loi</li><li>Gravité de 0 à 4</li><li>Recommandation</li>
+    </ul>
+    <div class="two">
+      <div>
+        <h4>À mobiliser</h4>
+        <p>Au moins 2 référentiels (Bastien &amp; Scapin, Nielsen, Boucher), 2 lois UX et 1 principe de la Gestalt, appliqués à bon escient.</p>
+      </div>
+      <div>
+        <h4>À ne pas oublier</h4>
+        <p>Au moins 3 points forts du site : un audit n’est pas qu’une liste de défauts.</p>
+      </div>
+    </div>
+    <div class="scale" role="group" aria-label="Échelle de gravité">
+      <span class="g0"><i>0</i>Aucun</span><span class="g1"><i>1</i>Cosmétique</span><span class="g2"><i>2</i>Mineur</span><span class="g3"><i>3</i>Majeur</span><span class="g4"><i>4</i>Catastrophe</span>
+    </div>
+  </article>
+
+  <article class="tile c4 t-slate part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">6</span><span class="tag">C1–C5</span></div>
+    <h3>Synthèse et priorités</h3>
+    <p class="vol">≈ 1 page</p>
+    <p>Top 3 des recommandations, priorisées (gravité, fréquence, coût de correction) et justifiées ; ce qu’il resterait à tester avec de vrais utilisateurs.</p>
+  </article>
+
+  <article class="tile c4 part">
+    <div class="part-head"><span class="pnum" aria-hidden="true">+</span><span class="tag" style="--tink:var(--ink);--tbg:var(--tile)">Annexes</span></div>
+    <h3>Pièces justificatives</h3>
+    <p class="vol muted">Volume libre</p>
+    <p>Verbatims des entretiens, captures numérotées et légendées, sources.</p>
+  </article>
+
+  <article class="tile c4 warn">
+    <h3><span aria-hidden="true">⚠️</span> Ce qui fait perdre des points</h3>
+    <ul class="dots" style="--tacc:var(--rose-acc)">
+      <li>Des jugements de goût (« c’est moche ») au lieu de constats ;</li>
+      <li>Des captures sans numéro ni légende ;</li>
+      <li>Tout noter en gravité 4 ;</li>
+      <li>Un persona inventé ;</li>
+      <li>Recopier le cours au lieu de l’appliquer au site.</li>
+    </ul>
+  </article>
+
+  <h2 class="band"><span class="n">03</span>Livrable 2 — La présentation orale</h2>
+
+  <section class="tile c7 t-night">
+    <div class="bigtime"><div><b>8 min</b><span>de présentation</span></div><div><b>+ 4 min</b><span>de questions</span></div></div>
+    <ul class="dots">
+      <li><strong>Tous les membres du groupe prennent la parole.</strong></li>
+      <li>Support libre (diaporama, dossier projeté, site en direct) : privilégiez les captures plutôt que les paragraphes.</li>
+      <li>Chaque membre reçoit <strong>une question individuelle</strong>, sur le dossier ou sur une notion du module : elle fonde sa note d’oral.</li>
+    </ul>
+    <ol class="flow" aria-label="Fil conseillé">
+      <li>Site et enjeux</li><li>Architecture</li><li>Persona et parcours</li><li>Problèmes les plus graves</li><li>Top 3</li>
+    </ol>
+  </section>
+
+  <section class="tile c5 t-blue">
+    <h3><span aria-hidden="true">📄</span> Format du rendu</h3>
+    <p>Un seul fichier PDF d’environ 10 pages, nommé :</p>
+    <code class="file">audit-[groupe]-[site].pdf</code>
+    <p>Le dépôt s’effectue selon les consignes du formateur.</p>
+  </section>
+
+  <h2 class="band"><span class="n">04</span>Évaluation</h2>
+
+  <section class="tile c8 r2" aria-labelledby="dos">
+    <h3 id="dos">Dossier — note de groupe <span class="muted">/ 14</span></h3>
+    <ul class="crit" style="--max:2.5">
+      <li class="t-blue"><span class="tag">C1</span><span class="cn">Contexte et enjeux</span><span class="pts">2 pts</span><span class="meter" style="--pts:2"><i></i></span></li>
+      <li class="t-green"><span class="tag">C2</span><span class="cn">Arborescence et architecture de l’information</span><span class="pts">2,5 pts</span><span class="meter" style="--pts:2.5"><i></i></span></li>
+      <li class="t-amber"><span class="tag">C3</span><span class="cn">Audit : problèmes relevés et qualifiés</span><span class="pts">2,5 pts</span><span class="meter" style="--pts:2.5"><i></i></span></li>
+      <li class="t-amber"><span class="tag">C3</span><span class="cn">Audit : mobilisation des référentiels</span><span class="pts">1,5 pt</span><span class="meter" style="--pts:1.5"><i></i></span></li>
+      <li class="t-violet"><span class="tag">C4</span><span class="cn">Persona fondé sur des entretiens</span><span class="pts">2 pts</span><span class="meter" style="--pts:2"><i></i></span></li>
+      <li class="t-rose"><span class="tag">C5</span><span class="cn">Parcours utilisateur d’une tâche clé</span><span class="pts">2 pts</span><span class="meter" style="--pts:2"><i></i></span></li>
+      <li class="t-slate"><span class="tag">C1–C5</span><span class="cn">Priorisation et qualité du dossier</span><span class="pts">1,5 pt</span><span class="meter" style="--pts:1.5"><i></i></span></li>
+    </ul>
+    <p class="total"><span>Total dossier</span><span>14 points</span></p>
+  </section>
+
+  <section class="tile c4" aria-labelledby="poids">
+    <h3 id="poids">Poids dans la note du module</h3>
+    <div class="weights" aria-hidden="true"><i style="width:40%;background:var(--blue-acc)"></i><i style="width:30%;background:var(--violet-acc)"></i><i style="width:30%;background:var(--green-acc)"></i></div>
+    <ul class="legend">
+      <li style="--dot:var(--blue-acc)"><span>Projet d’audit</span><b>40 %</b></li>
+      <li style="--dot:var(--violet-acc)"><span>QCM individuel</span><b>30 %</b></li>
+      <li style="--dot:var(--green-acc)"><span>Soft skills<br><span class="muted">observés tout au long du module</span></span><b>30 %</b></li>
+    </ul>
+  </section>
+
+  <section class="tile c4" aria-labelledby="oralnote">
+    <h3 id="oralnote">Oral — note individuelle <span class="muted">/ 6</span></h3>
+    <ul class="crit notag t-violet" style="--max:3">
+      <li><span class="cn">Clarté et structure de sa partie</span><span class="pts">2 pts</span><span class="meter" style="--pts:2"><i></i></span></li>
+      <li><span class="cn">Réponse à la question individuelle</span><span class="pts">3 pts</span><span class="meter" style="--pts:3"><i></i></span></li>
+      <li><span class="cn">Argumentation</span><span class="pts">1 pt</span><span class="meter" style="--pts:1"><i></i></span></li>
+    </ul>
+  </section>
+
+  <section class="tile c12" aria-labelledby="niveaux">
+    <h3 id="niveaux">Comment chaque critère est noté</h3>
+    <p class="muted">Un critère vaut ses points multipliés par un coefficient, selon son niveau. La grille détaillée (4 niveaux par critère) vous est communiquée : utilisez-la pour vous auto-évaluer avant le rendu.</p>
+    <ul class="levels">
+      <li class="t-rose"><span class="eyebrow">Insuffisant</span><b>× 0</b><span>Absent, hors sujet ou inexploitable.</span></li>
+      <li class="t-amber"><span class="eyebrow">Partiel</span><b>× 0,4</b><span>Présent, mais incomplet ou peu argumenté.</span></li>
+      <li class="t-green"><span class="eyebrow">Satisfaisant</span><b>× 0,75</b><span>Les attendus décrits dans cet énoncé sont remplis.</span></li>
+      <li class="t-blue"><span class="eyebrow">Excellent</span><b>× 1</b><span>Va plus loin : justifications, nuances, liens entre les parties.</span></li>
+    </ul>
+  </section>
+
+  <h2 class="band"><span class="n">05</span>Avant de rendre</h2>
+
+  <section class="tile c8" aria-labelledby="chk">
+    <h3 id="chk">Check-list</h3>
+    <ul class="check">
+      <li><label><input type="checkbox"> Le site est validé par le formateur et le périmètre (pages, tâche clé, appareils) est écrit en introduction.</label></li>
+      <li><label><input type="checkbox"> Le contexte cite la cible, les objectifs du site et au moins un indicateur d’enjeu.</label></li>
+      <li><label><input type="checkbox"> L’arborescence est reconstituée sur au moins 3 niveaux et analysée.</label></li>
+      <li><label><input type="checkbox"> Le persona s’appuie sur 2 mini-entretiens dont les verbatims sont en annexe.</label></li>
+      <li><label><input type="checkbox"> Le parcours contient au moins 5 étapes avec émotions et points de frustration.</label></li>
+      <li><label><input type="checkbox"> Le tableau contient au moins 10 problèmes, chacun avec capture, critère, gravité et recommandation.</label></li>
+      <li><label><input type="checkbox"> Au moins 2 référentiels, 2 lois UX et 1 principe de la Gestalt sont mobilisés à bon escient.</label></li>
+      <li><label><input type="checkbox"> Au moins 3 points forts du site sont mentionnés.</label></li>
+      <li><label><input type="checkbox"> Le top 3 des recommandations est priorisé et justifié.</label></li>
+      <li><label><input type="checkbox"> Le dossier fait environ 10 pages, en PDF, nommé « audit-[groupe]-[site].pdf ».</label></li>
+      <li><label><input type="checkbox"> La présentation tient en 8 minutes et chaque membre a une partie à présenter.</label></li>
+    </ul>
+  </section>
+
+  <section class="tile c4 t-night">
+    <p class="quote">Un audit convaincant ne dit pas « c’est mal fait » : il dit pourquoi, pour qui, à quel point, et comment corriger.</p>
+    <p class="muted">Constat factuel, critère ou loi, gravité, recommandation — et un utilisateur réel derrière chaque priorité.</p>
+  </section>
+
+</div>
+<footer>Ergonomie web — Projet d’évaluation : audit ergonomique d’un site réel</footer>
+</main>
+</body>
+</html>
