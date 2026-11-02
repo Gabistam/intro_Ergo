@@ -104,19 +104,14 @@ ul.dots li::before{content:"";position:absolute;left:2px;top:.9em;width:9px;heig
 .file{display:block;margin:10px 0 0;background:var(--tile);color:var(--ink);border-radius:12px;padding:11px 14px}
 
 /* évaluation */
-.crit{list-style:none;display:grid;gap:11px}
-.crit li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center}
-.crit.notag li{grid-template-columns:1fr auto}
-.crit .cn{font-weight:600;font-size:.9rem;line-height:1.3}
-.crit .pts{font-family:var(--mono);font-weight:700;font-size:.86rem;white-space:nowrap}
-.crit .meter{grid-column:1/-1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
-.crit .meter i{display:block;height:100%;width:calc(var(--pts) / var(--max) * 100%);background:var(--tacc);border-radius:99px}
-.weights{display:flex;height:16px;border-radius:99px;overflow:hidden;gap:3px;margin:4px 0 14px}
-.weights i{display:block;height:100%}
-.legend{list-style:none;display:grid;gap:7px;font-size:.88rem}
-.legend li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center}
-.legend li::before{content:"";width:12px;height:12px;border-radius:4px;background:var(--dot)}
-.legend b{font-family:var(--mono)}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th,.tbl td{padding:9px 10px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+.tbl thead th{font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tbl tbody td:not(.k){font-weight:600}
+.tbl .k{width:1%;white-space:nowrap}
+.tbl .num{text-align:right;font-family:var(--mono);font-weight:700;white-space:nowrap}
+.tbl tfoot th,.tbl tfoot td{font-weight:700;border-bottom:none;border-top:2px solid var(--ink)}
+.poids{display:flex;flex-direction:column;justify-content:center}
 
 footer{margin-top:24px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:.76rem}
 
@@ -236,7 +231,7 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-family:var(--mo
     <div class="bigtime"><div><b>8 min</b><span>de présentation</span></div><div><b>+ 4 min</b><span>de questions</span></div></div>
     <ul class="dots">
       <li>Tous les membres prennent la parole.</li>
-      <li>Chacun reçoit <strong>une question individuelle</strong> : elle fonde sa note d’oral.</li>
+      <li>Chacun reçoit <strong>une question individuelle</strong>.</li>
     </ul>
   </section>
 
@@ -249,36 +244,33 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-family:var(--mo
   <h2 class="band"><span class="n">04</span>Évaluation</h2>
   <p class="band-note">Chaque critère est noté sur 4 niveaux : insuffisant, partiel, satisfaisant, excellent. La grille détaillée vous est communiquée.</p>
 
-  <section class="tile c6" aria-labelledby="dos">
-    <h3 id="dos">Dossier — note de groupe <span class="muted">/ 14</span></h3>
-    <ul class="crit" style="--max:2.5">
-      <li class="t-blue"><span class="tag">C1</span><span class="cn">Contexte et enjeux</span><span class="pts">2</span><span class="meter" style="--pts:2"><i></i></span></li>
-      <li class="t-green"><span class="tag">C2</span><span class="cn">Architecture de l’information</span><span class="pts">2,5</span><span class="meter" style="--pts:2.5"><i></i></span></li>
-      <li class="t-amber"><span class="tag">C3</span><span class="cn">Audit : problèmes qualifiés</span><span class="pts">2,5</span><span class="meter" style="--pts:2.5"><i></i></span></li>
-      <li class="t-amber"><span class="tag">C3</span><span class="cn">Audit : référentiels</span><span class="pts">1,5</span><span class="meter" style="--pts:1.5"><i></i></span></li>
-      <li class="t-violet"><span class="tag">C4</span><span class="cn">Persona</span><span class="pts">2</span><span class="meter" style="--pts:2"><i></i></span></li>
-      <li class="t-rose"><span class="tag">C5</span><span class="cn">Parcours utilisateur</span><span class="pts">2</span><span class="meter" style="--pts:2"><i></i></span></li>
-      <li class="t-slate"><span class="tag">C1–C5</span><span class="cn">Priorisation et qualité</span><span class="pts">1,5</span><span class="meter" style="--pts:1.5"><i></i></span></li>
-    </ul>
+  <section class="tile c7" aria-labelledby="dos">
+    <h3 id="dos">Dossier — note de groupe <span class="muted">/ 20</span></h3>
+    <table class="tbl" aria-labelledby="dos">
+      <thead><tr><th scope="col" class="k">Compétence</th><th scope="col">Critère</th><th scope="col" class="num">Points</th></tr></thead>
+      <tbody>
+        <tr class="t-blue"><td class="k"><span class="tag">C1</span></td><td>Contexte et enjeux</td><td class="num">3</td></tr>
+        <tr class="t-green"><td class="k"><span class="tag">C2</span></td><td>Architecture de l’information</td><td class="num">3,5</td></tr>
+        <tr class="t-amber"><td class="k"><span class="tag">C3</span></td><td>Audit : problèmes qualifiés</td><td class="num">3,5</td></tr>
+        <tr class="t-amber"><td class="k"><span class="tag">C3</span></td><td>Audit : référentiels</td><td class="num">2</td></tr>
+        <tr class="t-violet"><td class="k"><span class="tag">C4</span></td><td>Persona</td><td class="num">3</td></tr>
+        <tr class="t-rose"><td class="k"><span class="tag">C5</span></td><td>Parcours utilisateur</td><td class="num">3</td></tr>
+        <tr class="t-slate"><td class="k"><span class="tag">C1–C5</span></td><td>Priorisation et qualité</td><td class="num">2</td></tr>
+      </tbody>
+      <tfoot><tr><th scope="row" colspan="2">Total</th><td class="num">20</td></tr></tfoot>
+    </table>
   </section>
 
-  <section class="tile c3" aria-labelledby="oralnote">
-    <h3 id="oralnote">Oral — individuel <span class="muted">/ 6</span></h3>
-    <ul class="crit notag t-violet" style="--max:3">
-      <li><span class="cn">Clarté et structure</span><span class="pts">2</span><span class="meter" style="--pts:2"><i></i></span></li>
-      <li><span class="cn">Réponse à la question</span><span class="pts">3</span><span class="meter" style="--pts:3"><i></i></span></li>
-      <li><span class="cn">Argumentation</span><span class="pts">1</span><span class="meter" style="--pts:1"><i></i></span></li>
-    </ul>
-  </section>
-
-  <section class="tile c3" aria-labelledby="poids">
+  <section class="tile c5 poids" aria-labelledby="poids">
     <h3 id="poids">Note du module</h3>
-    <div class="weights" aria-hidden="true"><i style="width:40%;background:var(--blue-acc)"></i><i style="width:30%;background:var(--violet-acc)"></i><i style="width:30%;background:var(--green-acc)"></i></div>
-    <ul class="legend">
-      <li style="--dot:var(--blue-acc)"><span>Projet d’audit</span><b>40 %</b></li>
-      <li style="--dot:var(--violet-acc)"><span>QCM</span><b>30 %</b></li>
-      <li style="--dot:var(--green-acc)"><span>Soft skills</span><b>30 %</b></li>
-    </ul>
+    <table class="tbl" aria-labelledby="poids">
+      <thead><tr><th scope="col">Composante</th><th scope="col" class="num">Poids</th></tr></thead>
+      <tbody>
+        <tr><td>Projet de groupe</td><td class="num">60 %</td></tr>
+        <tr><td>QCM</td><td class="num">40 %</td></tr>
+      </tbody>
+      <tfoot><tr><th scope="row">Total</th><td class="num">100 %</td></tr></tfoot>
+    </table>
   </section>
 
 </div>
